@@ -1,0 +1,16 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+u"""
+===============================
+    Shimehari.Sakagura
+    ~~~~~~~~~~~~~~~~~
+    アプリケーション作ったり…?
+===============================
+"""
+
+import os,sys
+
+if __name__ == '__main__':
+    from shimehari.core.manage import executeFromCommandLine
+    executeFromCommandLine(sys.argv)
