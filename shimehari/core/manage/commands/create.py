@@ -47,6 +47,7 @@ class Command(CreatableCommand):
             pass
         else:
             raise CommandError('%s mou aru' % appDir)
+
         path = options.get('path')
         if path is None:
             appRootDir = os.path.join(os.getcwd(), appDir)
@@ -87,6 +88,11 @@ class Command(CreatableCommand):
 
                 self.readAndCreateFile(oldPath, newPath)
 
+        viewsDir = os.path.join(appRootDir, 'views')
+        if not os.path.exists(viewsDir):
+            os.mkdir(viewsDir)
+            sys.stdout.write(u"Creating: %s\n" % viewsDir)
+
         #generate config file
         confOrgPath = os.path.join(shimehari.__path__[0], 'core', 'conf','config.org.py')
         newConfPath = os.path.join(os.getcwd(), 'config.py')
@@ -97,7 +103,7 @@ class Command(CreatableCommand):
         newochokoPath = os.path.join(os.getcwd(), 'ochoko.py')
         self.readAndCreateFile(ochokoOrgPath, newochokoPath)
 
-        sys.stdout.write("New App Create Complete. enjoy!")
+        sys.stdout.write("New App Create Complete. enjoy!\n")
 
 
 
@@ -114,19 +120,19 @@ class Command(CreatableCommand):
     ------------------------------"""
     def readAndCreateFile(self, old, new):
         if os.path.exists(new):
-            raise CommandError('もうあるぽよ')
+            raise CommandError('already... %s' % new)
 
         with open(old, 'r') as template:
             content = template.read()
         with open(new, 'w') as newFile:
             newFile.write(content)
-        sys.stdout.write("Creating: %s\n" % new)
+        sys.stdout.write(u"Creating: %s\n" % new)
 
         try:
             shutil.copymode(old,new)
             self.toWritable(new)
         except OSError:
-            sys.stderr.write('パーミッション設定できんかった')
+            sys.stderr.write('permission error')
 
 
 

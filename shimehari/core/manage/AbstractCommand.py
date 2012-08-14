@@ -59,11 +59,11 @@ class AbstractCommand(object):
             output = self.handle(*args,**options)
             if output:
                 self.stdout.write(output)
-        except CommandError, e:
+        except (TypeError,CommandError), e:
             if showTraceback:
                 traceback.print_exc()
             else:
-                self.stderror.write('%s\n' % unicode(e).encode('utf-8'))
+                self.stderror.write(u'%s\n' % unicode(e).encode('utf-8'))
             sys.exit(1)
 
     def validate(self):
@@ -72,6 +72,7 @@ class AbstractCommand(object):
     def handle(self):
         raise NotImplementedError()
 
+    #humu...
     def getAppConfig(self):
         pass
 
