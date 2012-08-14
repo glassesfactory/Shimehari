@@ -18,13 +18,14 @@ from shimehari.helpers import jsonAvailable
 try:
     import msgpack as msg
 except ImportError:
-    import cpickle as msg
-except ImportError:
-    import pickle as msg
-finally:
-    if not jsonAvailable:
-        raise RuntimeError('シリアライズできるもんがないぞ')
-    from shimehari.helpers import json as msg
+    try 
+        import cpickle as msg
+    except ImportError:
+        import pickle as msg
+    finally:
+        if not jsonAvailable:
+            raise RuntimeError('シリアライズできるもんがないぞ')
+        from shimehari.helpers import json as msg
 
 
 
@@ -235,6 +236,7 @@ class SecureCookieSessionStore(_SessionStore):
     def delete(self, session):
         session.pop(self.key, None)
 
+    #hum...
     def get(self, sid):
         if not self.is_vaild_key(sid):
             return self.new()
