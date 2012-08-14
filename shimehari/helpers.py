@@ -43,7 +43,7 @@ from shimehari.core.helpers import importFromString
 
 def _assertHaveJson():
     if not jsonAvailable:
-        raise RuntimeError('json ないじゃん')
+        raise RuntimeError(u'json ないじゃん')
 
 
 _osAltSep = list(sep for sep in [os.path.sep, os.path.altsep] if sep not in (None, '/'))
@@ -119,15 +119,15 @@ def urlFor(endpoint, **values):
 
     if reqctx is not None:
         urlAdapter = reqctx.urlAdapter
-        if urlAdapter is None:
-            raise RuntimeError('ooooo')
-        if endpoint.startswith('.'):
+        # if urlAdapter is None:
+            # raise RuntimeError('ooooo')
+        if endpoint[:1]==('.'):
             endpoint = endpoint[1:]
         external = values.pop('_external', False)
     else:
         urlAdapter = appctx.adapter
         if urlAdapter is None:
-            raise RuntimeError('aaaa')
+            raise RuntimeError('url adapter not found')
         external = values.pop('_external', True)
     
     anchor = values.pop('_anchor', None)
@@ -320,7 +320,7 @@ def sendFile(filenameOrFp, mimetype=None, asAttachment=False,
     if asAttachment:
         if attachmentFilename is None:
             if filename is None:
-                raise TypeError('ファイル名とかがおかしい予感')
+                raise TypeError('file name is invalid')
             attachmentFilename = os.path.basename(filename)
         headers.add('Content-Disposition','attachment',filename=attachmentFilename)
 
@@ -417,7 +417,7 @@ def getTemplater(app, templaterName):
     import shimehari
     templateDir = os.path.join(shimehari.__path__[0], 'template', templaterName)
     if not os.path.isdir(templateDir):
-        raise ValueError('oooo')
+        raise ValueError('template engine not found :: %s\n' % templateDir)
     try:
         module = importFromString('shimehari.template.' + templaterName)
         templater = module.templater
@@ -446,14 +446,13 @@ class _Kouzi(object):
 
         if config and self.rootPath == os.getcwd() +'/' + config['APP_DIRECTORY']:
             self.rootPath = os.getcwd()
-
+        
         self.appFolder = config['APP_DIRECTORY'] if config and config['APP_DIRECTORY'] else appFolder
         self.controllerFolder = config['CONTROLLER_DIRECTORY'] if config and \
                                 config['CONTROLLER_DIRECTORY'] else controllerFolder
         self.viewFolder = config['VIEW_DIRECTORY'] if config and config['VIEW_DIRECTORY'] else viewFolder
 
         self._staticFolder = config['ASSETS_DIRECTORY'] if config and config['ASSETS_DIRECTORY'] else None
-        print self._staticFolder
         self._staticURL = None
 
     def _getStaticFolder(self):
@@ -496,7 +495,7 @@ class _Kouzi(object):
     ----------------------------------"""
     def sendStaticFile(self, filename):
         if not self.hasStaticFolder:
-            raise RuntimeError(u'すたてぃっくふぉるだーが設定されていません')
+            raise RuntimeError('static file folder has none.')
         cacheTimeout = self.getSendFileMaxAge(filename)
         return sendFromDirectory(self.staticFolder, filename, cacheTimeout=cacheTimeout)
 
@@ -521,6 +520,6 @@ class _Kouzi(object):
 
     def openFile(self, filename, mode='rb'):
         if mode not in ('r', 'rb'):
-            raise ValueError('aaaa')
+            raise ValueError('can not read file')
         return open(os.path.join(self.rootPath,filename), mode)
 

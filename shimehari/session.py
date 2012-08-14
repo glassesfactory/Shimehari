@@ -24,7 +24,7 @@ except ImportError:
         import pickle as msg
     finally:
         if not jsonAvailable:
-            raise RuntimeError('シリアライズできるもんがないぞ')
+            raise RuntimeError('you do not have selializer')
         from shimehari.helpers import json as msg
 
 

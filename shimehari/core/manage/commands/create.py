@@ -41,6 +41,7 @@ class Command(CreatableCommand):
         )
 
     def handle(self, appDir='app', *args, **options):
+        print appDir
         try:
             importFromString(appDir)
         except ImportError:
@@ -91,12 +92,17 @@ class Command(CreatableCommand):
         viewsDir = os.path.join(appRootDir, 'views')
         if not os.path.exists(viewsDir):
             os.mkdir(viewsDir)
-            sys.stdout.write(u"Creating: %s\n" % viewsDir)
+            sys.stdout.write("Creating: %s\n" % viewsDir)
+
+        assetsDir = os.path.join(appRootDir, 'assets')
+        if not os.path.exists(assetsDir):
+            os.mkdir(assetsDir)
+            sys.stdout.write("Creating: %s\n" % assetsDir)
 
         #generate config file
         confOrgPath = os.path.join(shimehari.__path__[0], 'core', 'conf','config.org.py')
         newConfPath = os.path.join(os.getcwd(), 'config.py')
-        self.readAndCreateFile(confOrgPath, newConfPath)
+        self.readAndCreateFileWithRename(confOrgPath, newConfPath, appDir)
 
         #generate ochoko.py file
         ochokoOrgPath = os.path.join(shimehari.__path__[0], 'core', 'conf','ochoko.py')
@@ -133,6 +139,26 @@ class Command(CreatableCommand):
             self.toWritable(new)
         except OSError:
             sys.stderr.write('permission error')
+
+
+    def readAndCreateFileWithRename(self, old, new, name):
+        if os.path.exists(new):
+            raise CommandError('Controller already exists.')
+
+        with open(old, 'r') as template:
+            content = template.read()
+            if '%s' in content:
+                content = content % name
+        with open(new, 'w') as newFile:
+            newFile.write(content)
+        # sys.stdout.write("Genarating New Controller: %s\n" % new)
+
+        try:
+            shutil.copymode(old,new)
+            self.toWritable(new)
+        except OSError:
+            sys.stderr.write('can not setting permission')
+
 
 
 

@@ -132,7 +132,7 @@ class RESTfulRouter(AbstractRouter):
             elif isinstance(resource, Rule):
                 self.add(resource)
             else:
-                raise TypeError(u'resources として渡されたルールが不正です。')
+                raise TypeError('resources rule is invalid.')
 
 
 
@@ -210,7 +210,7 @@ class RESTfulRule(object):
         elif _act == 'new':
             return name + '/new'
         else:
-            raise ValueError(u'RESTfulRule')
+            raise ValueError('RESTfulRule')
 
 
 
@@ -246,7 +246,7 @@ class Resource(Map):
                  encoding_errors='replace', host_matching=False)
 
         if only != [] and excepts != []:
-                raise ValueError(u'許可なんか拒否なんかはっきりせい')
+                raise ValueError('allow or deny!!!!')
 
         self._rules = []
 
@@ -282,6 +282,7 @@ class Resource(Map):
                 self.baseName = controller.baseName
             self.add(controller)
 
+        #uuuumu
         if self.root:
             self.baseName = '/'
 
@@ -293,7 +294,7 @@ class Resource(Map):
         if isinstance(self.children, dict) and len(self.children) > 0:
             for child in self.children:
                 if not isinstance(child, Resource) and not isinstance(child, RESTfulRule) and not isinstance(child, Rule):
-                    raise TypeError(u'children として指定されているオブジェクトの型が不正です。')
+                    raise TypeError('children is invalid')
                 if isinstance(child, Rule):
                     child.rule = self.baseName + '/' + child.rule
                 else:
@@ -316,10 +317,10 @@ class Resource(Map):
             if isinstance(controller, dict):
                 for rule in dict:
                     if not isinstance(rule, Rule):
-                        raise ValueError('controller fail')
+                        raise ValueError('controller failed:: rule is invalid')
                         sys.exit()
             else:
-                raise ValueError('controller fail')
+                raise ValueError('controller is invalid... \n target instansce type is  %s' % type(controller))
         return controller
 
     #みなおし
@@ -369,10 +370,11 @@ class Resource(Map):
     def _addRuleFromRules(self, rules):
         for rule in rules:
             if not isinstance(rule, RuleBase):
-                raise TypeError(u'与えられた Rule の型が不正です。')
+                raise TypeError('Rule type is invalid')
             self._rules.append(rule)
 
 
+    #aaaaa
     u"""----------------------------------------
 
         add
@@ -397,7 +399,7 @@ class Resource(Map):
         elif isinstance(controller, dict):
             self._addRuleFromRules(controller)
         else:
-            raise ValueError(u'⊂ミ⊃＾ω＾ ）⊃　ｱｳｱｳ!!')
+            raise ValueError('out!')
 
     def refresh(self):
         for rule in self._rules:
@@ -427,7 +429,7 @@ class Resource(Map):
         elif _act == 'new':
             return name + '/new'
         else:
-            raise ValueError(u'RESTfulRule')
+            raise ValueError('RESTfulRule')
 
 
 

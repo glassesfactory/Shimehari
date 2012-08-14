@@ -26,6 +26,7 @@ setup(
     description='middle framework based on Flask, Werkzeug, Jinja2 ',
     packages=['shimehari','shimehari.core', 'shimehari.template', 'shimehari.core.conf','shimehari.core.conf.app_template',
                 'shimehari.core.conf.app_template.controllers','shimehari.core.conf.app_template.models',
+                'shimehari.template.jinja2',
                 'shimehari.core.manage','shimehari.core.manage.commands'],
     scripts=['shimehari/core/conf/shimehari-sakagura.py'],
     include_package_data=True,

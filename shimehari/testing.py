@@ -31,7 +31,7 @@ class ShimehariClient(Client):
     @contextmanager
     def sessionTransaction(self, *args, **kwargs):
         if self.cookieJar is None:
-            raise RuntimeError('クッキー有効にして')
+            raise RuntimeError('cookieeee')
 
         app = self.application
         environOverrides = kwargs.setdefault('environOverrides', {})
@@ -40,7 +40,7 @@ class ShimehariClient(Client):
         with app.testRequestContext(*args, **kwargs) as c:
             sess = app.openSession(c.request)
             if sess is None:
-                raise RuntimeError('セッションが開けません')
+                raise RuntimeError('can not open session')
             _requestContextStack.push(otherReqContext)
             try:
                 yield sess
@@ -69,7 +69,7 @@ class ShimehariClient(Client):
 
     def __enter__(self):
         if self.preserveContext:
-            raise RuntimeError('ねすとできません')
+            raise RuntimeError('can not nest')
         self.preserveContext = True
         return self
 

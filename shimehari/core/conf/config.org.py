@@ -20,7 +20,7 @@ ConfigManager.addConfigs([
         'TEST':False,
 
         #アプリのディレクトリ名
-        'APP_DIRECTORY':'app',
+        'APP_DIRECTORY':'%s',
 
         'MAIN_SCRIPT':'main',
 

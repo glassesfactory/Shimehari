@@ -63,7 +63,7 @@ class AbstractCommand(object):
             if showTraceback:
                 traceback.print_exc()
             else:
-                self.stderror.write(u'%s\n' % unicode(e).encode('utf-8'))
+                self.stderror.write('%s\n' % unicode(e).encode('utf-8'))
             sys.exit(1)
 
     def validate(self):

@@ -40,6 +40,7 @@ class BaseDrinkCommand(AbstractCommand):
 
     def run(self, *args, **options):
         try:
+            #humu-
             import config
         except ImportError, e:
             pass

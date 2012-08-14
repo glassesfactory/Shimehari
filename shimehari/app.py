@@ -39,7 +39,7 @@ _loggerLock = Lock()
 def setupMethod(f):
     def wrapperFunc(self, *args,**kwargs):
         if self.debug or self._gotFirstRequest:
-            raise AssertionError(u'セットアップが既に完了しているようです…')
+            raise AssertionError('Setup seems to have already completed ...')
         return f(self, *args, **kwargs)
     return update_wrapper(wrapperFunc, f)
 
@@ -133,6 +133,7 @@ class Shimehari(_Kouzi):
         self.sessionKey = self.config['SECRET_KEY']
         self.useXSendFile = self.config['USE_X_SENDFILE']
 
+        #ふむ
         self.templater = getTemplater(self, self.config['TEMPLATE_ENGINE'])
 
         if self.config['AUTO_SETUP']:
@@ -157,6 +158,14 @@ class Shimehari(_Kouzi):
         if rv is not None:
             return rv
         return self.debug
+
+
+
+    #@property
+    #def useXSendFile(self):
+    #    return self.config['USE_X_SENDFILE']
+
+
 
     @property
     def logger(self):
@@ -298,7 +307,7 @@ class Shimehari(_Kouzi):
 
 
     def logException(self, excInfo):
-        self.logger.error(u'例外 on %s [%s]' % (request.path, request.method), exc_info=excInfo)
+        self.logger.error('excepts on %s [%s]' % (request.path, request.method), exc_info=excInfo)
 
 
 
@@ -351,14 +360,14 @@ class Shimehari(_Kouzi):
     def setup(self):
         self.appPath = os.path.join(self.rootPath, self.appFolder)
         if not os.path.isdir(self.appPath):
-            raise ShimehariSetupError(u'指定された Application ディレクトリが存在しません。\n%s' % self.rootPath)
+            raise ShimehariSetupError('Application directory is not found\n%s' % self.rootPath)
             sys.exit(0)
         try:
             apps = __import__(self.appFolder)
             self.setupBindController()
             self.setupBindRouter()
         except (ImportError, AttributeError):
-            raise ShimehariSetupError(u'指定された Application ディレクトリからうんぬん')
+            raise ShimehariSetupError('Application directory is invalid')
 
 
 
@@ -398,8 +407,8 @@ class Shimehari(_Kouzi):
             routerMod = __import__(routerFile, fromlist=['router'])
             if hasattr(routerMod, 'appRoutes'):
                 self.router = routerMod.appRoutes
-        except (ImportError, AttributeError):
-            raise ShimehariSetupError(u'ルーターのセットアップに失敗しました')
+        except (ImportError, AttributeError), e:
+            raise ShimehariSetupError('Failed to setup the router ...\n details::\n%s' % e)
 
 
 
@@ -532,6 +541,7 @@ class Shimehari(_Kouzi):
     def createAdapter(self, request):
         if request is not None:
             return self.router.bind_to_environ(request.environ)
+        #なんのこっちゃ
         if self.config['SERVER_NAME'] is not None:
             return self.router.bind(
                 self.config['SERVER_NAME'], 

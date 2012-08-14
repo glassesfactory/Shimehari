@@ -51,12 +51,12 @@ class Command(CreatableCommand):
             try:
                 importFromString('config')
             except:
-                raise CommandError('コンフィグファイルが見当たりません')
+                raise CommandError('config file is not found...')
             config = ConfigManager.getConfig(getEnviron())
             path = os.path.join(currentPath, config['APP_DIRECTORY'], config['CONTROLLER_DIRECTORY'])
 
         if not os.path.isdir(path):
-           raise CommandError('パスが不正です')
+           raise CommandError('Given path is invalid')
 
         ctrlTemplate = os.path.join(shimehari.__path__[0], 'core','conf', 'controller_template.py')
         
@@ -69,7 +69,7 @@ class Command(CreatableCommand):
 
     def filenameValidation(self, name):
         if name.endswith(('.pyc','.pyo', '.py.class')):
-            raise CommandError('おかしな名前使うな')
+            raise CommandError('invalid name....')
         if not name.endswith('.py'):
             filename = name + '.py'
         else:
@@ -78,7 +78,7 @@ class Command(CreatableCommand):
 
         import re
         if re.search(r"\W", name) or re.match(r"\d", name[0]):
-            raise CommandError('指定されたファイル名が不正です')
+            raise CommandError('file name is invalid')
         name[0].upper() + name[1:]
         return name, filename
 
@@ -98,7 +98,7 @@ class Command(CreatableCommand):
     ------------------------------"""
     def readAndCreateFileWithRename(self, old, new, name):
         if os.path.exists(new):
-            raise CommandError('もうあるぽよ')
+            raise CommandError('Controller already exists.')
 
         with open(old, 'r') as template:
             content = template.read()
@@ -112,4 +112,4 @@ class Command(CreatableCommand):
             shutil.copymode(old,new)
             self.toWritable(new)
         except OSError:
-            sys.stderr.write('パーミッション設定できんかった')
+            sys.stderr.write('can not setting permission')
