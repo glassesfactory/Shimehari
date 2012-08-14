@@ -18,7 +18,7 @@ from shimehari.helpers import jsonAvailable
 try:
     import msgpack as msg
 except ImportError:
-    try 
+    try: 
         import cpickle as msg
     except ImportError:
         import pickle as msg
