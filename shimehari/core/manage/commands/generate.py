@@ -58,7 +58,7 @@ class Command(CreatableCommand):
         if not os.path.isdir(path):
            raise CommandError('Given path is invalid')
 
-        ctrlTemplate = os.path.join(shimehari.__path__[0], 'core','conf', 'controller_template.py')
+        ctrlTemplate = os.path.join(shimehari.__path__[0], 'core','conf', 'controller_template.py.org')
         
         name, filename = self.filenameValidation(name)
         newPath = os.path.join(path,filename)
@@ -79,7 +79,7 @@ class Command(CreatableCommand):
         import re
         if re.search(r"\W", name) or re.match(r"\d", name[0]):
             raise CommandError('file name is invalid')
-        name[0].upper() + name[1:]
+        name = name[0].upper() + name[1:]
         return name, filename
 
 

@@ -3,7 +3,7 @@
 
 
 from setuptools import Command, setup
-
+from shimehari import VERSION, AUTHOR
 
 class runAudit(Command):
     def initialize_options(self):
@@ -18,10 +18,10 @@ class runAudit(Command):
 
 setup(
     name='Shimehari',
-    version='0.1alpha',
+    version=VERSION,
     url='https://github.com/glassesfactory/Shimehari',
     license='BSD',
-    author='Yamaguchi Eikichi',
+    author=AUTHOR,
     author_email='megane@glasses-factory.net',
     description='middle framework based on Flask, Werkzeug, Jinja2 ',
     packages=['shimehari','shimehari.core', 'shimehari.template', 'shimehari.core.conf','shimehari.core.conf.app_template',
@@ -37,7 +37,7 @@ setup(
         'Jinja2>=2.4'
     ],
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 2 - Pre-Alpha',
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
