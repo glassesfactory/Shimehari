@@ -25,6 +25,12 @@ Form ヘルパーや ORM 、Scaffold といった高度な機能は提供しま�
 How to Install
 ---
 
+from pypi
+```
+$ pip install Shimehari
+```
+
+or github
 ```
 $ git clone git@github.com:glassesfactory/Shimehari.git
 $ python setup.py install
@@ -92,7 +98,7 @@ ApplicationController を自前で継承後、必要なアクションを定義�
 以下のコマンドを叩くことで一通りアクションが定義済みのコントローラーを生成することが出来ます。
 
 ```
-$ python ochoko.py generate Example
+$ python ochoko.py generate controller Example
 ```
   
     
