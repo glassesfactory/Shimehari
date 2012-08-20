@@ -49,6 +49,8 @@ class BaseDrinkCommand(AbstractCommand):
             currentEnv = options.get('SHIMEHARI_ENV')
             currentConfig = ConfigManager.getConfig(currentEnv or 'development')
             app = importFromString(currentConfig['APP_DIRECTORY'] + '.' + currentConfig['MAIN_SCRIPT'] + '.' + currentConfig['APP_INSTANCE_NAME'])
+            if not self.debug and currentConfig['DEBUG']:
+                self.debug = True
             app.drink(host=self.host, port=int(self.port), debug=self.debug)
         except Exception, e:
             raise CommandError(e)

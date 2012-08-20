@@ -88,10 +88,11 @@ Resource() を使ってルーティングを拾い上げることが出来ます
 コントローラーで実装されていない RESTful アクションは自動的にルーティングの対象外となります。
   
 ```
+from shimehari import renderTemplate
 from shimehari.controllers import ApplicationController
 class ExampleController(ApplicationController):
 	def index(self, *args, **kwargs):
-		return render_template('index.html')
+		return renderTemplate('index.html')
 ```
 
 ApplicationController を自前で継承後、必要なアクションを定義するだけでなく、  
