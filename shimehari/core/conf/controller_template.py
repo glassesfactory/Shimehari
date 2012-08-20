@@ -1,4 +1,4 @@
-"#!/usr/bin/env python
+"""#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 from shimehari import Request, Response, ApplicationController
@@ -29,4 +29,4 @@ class %sController(ApplicationController):
 
     def destroy(self, *args, **kwargs):
         pass
-"
+"""

@@ -13,7 +13,7 @@ from .shared import request, session, shared, _requestContextStack, _appContextS
 from .template import renderTemplate, renderTempalteString
 from .wrappers import Request, Response
 
-VERSION = '0.1.01'
+VERSION = '0.1.2'
 AUTHOR = 'Yamaguchi Eikichi'
 
 

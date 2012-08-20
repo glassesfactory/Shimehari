@@ -58,7 +58,7 @@ class Command(CreatableCommand):
         if not os.path.isdir(path):
            raise CommandError('Given path is invalid')
 
-        ctrlTemplate = os.path.join(shimehari.__path__[0], 'core','conf', 'controller_template.py.org')
+        ctrlTemplate = os.path.join(shimehari.__path__[0], 'core','conf', 'controller_template.py')
         
         name, filename = self.filenameValidation(name)
         newPath = os.path.join(path,filename)
