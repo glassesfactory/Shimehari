@@ -28,7 +28,7 @@ setup(
                 'shimehari.core.conf.app_template.controllers','shimehari.core.conf.app_template.models',
                 'shimehari.template.jinja2',
                 'shimehari.core.manage','shimehari.core.manage.commands'],
-    scripts=['shimehari/core/conf/shimehari-sakagura.py'],
+    scripts=['shimehari/core/conf/shimehari'],
     include_package_data=True,
     zip_safe=False,
     platforms='any',

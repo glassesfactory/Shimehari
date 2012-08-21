@@ -44,7 +44,7 @@ How to use
 
 ```
 $ cd your_proj_directory
-$ shimehari-sakagura.py create your_app_name
+$ shimehari create your_app_name
 $ python ochoko.py drink
 $ * Shimehari GKGK!
 $ * Running on http://127.0.0.1:5959/
