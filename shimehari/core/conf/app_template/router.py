@@ -4,6 +4,26 @@
 from shimehari import Router, Resource
 from controllers import IndexController
 
+#
+# You can routing like Rails style.
+#
+#app.router = RESTfulRouter(
+#        Resource(IndexController,root=True),
+#        Resource(SomeOtherController),
+#        Resource(SomethingElseController, expect=['edit', 'destroy'])
+#    )
+
+
 appRoutes = Router([
 		Resource(IndexController, root=True)
 	])
+
+#
+# You can routing like werkzeug style.
+# 
+# from shimehari import BasicRouter
+# app.router = BasicRouter(
+#        {'/':IndexController.list},
+#        {'/hoge':SomeOtherController.list},
+#        {'/hoge/<int:id>':SomeOtherController.show}
+#    )

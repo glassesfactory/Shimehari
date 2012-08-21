@@ -17,7 +17,6 @@ class Environment(BaseEnvironment):
         self.app = app
 
 
-
 class DispatchJinjaLoader(BaseLoader):
     def __init__(self, app):
         self.app = app
@@ -52,7 +51,7 @@ class Jinja2Templater(AbstractTemplater):
     @lockedCachedProperty
     def templateLoader(self):
         if self.app.viewFolder is not None:
-            return FileSystemLoader(os.path.join(self.app.rootPath, 'app', self.app.viewFolder))
+            return FileSystemLoader(os.path.join(self.app.rootPath, self.app.appFolder, self.app.viewFolder))
     
     def templateEnv(self):
         rv = self.createTemplateEnvironment()
@@ -63,6 +62,7 @@ class Jinja2Templater(AbstractTemplater):
         if 'autoescape' in options:
             options['autoescape'] = self.selectJinjaAutoescape
         rv = Environment(self.app, **options)
+        #いるかなー
         rv.globals.update(
                 url_for=urlFor,
                 csrfToken = generateCSRFToken
