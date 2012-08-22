@@ -38,7 +38,7 @@ ConfigManager.addConfigs([
 
         'AUTO_SETUP':True,
 
-        'TEPMLATE_ENGINE':'jinja2',
+        'TEMPLATE_ENGINE':'jinja2',
 
         'SECRET_KEY':'_secret_shimehari',
 
