@@ -62,11 +62,11 @@ Shimehari は RESTful なルーティングを推奨しています。
 Router に対し、Resource としてコントローラークラスを追加するだけで自動的に RESTful なアクションがルーティングされます。
 
 ```
-appRoutes = Router(
+appRoutes = Router([
 	Resource(IndexController, root=True),
 	Resource(FooController),
 	Resource(BarController)
-)
+    ])
 ```
 
 現在のルーティング状況は以下のコマンドを叩くことで確認することが出来ます。
