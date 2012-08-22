@@ -7,11 +7,11 @@ from controllers import IndexController
 #
 # You can routing like Rails style.
 #
-#app.router = RESTfulRouter(
+#appRoutes = RESTfulRouter([
 #        Resource(IndexController,root=True),
 #        Resource(SomeOtherController),
 #        Resource(SomethingElseController, expect=['edit', 'destroy'])
-#    )
+#    ])
 
 
 appRoutes = Router([
@@ -22,8 +22,8 @@ appRoutes = Router([
 # You can routing like werkzeug style.
 # 
 # from shimehari import BasicRouter
-# app.router = BasicRouter(
+# appRoutes = BasicRouter([
 #        {'/':IndexController.list},
 #        {'/hoge':SomeOtherController.list},
 #        {'/hoge/<int:id>':SomeOtherController.show}
-#    )
+#    ])
