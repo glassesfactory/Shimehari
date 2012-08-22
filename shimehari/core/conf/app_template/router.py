@@ -7,7 +7,8 @@ from controllers import IndexController
 #
 # You can routing like Rails style.
 #
-#appRoutes = RESTfulRouter([
+# from shimehari.routing import RESTfulRouter
+# appRoutes = RESTfulRouter([
 #        Resource(IndexController,root=True),
 #        Resource(SomeOtherController),
 #        Resource(SomethingElseController, expect=['edit', 'destroy'])
