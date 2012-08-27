@@ -46,8 +46,11 @@ u"""
 class AbstractTemplater(object):
     templateOptions = ImmutableDict()
 
-    def __init__(self,app):
+    def __init__(self,app,**options):
         self.app = app
+
+        if 'templateOptions' in options:
+            self.templateOptions = ImmutableDict(options)
 
     @lockedCachedProperty
     def templateLoader(self):

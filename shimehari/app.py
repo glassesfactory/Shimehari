@@ -89,7 +89,7 @@ class Shimehari(_Kouzi):
                  staticURL=None, staticFolder='static',
                  appFolder='app', controllerFolder='controllers', 
                  viewFolder='views', assetsFolder='assets',
-                 instancePath=None, isRelativeConfig=False):
+                 instancePath=None, isRelativeConfig=False,templateOptions={}):
 
         _Kouzi.__init__(self, importName, appFolder=appFolder, 
                         controllerFolder=controllerFolder, viewFolder=viewFolder)
@@ -134,7 +134,7 @@ class Shimehari(_Kouzi):
         self.useXSendFile = self.config['USE_X_SENDFILE']
 
         #ふむ
-        self.templater = getTemplater(self, self.config['TEMPLATE_ENGINE'])
+        self.templater = getTemplater(self, self.config['TEMPLATE_ENGINE'],templateOptions)
 
         if self.config['AUTO_SETUP']:
             self.setup()
