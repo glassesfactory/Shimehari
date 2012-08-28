@@ -79,7 +79,7 @@ class Shimehari(_Kouzi):
         'SECRET_KEY':'_secret_shimehari'
     }
 
-    #tempalte options
+    templateOptions = {}
 
     sessionStore = SessionStore()
 
@@ -133,8 +133,8 @@ class Shimehari(_Kouzi):
         self.sessionKey = self.config['SECRET_KEY']
         self.useXSendFile = self.config['USE_X_SENDFILE']
 
-        self.templater = getTemplater(self, self.config['TEMPLATE_ENGINE'],templateOptions=templateOptions)
-
+        self.templateOptions = templateOptions
+        
         if self.config['AUTO_SETUP']:
             self.setup()
 
@@ -356,12 +356,18 @@ class Shimehari(_Kouzi):
             sys.exit(0)
         try:
             apps = __import__(self.appFolder)
+            self.setupTemplater()
             self.setupBindController()
             self.setupBindRouter()
         except (ImportError, AttributeError):
             raise ShimehariSetupError('Application directory is invalid')
 
 
+    def setupTemplater(self):
+        try:
+            self.templater = getTemplater(self, self.config['TEMPLATE_ENGINE'],templateOptions=self.templateOptions)
+        except Exception, e:
+            raise ShimehariSetupError('setup template engine was failed... \n%s' % e)
 
     u"""-----------------------------
         ::pkg:: Shimehari.app
@@ -374,7 +380,7 @@ class Shimehari(_Kouzi):
     def setupBindController(self):
         self.controllerPath = os.path.join(self.appPath, self.controllerFolder)
         if not os.path.isdir(self.controllerPath):
-            raise ShimehariSetupError('Controller in the specified directory does not exist.')
+            raise ShimehariSetupError('Controller in the specified directory does not exist. %s' % self.controllerPath)
 
         try:
             ctrlDir = self.appFolder + '.' + self.controllerFolder

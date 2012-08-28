@@ -9,11 +9,13 @@ from shimehari.template import AbstractTemplater
 from shimehari.helpers import urlFor, _toJsonFilter
 from shimehari.crypt import generateCSRFToken
 
+
 class Environment(BaseEnvironment):
-    def __init__(self, app, **options):
+    def __init__(self, app, *args, **options):
         if 'loader' not in options:
             options['loader'] = app.createGlobalTemplateLoader()
-        BaseEnvironment.__init__(self, **options)
+
+        BaseEnvironment.__init__(self, *args, **options)
         self.app = app
 
 
@@ -46,8 +48,7 @@ class DispatchJinjaLoader(BaseLoader):
 
 class Jinja2Templater(AbstractTemplater):
     def __init__(self, app, *args, **options):
-        AbstractTemplater.__init__(self, app, **options)
-        # self.app = app
+        AbstractTemplater.__init__(self, app, *args, **options)
 
     @lockedCachedProperty
     def templateLoader(self):
@@ -59,9 +60,11 @@ class Jinja2Templater(AbstractTemplater):
         return rv
 
     def createTemplateEnvironment(self):
-        options = dict(self.templateOptions)
+        options = self.templateOptions
+               
         if 'autoescape' in options:
             options['autoescape'] = self.selectJinjaAutoescape
+        
         rv = Environment(self.app, **options)
         #いるかなー
         rv.globals.update(

@@ -413,7 +413,7 @@ class lockedCachedProperty(object):
 
 
 
-def getTemplater(app, templaterName, **options):
+def getTemplater(app, templaterName, *args, **options):
     import shimehari
     templateDir = os.path.join(shimehari.__path__[0], 'template', templaterName)
     if not os.path.isdir(templateDir):
@@ -424,8 +424,7 @@ def getTemplater(app, templaterName, **options):
     except Exception, e:
         # print e
         raise Exception(e)
-
-    return templater(app, options)
+    return templater(app, *args, **options)
 
 
 u"""--------------------------------------
