@@ -133,8 +133,7 @@ class Shimehari(_Kouzi):
         self.sessionKey = self.config['SECRET_KEY']
         self.useXSendFile = self.config['USE_X_SENDFILE']
 
-        #ふむ
-        self.templater = getTemplater(self, self.config['TEMPLATE_ENGINE'],templateOptions)
+        self.templater = getTemplater(self, self.config['TEMPLATE_ENGINE'],templateOptions=templateOptions)
 
         if self.config['AUTO_SETUP']:
             self.setup()
@@ -158,13 +157,6 @@ class Shimehari(_Kouzi):
         if rv is not None:
             return rv
         return self.debug
-
-
-
-    #@property
-    #def useXSendFile(self):
-    #    return self.config['USE_X_SENDFILE']
-
 
 
     @property

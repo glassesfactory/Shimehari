@@ -45,8 +45,8 @@ class DispatchJinjaLoader(BaseLoader):
 
 
 class Jinja2Templater(AbstractTemplater):
-    def __init__(self, app, **options):
-        AbstractTemplater.__init__(self,app, options)
+    def __init__(self, app, *args, **options):
+        AbstractTemplater.__init__(self, app, **options)
         # self.app = app
 
     @lockedCachedProperty

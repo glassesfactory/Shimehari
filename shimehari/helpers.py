@@ -422,7 +422,8 @@ def getTemplater(app, templaterName, **options):
         module = importFromString('shimehari.template.' + templaterName)
         templater = module.templater
     except Exception, e:
-        print e
+        # print e
+        raise Exception(e)
 
     return templater(app, options)
 

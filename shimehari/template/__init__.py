@@ -46,7 +46,7 @@ u"""
 class AbstractTemplater(object):
     templateOptions = ImmutableDict()
 
-    def __init__(self,app,**options):
+    def __init__(self,app, **options):
         self.app = app
 
         if 'templateOptions' in options:
