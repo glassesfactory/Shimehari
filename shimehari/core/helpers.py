@@ -20,10 +20,6 @@ u"""--------------------------------------
     importFromString
     ~~~~~~~~~~~~~~~~
 
-    アプリを走らせます。
-    drink のラッパー。
-    WSGI 周りのライブラリとかで
-    run を自動的に呼ぶ物対策
 --------------------------------------"""
 def importFromString(targetName):
     if isinstance(targetName, unicode):
@@ -32,14 +28,14 @@ def importFromString(targetName):
         if '.' in targetName:
             pkgs, obj = targetName.rsplit('.',1)
         else:
-            return __import__(targetName)
+            return __import__('config')
         try:
             return getattr(__import__(pkgs, fromlist=[obj]), obj)
         except (ImportError, AttributeError):
             pkgName = pkgs + '.' + obj
             __import__(pkgName)
-            return sys.modname[pkgName]
-            
+            return sys.modules[pkgName]
+        
     except ImportError, error:
         raise ImportError(error)
 

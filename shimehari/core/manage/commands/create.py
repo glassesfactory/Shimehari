@@ -103,12 +103,7 @@ class Command(CreatableCommand):
         confOrgPath = os.path.join(shimehari.__path__[0], 'core', 'conf','config.org.py')
         newConfPath = os.path.join(os.getcwd(), 'config.py')
         self.readAndCreateFileWithRename(confOrgPath, newConfPath, appDir)
-
-        #generate ochoko.py file
-        ochokoOrgPath = os.path.join(shimehari.__path__[0], 'core', 'conf','ochoko.py')
-        newochokoPath = os.path.join(os.getcwd(), 'ochoko.py')
-        self.readAndCreateFile(ochokoOrgPath, newochokoPath)
-
+        
         sys.stdout.write("New App Create Complete. enjoy!\n")
 
 

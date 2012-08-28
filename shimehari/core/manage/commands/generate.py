@@ -51,14 +51,18 @@ class Command(CreatableCommand):
             try:
                 importFromString('config')
             except:
-                raise CommandError('config file is not found...')
+                sys.path.append(os.getcwd())
+                try:
+                    importFromString('config')
+                except ImportError:
+                    raise CommandError('config file is not found...')
             config = ConfigManager.getConfig(getEnviron())
             path = os.path.join(currentPath, config['APP_DIRECTORY'], config['CONTROLLER_DIRECTORY'])
 
         if not os.path.isdir(path):
            raise CommandError('Given path is invalid')
 
-        ctrlTemplate = os.path.join(shimehari.__path__[0], 'core','conf', 'controller_template.py')
+        ctrlTemplate = os.path.join(shimehari.__path__[0], 'core','conf', 'controller_template.org.py')
         
         name, filename = self.filenameValidation(name)
         newPath = os.path.join(path,filename)
@@ -104,6 +108,8 @@ class Command(CreatableCommand):
             content = template.read()
             if '%s' in content:
                 content = content % name
+                content = content[3:]
+                content = content[:len(content) -3]
         with open(new, 'w') as newFile:
             newFile.write(content)
         sys.stdout.write("Genarating New Controller: %s\n" % new)

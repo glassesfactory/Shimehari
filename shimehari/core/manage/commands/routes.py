@@ -24,12 +24,16 @@ class Command(AbstractCommand):
 		try:
 			importFromString('config')
 		except ImportError:
-			raise CommandError('コンフィグファイルが見当たりません')
+			sys.path.append(os.getcwd())
+			try:
+				importFromString('config')
+			except ImportError:
+				raise CommandError(u'コンフィグファイルが見当たりません')
 
 		config = ConfigManager.getConfig(getEnviron())
 		appPath = os.path.join(os.getcwd(), config['APP_DIRECTORY'])
 		if not os.path.isdir(appPath):
-			raise CommandError('アプリケーションが見当たりません')
+			raise CommandError(u'アプリケーションが見当たりません')
 
 		try:
 			router = importFromString(config['APP_DIRECTORY'] + '.' + 'router')

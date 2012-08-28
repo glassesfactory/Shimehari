@@ -43,7 +43,12 @@ class BaseDrinkCommand(AbstractCommand):
             #humu-
             import config
         except ImportError, e:
-            pass
+            import sys
+            sys.path.append(os.getcwd())
+            try:
+                import config
+            except:
+                pass
 
         try:
             currentEnv = options.get('SHIMEHARI_ENV')
@@ -51,7 +56,28 @@ class BaseDrinkCommand(AbstractCommand):
             app = importFromString(currentConfig['APP_DIRECTORY'] + '.' + currentConfig['MAIN_SCRIPT'] + '.' + currentConfig['APP_INSTANCE_NAME'])
             if not self.debug and currentConfig['DEBUG']:
                 self.debug = True
+
+            def openBrowser(host,port):
+                url = 'http://'
+                if not host:
+                    url += '127.0.0.1'
+                else:
+                    url += host
+
+                if not port:
+                    url += ':5959/'
+                else:
+                    url += ':' + str(port)
+                import webbrowser
+                webbrowser.open(url)
+            import threading
+            timer = threading.Timer(0.5,openBrowser,args=[self.host,self.port])
+            timer.start()
             app.drink(host=self.host, port=int(self.port), debug=self.debug)
+            
+            
+
+            
         except Exception, e:
             raise CommandError(e)
 
