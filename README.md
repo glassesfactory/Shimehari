@@ -45,7 +45,7 @@ How to use
 ```
 $ cd your_proj_directory
 $ shimehari create your_app_name
-$ python ochoko.py drink
+$ shimehari drink
 $ * Shimehari GKGK!
 $ * Running on http://127.0.0.1:5959/
 ```
@@ -72,7 +72,7 @@ appRoutes = Router([
 現在のルーティング状況は以下のコマンドを叩くことで確認することが出来ます。
 
 ```
-$ python ochoko.py routes
+$ shimehari routes
 $ Your Shimehari App Current Routing.
 
 Methods       |URL                          |Action
@@ -99,7 +99,7 @@ ApplicationController を自前で継承後、必要なアクションを定義�
 以下のコマンドを叩くことで一通りアクションが定義済みのコントローラーを生成することが出来ます。
 
 ```
-$ python ochoko.py generate controller Example
+$ shimehari generate controller Example
 ```
   
     
