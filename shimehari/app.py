@@ -55,6 +55,11 @@ class Shimehari(_Kouzi):
         '%(message)s\n' +
         '-' * 80)
 
+    outputLogFormat = (
+        '%(asctime)s %(levelname)s in %(module)s [%(pathname)s:%(lineno)d]:\n' +
+        '%(message)s\n' +
+        '-' * 80)
+
     requestClass = Request
     responseClass = Response
 

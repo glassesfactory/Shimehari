@@ -46,6 +46,14 @@ ConfigManager.addConfigs([
 
         'PRESERVE_CONTEXT_ON_EXCEPTION':None,
 
-        'PERMANENT_SESSION_LIFETIME':timedelta(days=31)
+        'PERMANENT_SESSION_LIFETIME':timedelta(days=31),
+
+        'LOG_FILE_OUTPUT':False,
+        
+        'LOG_FILE_ROTATE':False,
+
+        'LOG_ROTATE_MAX_BITE':(5*1024*1024),
+        
+        'LOG_ROTATE_COUNT':5
     })
 ])

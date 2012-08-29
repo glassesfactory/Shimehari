@@ -168,7 +168,11 @@ class Config(dict):
         'TRAP_BAD_REQUEST_ERRORS':False,
         'PRESERVE_CONTEXT_ON_EXCEPTION':None,
         'SEND_FILE_MAX_AGE_DEFAULT': 12 * 60 * 60,
-        'PERMANENT_SESSION_LIFETIME':timedelta(days=31)
+        'PERMANENT_SESSION_LIFETIME':timedelta(days=31),
+        'LOG_FILE_OUTPUT':False,
+        'LOG_FILE_ROTATE':False,
+        'LOG_ROTATE_MAX_BITE':(5*1024*1024),
+        'LOG_ROTATE_COUNT':5
     }
     def __init__(self, environment='development', defaults={}):
         d = self.defaults.copy()
