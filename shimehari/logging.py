@@ -14,37 +14,43 @@ u"""
 
 from __future__ import absolute_import
 
+import sys
+
 from logging import getLogger, StreamHandler, Formatter, getLoggerClass, DEBUG
 from shimehari.configuration import ConfigManager,Config
+from shimehari.helpers import getEnviron
 
-def createLogger(app):
+def createLogger(loggerName='shimehariLoagger'):
 
     Logger = getLoggerClass()
 
     class DebugLogger(Logger):
         def getEffectiveLevel(x):
-            if x.level == 0 and app.debug:
+            if x.level == 0 and config['DEBUG']:
                 return DEBUG
             return Logger.getEffectiveLevel(x)
 
     class DebugHandler(StreamHandler):
         def emit(x,record):
-            StreamHandler.emit(x,record) if app.debug else None
-    if app.config['LOG_FILE_OUTPUT']:
-        fn = './' + app.config['APP_DIRECTORY'] + '.log'
-        if app.config['LOG_FILE_ROTATE']:
+            StreamHandler.emit(x,record) if config['DEBUG'] else None
+    config = ConfigManager.getConfig(getEnviron())
+    if config['LOG_FILE_OUTPUT']:
+        fn = './' + config['APP_DIRECTORY'] + '.log'
+        if config['LOG_FILE_ROTATE']:
             from logging import RotateFileHandler
-            handler = RotateFileHandler(fn,'a',app.config['LOG_ROTATE_MAX_BITE'], app.config['LOG_ROTATE_COUNT'])
+            handler = RotateFileHandler(fn,'a', config['LOG_ROTATE_MAX_BITE'], config['LOG_ROTATE_COUNT'])
         else:
             from logging import FileHandler
             handler = FileHandler(fn, 'a')
-        handler.setFormatter(Formatter(app.outputLogFormat))
+
+        handler.setFormatter(Formatter(config['LOG_OUTPUT_FORMAT']))
+        logger = getLogger()
     else:
         handler = DebugHandler()
-        handler.setFormatter(Formatter(app.debugLogFormat))
-
-    handler.setLevel(DEBUG)
-    logger = getLogger(app.loggerName)
+        handler.setFormatter(Formatter(config['LOG_DEBUG_FORMAT']))
+        logger = getLogger(loggerName)
+    
+    logger.setLevel(DEBUG)
 
     del logger.handlers[:]
     logger.__class__ = DebugLogger

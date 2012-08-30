@@ -172,7 +172,16 @@ class Config(dict):
         'LOG_FILE_OUTPUT':False,
         'LOG_FILE_ROTATE':False,
         'LOG_ROTATE_MAX_BITE':(5*1024*1024),
-        'LOG_ROTATE_COUNT':5
+        'LOG_ROTATE_COUNT':5,
+        'LOG_DEBUG_FORMAT':('-' * 80 + '\n' +
+        '%(levelname)s in %(module)s [%(pathname)s:%(lineno)d]:\n' +
+        '%(message)s\n' +
+        '-' * 80),
+        'LOG_OUTPUT_FORMAT':(
+        '%(asctime)s %(levelname)s in %(module)s [%(pathname)s:%(lineno)d]:\n' +
+        '%(message)s\n' +
+        '-' * 80)
+
     }
     def __init__(self, environment='development', defaults={}):
         d = self.defaults.copy()

@@ -50,16 +50,6 @@ class Shimehari(_Kouzi):
     debug = None
     testing = None
 
-    debugLogFormat = ('-' * 80 + '\n' +
-        '%(levelname)s in %(module)s [%(pathname)s:%(lineno)d]:\n' +
-        '%(message)s\n' +
-        '-' * 80)
-
-    outputLogFormat = (
-        '%(asctime)s %(levelname)s in %(module)s [%(pathname)s:%(lineno)d]:\n' +
-        '%(message)s\n' +
-        '-' * 80)
-
     requestClass = Request
     responseClass = Response
 
@@ -172,7 +162,7 @@ class Shimehari(_Kouzi):
             if self._logger and self._logger.name == self.loggerName:
                 return self._logger
             from shimehari.logging import createLogger
-            self._logger = rv = createLogger(self)
+            self._logger = rv = createLogger()
             return rv
 
 
