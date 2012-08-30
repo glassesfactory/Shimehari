@@ -25,6 +25,10 @@ from shimehari.core.manage import CreatableCommand
 from shimehari.core.helpers import importFromString
 from shimehari.core.exceptions import CommandError
 
+debugFormat = "('-' * 80 + '\\n' + '%(levelname)s in %(module)s [%(pathname)s:%(lineno)d]:\\n' + '%(message)s\\n' + '-' * 80)" 
+
+outputFormat = "('%(asctime)s %(levelname)s in %(module)s [%(pathname)s:%(lineno)d]:\\n' + '%(message)s\\n' + '-' * 80)"
+
 u"""
 ===============================
     ::pkg:: Shimehari.core.manage.commands.create
@@ -89,20 +93,15 @@ class Command(CreatableCommand):
 
                 self.readAndCreateFile(oldPath, newPath)
 
-        viewsDir = os.path.join(appRootDir, 'views')
-        if not os.path.exists(viewsDir):
-            os.mkdir(viewsDir)
-            sys.stdout.write("Creating: %s\n" % viewsDir)
-
-        assetsDir = os.path.join(appRootDir, 'assets')
-        if not os.path.exists(assetsDir):
-            os.mkdir(assetsDir)
-            sys.stdout.write("Creating: %s\n" % assetsDir)
+        
+        self.createDirectory(appRootDir, 'views')
+        self.createDirectory(appRootDir, 'assets')
+        self.createDirectory(appRootDir, 'log')
 
         #generate config file
         confOrgPath = os.path.join(shimehari.__path__[0], 'core', 'conf','config.org.py')
         newConfPath = os.path.join(os.getcwd(), 'config.py')
-        self.readAndCreateFileWithRename(confOrgPath, newConfPath, appDir)
+        self.readAndCreateFileWithRename(confOrgPath, newConfPath, (appDir, appDir, debugFormat, outputFormat))
         
         sys.stdout.write("New App Create Complete. enjoy!\n")
 
@@ -146,13 +145,20 @@ class Command(CreatableCommand):
                 content = content % name
         with open(new, 'w') as newFile:
             newFile.write(content)
-        # sys.stdout.write("Genarating New Controller: %s\n" % new)
+        sys.stdout.write("Creating: %s\n" % new)
 
         try:
             shutil.copymode(old,new)
             self.toWritable(new)
         except OSError:
             sys.stderr.write('can not setting permission')
+
+    def createDirectory(self, rootDir, dirname):
+        targetName = os.path.join(rootDir, dirname)
+        if not os.path.exists(targetName):
+            os.mkdir(targetName)
+            sys.stdout.write("Creating: %s\n" % targetName) 
+
 
 
 

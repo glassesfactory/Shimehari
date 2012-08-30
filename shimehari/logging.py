@@ -14,6 +14,7 @@ u"""
 
 from __future__ import absolute_import
 
+import os
 import sys
 
 from logging import getLogger, StreamHandler, Formatter, getLoggerClass, DEBUG
@@ -35,7 +36,7 @@ def createLogger(loggerName='shimehariLoagger'):
             StreamHandler.emit(x,record) if config['DEBUG'] else None
     config = ConfigManager.getConfig(getEnviron())
     if config['LOG_FILE_OUTPUT']:
-        fn = './' + config['APP_DIRECTORY'] + '.log'
+        fn = os.path.join(config['LOG_FILE_DIRECTORY'],getEnviron() ) + '.log'
         if config['LOG_FILE_ROTATE']:
             from logging import RotateFileHandler
             handler = RotateFileHandler(fn,'a', config['LOG_ROTATE_MAX_BITE'], config['LOG_ROTATE_COUNT'])

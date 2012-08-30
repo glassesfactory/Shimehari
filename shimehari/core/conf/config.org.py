@@ -54,6 +54,12 @@ ConfigManager.addConfigs([
 
         'LOG_ROTATE_MAX_BITE':(5*1024*1024),
         
-        'LOG_ROTATE_COUNT':5
+        'LOG_ROTATE_COUNT':5,
+
+        'LOG_FILE_DIRECTORY':'%s/log',
+
+        'LOG_DEBUG_FORMAT':%s,
+
+        'LOG_OUTPUT_FORMAT':%s
     })
 ])
