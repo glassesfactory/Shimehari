@@ -162,7 +162,7 @@ class Shimehari(_Kouzi):
             if self._logger and self._logger.name == self.loggerName:
                 return self._logger
             from shimehari.logging import createLogger
-            self._logger = rv = createLogger()
+            self._logger = rv = createLogger(self.loggerName)
             return rv
 
 
