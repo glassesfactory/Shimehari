@@ -13,8 +13,8 @@ from .shared import request, session, shared, _requestContextStack, _appContextS
 from .template import renderTemplate, renderTempalteString
 from .wrappers import Request, Response
 
-VERSION = '0.1.3'
-AUTHOR = 'Yamaguchi Eikichi'
+VERSION = '0.1.4'
+AUTHOR = 'Yamaguchi Eikichi, Keiichiro Matsumoto'
 
 
 def getVersion():
