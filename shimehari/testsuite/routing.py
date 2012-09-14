@@ -31,6 +31,14 @@ class testResource(ShimehariTestCase):
         self.assertNotEqual(res.add(IndexController), Exception)
         self.assertRaises(ValueError, res.add, 'puuuu')
 
+    def testAddRule(self):
+        res = Resource(IndexController)
+        def testUserID(*args, **kwargs):
+            print kwargs
+            return userid
+        res.addRule('/<userid>', testUserID)
+        
+
     def testRefresh(self):
         res = Resource(IndexController)
         self.assertNotEqual(res.refresh(), Exception)
@@ -40,6 +48,9 @@ class testResource(ShimehariTestCase):
         self.assertEqual(res.getNameFromRESTAction('megane','show'),'/megane/<int:id>')
         self.assertEqual(res.getNameFromRESTAction('megane','index',root=True),'/')
         self.assertRaises(ValueError,res.getNameFromRESTAction, 'megane', 'ninja')
+
+    
+
 
 
 

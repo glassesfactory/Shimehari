@@ -39,12 +39,13 @@ class Command(CreatableCommand):
     help = ("Generate Shimehari Modules")
     option_list = CreatableCommand.option_list + (
             make_option('--path', '-p', action='store', type='string', dest='path', help='generating target path'),
+            make_option('--namespace', '-ns', action='store', type='string', dest='prefix', help='prefix generetiong target path')
         )
 
     def handle(self, moduleType, name, *args, **options):
         if not moduleType == 'controller':
             raise CommandError('ない')
-        
+    
         path = options.get('path')
         if path is None:
             currentPath = os.getcwd()
@@ -61,6 +62,12 @@ class Command(CreatableCommand):
 
         if not os.path.isdir(path):
            raise CommandError('Given path is invalid')
+
+        prefix = options.get('prefix')
+        if prefix is not None:
+            path = prefix + path
+            #うーむ
+            #os.path.join(path,prefix)
 
         ctrlTemplate = os.path.join(shimehari.__path__[0], 'core','conf', 'controller_template.org.py')
         

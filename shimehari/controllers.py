@@ -23,6 +23,8 @@ class AbstractController(object):
 
 	baseName = ''
 
+	folderPrefix = ''
+
 	def __init__(self,name):
 		if not name:
 			name = self.__class__.__name__
@@ -38,6 +40,8 @@ class AbstractController(object):
 	def httpMethodNotAllowed(self,templateName='405.html'):
 		return
 
+	def bindHelper(self,helperName=None):
+		pass
 
 
 u"""
@@ -70,6 +74,23 @@ u"""
 ===============================
 """
 class ApplicationController(TemplateRenderableMixIn, AbstractController):
+
+	_cache = None
+
+	def cache():
+		doc = "The cache property."
+		def fget(self):
+			return self._cache
+		#setter 塞ぐか
+		def fset(self, value):
+			self._cache = value
+
+		def fdel(self):
+			del self._cache
+		return locals()
+	cache = property(**cache())
+
+
 	def __init__(self,name):
 		AbstractController.__init__(self,name)
 

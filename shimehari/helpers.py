@@ -45,6 +45,19 @@ def _assertHaveJson():
     if not jsonAvailable:
         raise RuntimeError(u'json ないじゃん')
 
+u"""redis が使用可能かどうか"""
+redisAvailable = True
+redis = None
+try:
+    import redis
+except ImportError:
+    redisAvailable = False
+
+def _assertHaveRedis():
+    if not redisAvailable:
+        raise RuntimeError('no redis module found')
+
+
 
 _osAltSep = list(sep for sep in [os.path.sep, os.path.altsep] if sep not in (None, '/'))
 

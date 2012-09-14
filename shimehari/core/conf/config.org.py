@@ -38,6 +38,8 @@ ConfigManager.addConfigs([
 
         'AUTO_SETUP':True,
 
+        'CONTROLLER_AUTO_NAMESPACE':True,
+
         'TEMPLATE_ENGINE':'jinja2',
 
         'SECRET_KEY':'_secret_shimehari',

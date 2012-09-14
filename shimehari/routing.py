@@ -15,9 +15,7 @@ from shimehari.controllers import AbstractController
 from shimehari.core import (RESTFUL_ACTIONS, ALLOWED_HTTP_METHOD_NAMES, RESTFUL_METHODS_MAP,
                             importFromString)
 from shimehari.helpers import getHandlerAction, fillSpace
-
-
-
+from shimehari.configuration import ConfigManager, Config
 
 
 u"""
@@ -129,10 +127,17 @@ class RESTfulRouter(AbstractRouter):
             elif isinstance(resource, list):
                 for rule in resource:
                     self.add(rule)
-            elif isinstance(resource, Rule):
+            elif isinstance(resource, Rule) or isinstance(resource, Root):
                 self.add(resource)
             else:
                 raise TypeError('resources rule is invalid.')
+
+
+
+class Root(Rule):
+    root = True
+    def __init__(self, endpoint, methods=['get']):
+        Rule.__init__(self, '/', endpoint=endpoint, methods=methods)
 
 
 
@@ -152,6 +157,7 @@ u"""
 
 ===============================
 """
+
 class RESTfulRule(object):
 
     parent = None
@@ -188,7 +194,7 @@ class RESTfulRule(object):
             # rule.refresh()
 
 
-    u"""アクション名から URL Name を生成します"""
+    #uアクション名から URL Name を生成します
     def getNameFromRESTAction(self, name, action, root=False):
         if not name.startswith('/') and len(name) > 1:
             name = '/' + name
@@ -213,7 +219,6 @@ class RESTfulRule(object):
             raise ValueError('RESTfulRule')
 
 
-
 u"""
 ===============================
     Shimehari.routing.Resource
@@ -235,10 +240,12 @@ class Resource(Map):
     u"""名前"""
     baseName = None
 
+    orgName = None
+
 
     def __init__(self, controller=None, children=[], name=None, only=[], excepts=[], root=False, 
                 subdomain=None, buildOnly=False, strict_slashes=None, redirectTo=None,
-                alias=False, host=None, defaults=None):
+                alias=False, host=None, defaults=None, namespace=None):
       
         Map.__init__(self, rules=[], default_subdomain='', charset='utf-8',
                  strict_slashes=True, redirect_defaults=True,
@@ -276,10 +283,30 @@ class Resource(Map):
 
         self.getName = self.getNameFromRESTAction
 
+        self.namespace = namespace
+        if self.namespace:
+            if self.namespace.startswith('/'):
+                self.namespace = self.namespace[1:]
+            if self.namespace.endswith('/'):
+                self.namespace = self.namespace[:len(self.namespace)-1]
+        #ディレクトリが深かった時自動で
+        elif controller is not None: 
+            config = ConfigManager.getConfig()
+            if config['CONTROLLER_AUTO_NAMESPACE']:
+                package = controller.__module__.split('.')
+                appFolder = config['APP_DIRECTORY']
+                controllerFolder = config['CONTROLLER_DIRECTORY']
+                package.remove(appFolder)
+                package.remove(controllerFolder)
+
+                self.orgName = package[len(package)-1]
+                package = package[:len(package)-1]
+                self.namespace = "/".join(package)
+            
         if controller:
             controller = self._checkControllerType(controller)
             if not name:
-                self.baseName = controller.baseName
+                self.baseName = self.orgName = controller.baseName
             self.add(controller)
 
         #uuuumu
@@ -288,8 +315,6 @@ class Resource(Map):
 
         if self.parent:
             self.baseName = self.parent.baseName + '/' + self.baseName
-
-        
 
         if isinstance(self.children, dict) and len(self.children) > 0:
             for child in self.children:
@@ -401,21 +426,39 @@ class Resource(Map):
         else:
             raise ValueError('out!')
 
+
     def refresh(self):
         for rule in self._rules:
             if self.parent:
                 rule.rule = '/' + self.parent.baseName + rule.rule
 
 
+
+    def addRule(self, name, handler, methods=[], *args, **kwargs):
+        rule = Rule(name, defaults=self.defaults, endpoint=handler, 
+                            subdomain=self.subdomain, methods=methods, build_only=self.buildOnly,
+                            strict_slashes=self.strict_slashes, redirect_to=self.redirectTo, alias=self.alias, host=self.host)
+        self._rules.append(rule)
+        self.refresh()
+        return self
+
+    #上書きできるようにしよう
+    def overRideRule(self, action, name, handler=None, methods=[], *args, **kwargs):
+        print self._rules
+
+
     u"""アクション名から URL Name を生成します"""
     def getNameFromRESTAction(self, name, action, root=False):
+        if self.namespace:
+            name = self.namespace + '/' + name
+
         if not name.startswith('/') and len(name) > 1:
             name = '/' + name
         if name.endswith('/') and len(name) > 1:
             name = name[:len(name)-1]
 
         if root:
-            name = ''
+            name = '' 
 
         _act = action.lower()
         if _act == 'index' or _act == 'create':
@@ -430,6 +473,21 @@ class Resource(Map):
             return name + '/new'
         else:
             raise ValueError('RESTfulRule')
+
+
+
+class Group(object):
+    def __init__(self, name, children):
+        for child in children:
+            if isinstance(child, Resource):
+                pass
+                child.namespace = name
+                child.refresh()
+            elif isinstance(child, Rule):
+                child.rule = name + '/' + child.name
+                child.refresh()
+            else:
+                raise RuntimeError('settei dekimasen.')
 
 
 

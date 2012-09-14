@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from shimehari.helpers import getEnviron
+
 u"""
 ===============================
     Shimehari.configuration
@@ -28,8 +30,6 @@ u"""
 """
 class ConfigManager(object):
     configrations = {}
-
-
 
     u"""-----------------------------
         [[classmethod]]
@@ -78,8 +78,10 @@ class ConfigManager(object):
             :Config
     ------------------------------"""
     @classmethod
-    def getConfig(cls, environ):
-        if environ in cls.configrations:            
+    def getConfig(cls, environ=None):
+        if environ is None:
+            environ = getEnviron()
+        if environ in cls.configrations:
             return cls.configrations[environ]
         return None
 
@@ -160,6 +162,7 @@ class Config(dict):
         'ASSETS_DIRECTORY':'assets',
         'PREFERRED_URL_SCHEME':'http',
         'AUTO_SETUP':True,
+        'CONTROLLER_AUTO_NAMESPACE':True,
         'TEMPLATE_ENGINE':'jinja2',
         'USE_X_SENDFILE':False,
         'SECRET_KEY':'_secret_shimehari',
@@ -169,6 +172,15 @@ class Config(dict):
         'PRESERVE_CONTEXT_ON_EXCEPTION':None,
         'SEND_FILE_MAX_AGE_DEFAULT': 12 * 60 * 60,
         'PERMANENT_SESSION_LIFETIME':timedelta(days=31),
+        #キャッシュ
+        'CACHE_STORE':None,
+        'CACHE_DEFAULT_TIMEOUT': 300,
+        'CACHE_THRESHOLD':500,
+        'CACHE_KEY_PREFIX':None,
+        'CACHE_DIR':None,
+        'CACHE_OPTIONS':None,
+        'CACHE_ARGS':[],
+        #ログ周り
         'LOG_FILE_OUTPUT':False,
         'LOG_FILE_ROTATE':False,
         'LOG_ROTATE_MAX_BITE':(5*1024*1024),

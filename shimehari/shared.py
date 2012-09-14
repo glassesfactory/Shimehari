@@ -15,7 +15,7 @@ from werkzeug.local import LocalProxy, LocalStack
 
 class _SharedRequestClass(object): pass
 
-def _lookUpObjectInRequestContexat(name):
+def _lookUpObjectInRequestContext(name):
     top = _requestContextStack.top
     if top is None:
         raise RuntimeError('ahixi...')
@@ -31,6 +31,6 @@ def findApp():
 _requestContextStack= LocalStack()
 _appContextStack  = LocalStack()
 currentApp = LocalProxy(findApp)
-request = LocalProxy(partial(_lookUpObjectInRequestContexat, 'request'))
-session = LocalProxy(partial(_lookUpObjectInRequestContexat, 'session'))
-shared = LocalProxy(partial(_lookUpObjectInRequestContexat, 'shared'))
+request = LocalProxy(partial(_lookUpObjectInRequestContext, 'request'))
+session = LocalProxy(partial(_lookUpObjectInRequestContext, 'session'))
+shared = LocalProxy(partial(_lookUpObjectInRequestContext, 'shared'))
