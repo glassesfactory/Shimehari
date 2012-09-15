@@ -42,7 +42,6 @@ class AbstractRouter(Map):
             self.add(rule)
 
 
-
     u"""-----------------------------
         Shimehari.AbstractRouter.dump
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -475,7 +474,9 @@ class Resource(Map):
             raise ValueError('RESTfulRule')
 
 
-
+u"""
+werkzeug の中に似たのがあるっぽい…
+"""
 class Group(object):
     def __init__(self, name, children):
         for child in children:

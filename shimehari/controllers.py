@@ -34,8 +34,6 @@ class AbstractController(object):
 		
 		self.baseName = name.lower()
 	
-
-
 	@abstractmethod
 	def httpMethodNotAllowed(self,templateName='405.html'):
 		return

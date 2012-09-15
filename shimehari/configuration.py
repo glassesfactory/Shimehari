@@ -195,10 +195,18 @@ class Config(dict):
         '%(message)s\n' +
         '-' * 80)
     }
+
+
     def __init__(self, environment='development', defaults={}):
         d = self.defaults.copy()
         d.update(defaults)
         dict.__init__(self, d)
         self.environment = environment
+
+    def dump(self):
+        _conf = ''
+        for k, v in self.defaults.items():
+            _conf += k + ' => ' + str(v) + '\n'
+        return _conf
 
 
