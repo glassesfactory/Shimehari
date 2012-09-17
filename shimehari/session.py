@@ -12,7 +12,7 @@ u"""
 from werkzeug.contrib.securecookie import SecureCookie
 from werkzeug.contrib.sessions import SessionStore as SessionStoreBase, Session
 from shimehari.helpers import jsonAvailable
-from shimehari.core import importPreferredMemcachedClient
+from shimehari.core.helpers import importPreferredMemcachedClient
 
 
 """シリアライズで使用するモジュールを決定します。"""

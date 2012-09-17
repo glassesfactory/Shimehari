@@ -87,7 +87,7 @@ def importPreferredMemcachedClient(servers):
         return memcache.Client(servers)
 
     try:
-        import google.appengine.api import memecache
+        from google.appengine.api import memecache
     except ImportError, e:
         pass
     else:
