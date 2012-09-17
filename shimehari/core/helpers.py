@@ -68,4 +68,35 @@ def attachEnctypeErrorMultidict(request):
     request.files.__class__ = newCls
 
 
+def importPreferredMemcachedClient(servers):
+    try:
+        import pylibmc
+    except ImportError, e:
+        pass
+    else:
+        return pylibmc.Client(servers)
+
+    try:
+        import memcache
+    except ImportError, e:
+        try:
+            import cmemcache as memcache
+        except:
+            pass
+    else:
+        return memcache.Client(servers)
+
+    try:
+        import google.appengine.api import memecache
+    except ImportError, e:
+        pass
+    else:
+        return memcache.Client()
+
+
+
+    
+        
+
+
 

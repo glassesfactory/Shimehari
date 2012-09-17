@@ -120,13 +120,13 @@ class RESTfulRouter(AbstractRouter):
 
         for resource in resources:
             rules = []
-            if isinstance(resource, Resource) or isinstance(resource, RESTfulRule):
+            if isinstance(resource, (Resource, RESTfulRule):
                 for rule in resource._rules:
                     self.add(rule)
             elif isinstance(resource, list):
                 for rule in resource:
                     self.add(rule)
-            elif isinstance(resource, Rule) or isinstance(resource, Root):
+            elif isinstance(resource, (Rule, Root)):
                 self.add(resource)
             else:
                 raise TypeError('resources rule is invalid.')

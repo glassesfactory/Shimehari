@@ -12,6 +12,7 @@ u"""
 from werkzeug.contrib.securecookie import SecureCookie
 from werkzeug.contrib.sessions import SessionStore as SessionStoreBase, Session
 from shimehari.helpers import jsonAvailable
+from shimehari.core import importPreferredMemcachedClient
 
 
 """シリアライズで使用するモジュールを決定します。"""
@@ -139,6 +140,8 @@ class MemcachedSessionStore(_SessionStore):
         _SessionStore.__init__(self,session_class=session_class)
 
         if isinstance(servers, (list,tuple)):
+            client = importPreferredMemcachedClient(servers)
+            """
             try:
                 import cmemcache as memcache
                 isCmemcache = True
@@ -171,6 +174,7 @@ class MemcachedSessionStore(_SessionStore):
                     client = memcache.Client()
                 else:
                     client = memcache.Client(servers, False, HIGHEST_PROTOCOL)
+            """
         else:
             client = servers
 

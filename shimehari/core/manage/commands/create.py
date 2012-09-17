@@ -42,10 +42,10 @@ class Command(CreatableCommand):
     help = ("Create Shimehari Application.")
     option_list = CreatableCommand.option_list + (
             make_option('--path', '-p', action='store', type='string', dest='path', help='target create path'),
+            make_option('--template', '-t', action='store', type='string', dest='template', help='using project tempalte')
         )
 
     def handle(self, appDir='app', *args, **options):
-        print appDir
         try:
             importFromString(appDir)
         except ImportError:
@@ -69,7 +69,11 @@ class Command(CreatableCommand):
             if not os.path.exists(appRootDir):
                 raise CommandError("auau")
 
-        appTemplateDir = os.path.join(shimehari.__path__[0], 'core','conf', 'app_template')
+        template = options.get('template')
+        if template is None:
+            appTemplateDir = os.path.join(shimehari.__path__[0], 'core','conf', 'app_template')
+        else:
+            appTemplateDir = template
 
         prefixLen = len(appTemplateDir) + 1
 
@@ -93,7 +97,7 @@ class Command(CreatableCommand):
 
                 self.readAndCreateFile(oldPath, newPath)
 
-        
+        #ここどうすっかな
         self.createDirectory(appRootDir, 'views')
         self.createDirectory(appRootDir, 'assets')
         self.createDirectory(appRootDir, 'log')
@@ -101,7 +105,8 @@ class Command(CreatableCommand):
         #generate config file
         confOrgPath = os.path.join(shimehari.__path__[0], 'core', 'conf','config.org.py')
         newConfPath = os.path.join(os.getcwd(), 'config.py')
-        self.readAndCreateFileWithRename(confOrgPath, newConfPath, (appDir, appDir, debugFormat, outputFormat))
+        self.readAndCreateFileWithRename(confOrgPath, newConfPath, 
+                                            (appDir, appDir, debugFormat, outputFormat))
         
         sys.stdout.write("New App Create Complete. enjoy!\n")
 
