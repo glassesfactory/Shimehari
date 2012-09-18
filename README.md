@@ -5,6 +5,8 @@ Python Middle Framework for web.
 
 forked from Flask:: http://flask.pocoo.org
 
+![travis-ci](https://secure.travis-ci.org/glassesfactory/Shimehari.png)
+
 What is Shimehari
 ---
 
