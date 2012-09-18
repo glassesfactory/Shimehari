@@ -31,10 +31,10 @@ class testResource(ShimehariTestCase):
         self.assertNotEqual(res.add(IndexController), Exception)
         self.assertRaises(ValueError, res.add, 'puuuu')
 
+
     def testAddRule(self):
         res = Resource(IndexController)
         def testUserID(*args, **kwargs):
-            print kwargs
             return userid
         res.addRule('/<userid>', testUserID)
         

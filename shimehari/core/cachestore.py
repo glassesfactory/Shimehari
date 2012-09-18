@@ -261,6 +261,7 @@ class SimpleCacheStore(BaseCacheStore):
 
 
 import re
+from shimehari.core.helpers import importPreferredMemcachedClient
 u"""-----------------------------
     Shimehari.core.cachestore.MemcachedCacheStore
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -354,7 +355,7 @@ class MemcachedCacheStore(BaseCacheStore):
 
     ------------------------------"""
     def getMany(self, *keys):
-        d = self.getDict(*keys))
+        d = self.getDict(*keys)
         return [d[k] for k in keys ]
 
 
@@ -695,7 +696,7 @@ class RedisCacheStore(BaseCacheStore):
     ------------------------------"""
     def dump(self, value):
         t = type(value)
-        if t is int or  is long:
+        if t is int or t is long:
             return str(value)
         else:
             return '!' + msg.dumps(value)

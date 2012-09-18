@@ -379,7 +379,6 @@ class Shimehari(_Kouzi):
 
         try:
             ctrlDir = self.appFolder + '.' + self.controllerFolder
-            print self.appFolder
             ctrlMod = __import__(ctrlDir)
             ctrls = getModulesFromPyFile(self.controllerPath, self.rootPath)
         except (ImportError, AttributeError), error:

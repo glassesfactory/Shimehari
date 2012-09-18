@@ -16,6 +16,7 @@ from functools import wraps
 from shimehari.core.cachestore import SimpleCacheStore, MemcachedCacheStore, FileSystemCacheStore, RedisCacheStore, NullCacheStore
 from shimehari.configuration import ConfigManager, Config
 from shimehari.helpers import getEnviron
+from shimehari.shared import request, currentApp
 
 u"""
 ===============================
@@ -25,7 +26,7 @@ u"""
 ===============================
 """
 class Cache(object):
-	_store = None
+	store = None
 	def __init__(self, storetype=None):
 		config = ConfigManager.getConfig(getEnviron())
 
@@ -34,42 +35,42 @@ class Cache(object):
 		else:
 			store = storetype
 	
-		self._store = self._importCacheStore(store)
+		self.store = self._importCacheStore(store)
 
 	def get(self, *args, **kwargs):
-		return self._store.get(*args, **kwargs)
+		return self.store.get(*args, **kwargs)
 
 	def set(self, *args, **kwargs):
-		self._store.set(*args, **kwargs)
+		self.store.set(*args, **kwargs)
 
 	def setMany(self, *args, **kwargs):
-		self._store.setMany(*args, **kwargs)
+		self.store.setMany(*args, **kwargs)
 
 	def add(self, *args, **kwargs):
-		self._store.add(*args, **kwargs)
+		self.store.add(*args, **kwargs)
 
 	def delete(self, *args, **kwargs):
-		self._store.delete(*args, **kwargs)
+		self.store.delete(*args, **kwargs)
 
 	def deleteMany(self, *args, **kwargs):
-		self._store.deleteMany
+		self.store.deleteMany
 
 
 	def setCacheStore(self, store):
-		self._store = store
+		self.store = store
 
 	#u-mu....
 	def cached(self, timeout=None, key_prefix='view/%s', unless=None):
 		def decorator(f):
 			@wraps(f)
 			def decoratedFunction(*args, **kwargs):
-				if callable(unlees) or unless() is True:
+				if callable(unless) and unless() is True:
 					return f(*args, **kwargs)
 				cacheKey = decoratedFunction.createCacheKey(*args, **kwargs)
 
-				rv = self.cache.get(cacheKey)
+				rv = self.store.get(cacheKey)
 				if rv is None:
-					self.cache.set(cacheKey, rv, decoratedFunction.cacheTimeout)
+					self.store.set(cacheKey, rv, decoratedFunction.cacheTimeout)
 				return rv
 
 			def createCacheKey(*args, **kwargs):
