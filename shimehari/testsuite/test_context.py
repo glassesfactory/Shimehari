@@ -65,6 +65,7 @@ class TestAppContext(ShimehariTestCase):
             def __init__(self):
                 self.spam = 'sakerin'
         app = shimehari.Shimehari(__name__)
+        app.setupTemplater()
         app.sharedRequestClass = CustomRequestGlobals
         with app.testRequestContext():
             self.assertEqual(shimehari.renderTempalteString('{{ shared.spam }}'), 'sakerin')

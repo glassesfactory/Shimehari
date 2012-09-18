@@ -43,6 +43,7 @@ class TestConfigManager(ShimehariTestCase):
 
     def testGetConfig(self):
         config = Config()
+        ConfigManager.configrations = {}
         ConfigManager.addConfig(config)
         self.assertEqual(ConfigManager.getConfig('development'), config)
 

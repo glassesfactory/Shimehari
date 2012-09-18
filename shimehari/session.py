@@ -141,42 +141,10 @@ class MemcachedSessionStore(_SessionStore):
 
         if isinstance(servers, (list,tuple)):
             client = importPreferredMemcachedClient(servers)
-            """
-            try:
-                import cmemcache as memcache
-                isCmemcache = True
-            except ImportError:
-                try:
-                    import memcache
-                    isCmemcache = False
-                    isPylibmc  = False
-                except ImportError:
-                    try:
-                        import pylibmc as memcache
-                        isCmemcache = False
-                        isPylibmc = True
-                    except ImportError:
-                        try:
-                            from google.appengine.api import memcache
-                            isGAEMem = True
-                        except ImportError:
-                            raise RuntimeError('memcache nai')
-            if isCmemcache:
-                client = memcache.Client(map(str, servers))
-                try:
-                    client.debuglog = lambda *a: None
-                except Exception:
-                    pass
-            else:
-                if isPylibmc:
-                    client = memcache.Client(servers, False)
-                elif isGAEMem:
-                    client = memcache.Client()
-                else:
-                    client = memcache.Client(servers, False, HIGHEST_PROTOCOL)
-            """
-        else:
+        elif servers is not None:
             client = servers
+        else:
+            raise RuntimeError('no memcache module.')
 
         self._memcacheClient = client
         self._memcacheKeyPrefix = keyPrefix
@@ -203,7 +171,10 @@ class MemcachedSessionStore(_SessionStore):
         return self.session_class(data, sid, False)
 
     def _getMemcacheKey(self,sid):
-        key = self._memcacheKeyPrefix + sid
+        if self._memcacheKeyPrefix:
+            key = self._memcacheKeyPrefix + sid
+        else:
+            key = sid
         if isinstance(key, unicode):
             key = key.encode('utf-8')
         return key
@@ -297,12 +268,12 @@ class RedisSessionStore(_SessionStore):
 try:
     from werkzeug.contrib.sessions import FileSystemSessionStore
     _currentStore = FileSystemSessionStore()
-except Exception, RuntimeError:
+except (Exception, RuntimeError), e:
     try:
         """GAE 対策"""
-        _currentStore = MemcachedSessionStore(())
-    except Exception:
+        _currentStore = MemcachedSessionStore()
+    except (Exception, RuntimeError), e:
         """それでもダメだったら最後の手段"""
         _currentStore = SecureCookieSessionStore()
-
-SessionStore = _currentStore.__class__
+finally:
+    SessionStore = _currentStore.__class__

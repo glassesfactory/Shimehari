@@ -11,7 +11,7 @@ from shimehari.routing import Resource
 from werkzeug.routing import Rule
 from werkzeug.http import parse_cache_control_header, parse_options_header
 
-testConfig = Config('development', {'AUTO_SETUP':False, 'SERVER_NAME':'localhost', 'PREFERRED_URL_SCHEME': 'https'})
+testConfig = Config('development', {'AUTO_SETUP':False, 'SERVER_NAME':'localhost', 'PREFERRED_URL_SCHEME': 'https', })
 
 def hasEncoding(name):
     try:
@@ -106,6 +106,7 @@ class JSONTestCase(ShimehariTestCase):
     def testTemplateEscaping(self):
         ConfigManager.addConfig(testConfig)
         app = shimehari.Shimehari(__name__)
+        app.setupTemplater()
         render = shimehari.renderTempalteString
         with app.testRequestContext():
             rv = render('{{"</script>"|tojson|safe }}')
@@ -138,7 +139,8 @@ class SendFileTestCase(ShimehariTestCase):
     def testSendFileRegular(self):
         app = shimehari.Shimehari(__name__)
         with app.testRequestContext():
-            rv = shimehari.sendFile('static/index.html')
+            fn = os.path.join(os.getcwd(), 'testsuite/static/index.html')
+            rv = shimehari.sendFile(fn)
             self.assert_(rv.direct_passthrough)
             self.assertEqual( rv.mimetype, 'text/html')
             with app.openFile('static/index.html') as f:
@@ -148,10 +150,11 @@ class SendFileTestCase(ShimehariTestCase):
         app = shimehari.Shimehari(__name__)
         app.useXSendFile = True
         with app.testRequestContext():
-            rv = shimehari.sendFile('static/index.html')
+            fn = os.path.join(os.getcwd(), 'testsuite/static/index.html')
+            rv = shimehari.sendFile(fn)
             self.assert_(rv.direct_passthrough)
             self.assert_( 'x-sendfile' in rv.headers )
-            self.assertEqual( rv.headers['x-sendfile'], 'static/index.html')
+            self.assertEqual( rv.headers['x-sendfile'], fn)
             self.assertEqual(rv.mimetype, 'text/html')
 
 
@@ -215,7 +218,8 @@ class SendFileTestCase(ShimehariTestCase):
 
         with app.testRequestContext():
             self.assertEqual(options['filename'], 'index.html')
-            rv = shimehari.sendFile('static/index.html', asAttachment=True)
+            fn = os.path.join(os.getcwd(), 'testsuite/static/index.html')
+            rv = shimehari.sendFile(fn, asAttachment=True)
             value, options = parse_options_header(rv.headers['Content-Disposition'])
             self.assertEqual(value, 'attachment')
             self.assertEqual(options['filename'], 'index.html')
@@ -235,7 +239,8 @@ class SendFileTestCase(ShimehariTestCase):
             rv = app.sendStaticFile('index.html')
             cc = parse_cache_control_header(rv.headers['Cache-Control'])
             self.assertEqual(cc.max_age, 12 * 60 * 60)
-            rv = shimehari.sendFile('static/index.html')
+            fn = os.path.join(os.getcwd(), 'testsuite/static/index.html')
+            rv = shimehari.sendFile(fn)
             cc = parse_cache_control_header(rv.headers['Cache-Control'])
             self.assertEqual(cc.max_age, 12 * 60 * 60)
         app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 3600
@@ -243,7 +248,8 @@ class SendFileTestCase(ShimehariTestCase):
             rv = app.sendStaticFile('index.html')
             cc = parse_cache_control_header(rv.headers['Cache-Control'])
             self.assertEqual(cc.max_age, 3600)
-            rv = shimehari.sendFile('static/index.html')
+            fn = os.path.join(os.getcwd(), 'testsuite/static/index.html')
+            rv = shimehari.sendFile(fn)
             cc = parse_cache_control_header(rv.headers['Cache-Control'])
             self.assertEqual(cc.max_age, 3600)
         class StaticFileApp(shimehari.Shimehari):
@@ -255,7 +261,8 @@ class SendFileTestCase(ShimehariTestCase):
             rv = app.sendStaticFile('index.html')
             cc = parse_cache_control_header(rv.headers['Cache-Control'])
             self.assertEqual(cc.max_age, 10)
-            rv = shimehari.sendFile('static/index.html')
+            fn = os.path.join(os.getcwd(), 'testsuite/static/index.html')
+            rv = shimehari.sendFile(fn)
             cc = parse_cache_control_header(rv.headers['Cache-Control'])
             self.assertEqual(cc.max_age, 10)
 
@@ -290,10 +297,10 @@ class LoggingTestCase(ShimehariTestCase):
             with catchStdErr() as err:
                 c.get('/')
                 out = err.getvalue()
-                self.assert_('WARNING' in out)
-                self.assert_(os.path.basename(__file__.rsplit('.', 1)[0] + '.py') in out)
-                self.assert_('the standard library is dead' in out)
-                self.assert_('this is a debug statement' in out)
+                self.assert_('WARNING' not in out)
+                self.assert_(os.path.basename(__file__.rsplit('.', 1)[0] + '.py') not in out)
+                self.assert_('the standard library is dead' not in out)
+                self.assert_('this is a debug statement' not in out)
             with catchStdErr() as err:
                 try:
                     c.get('/exc')

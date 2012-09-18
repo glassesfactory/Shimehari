@@ -6,9 +6,9 @@ from shimehari.controllers import ApplicationController
 
 import logging
 
-class ChildController(ApplicationController):
+class NinjaController(ApplicationController):
 	def index(self, *args, **kwargs):
-		huge = 'huaaaa'
+		huge = 'hugaaaan'
 		return renderTemplate('index.html',huga=huge)
 		# return 'Shimehari GKGKGKGKGKGK!'
 

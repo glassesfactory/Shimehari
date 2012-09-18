@@ -3,3 +3,6 @@
 
 from .index import IndexController
 from .child import ChildController
+from .ninja import NinjaController
+from .takenoko import TakenokoController
+from .hoge import HogeController

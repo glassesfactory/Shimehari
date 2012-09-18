@@ -80,6 +80,7 @@ class ShimehariAppTestCase(ShimehariTestCase):
         ConfigManager.addConfig(Config('development', {'AUTO_SETUP':False, 'SERVER_NAME':'localhost', 'PREFERRED_URL_SCHEME': 'https'}))
         app = shimehari.Shimehari(__name__)
         app.appPath = os.path.join(app.rootPath, 'testApp')
+        app.appFolder = 'shimehari.testsuite.testApp'
         app.setupTemplater()
         app.setupBindController()
         app.setupBindRouter()

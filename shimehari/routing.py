@@ -291,16 +291,18 @@ class Resource(Map):
         #ディレクトリが深かった時自動で
         elif controller is not None: 
             config = ConfigManager.getConfig()
-            if config['CONTROLLER_AUTO_NAMESPACE']:
-                package = controller.__module__.split('.')
+            if config['CONTROLLER_AUTO_NAMESPACE'] and type(controller) is not int:
+                pkgs = controller.__module__.split('.')
                 appFolder = config['APP_DIRECTORY']
                 controllerFolder = config['CONTROLLER_DIRECTORY']
-                package.remove(appFolder)
-                package.remove(controllerFolder)
+                if appFolder in pkgs:
+                    pkgs.remove(appFolder)
+                if controllerFolder in pkgs:
+                    pkgs.remove(controllerFolder)
 
-                self.orgName = package[len(package)-1]
-                package = package[:len(package)-1]
-                self.namespace = "/".join(package)
+                self.orgName = pkgs[len(pkgs)-1]
+                pkgs = pkgs[:len(pkgs)-1]
+                self.namespace = "/".join(pkgs)
             
         if controller:
             controller = self._checkControllerType(controller)

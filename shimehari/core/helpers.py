@@ -81,7 +81,7 @@ def importPreferredMemcachedClient(servers):
     except ImportError, e:
         try:
             import cmemcache as memcache
-        except:
+        except ImportError, e:
             pass
     else:
         return memcache.Client(servers)
