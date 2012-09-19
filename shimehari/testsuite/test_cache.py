@@ -64,9 +64,15 @@ class TestCache(ShimehariTestCase):
         [d.setdefault(str(x),x) for x in range(100)]
         cache.setMany(d)
         keys = [str(x) for x in range(100)]
-        self.assertNotIn(None,cache.getMany(*keys))
+        rv = cache.getMany(*keys)
+        self.assert_( None not in rv )
         cache.clear()
-        self.assertIn(None,cache.getMany(*keys))
+        flg = True
+        for x in cache.getMany(*keys):
+            if x is not None:
+                flg = False
+                break
+        self.assert_(flg)
 
     def testSetCacheStore(self):
         cache = Cache()
@@ -76,9 +82,9 @@ class TestCache(ShimehariTestCase):
 
     def testCacheLimit(self):
         cache = Cache(storetype='simple')
-        cache.set('sake', 'shimehari' ,timeout=10)
+        cache.set('sake', 'shimehari' ,timeout=3)
         self.assertEqual(cache.get('sake'), 'shimehari')
-        time.sleep(11)
+        time.sleep(4)
         self.assert_(cache.get('sake') is None)
 
 
