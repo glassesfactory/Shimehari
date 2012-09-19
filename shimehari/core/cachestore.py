@@ -256,6 +256,24 @@ class SimpleCacheStore(BaseCacheStore):
         self._cache[key] = (time() + timeout, msg.dumps(value, msg.HIGHEST_PROTOCOL))
 
 
+    u"""-----------------------------
+        Shimehari.core.cachestore.SimpleCacheStore
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        add
+
+        キーをチェックして存在していなかった時キャッシュを追加します。
+
+    ------------------------------"""
+    def add(self, key, value, timeout=None):
+        if timeout is None:
+            timeout = self.default_timeout
+
+        if len(self._cache) > self._threshold:
+            self._prune()
+        item = (time() + timeout, msg.dumps(value, msg.HIGHEST_PROTOCOL))
+        self._cache.setdefault(key, item)
+
+
 
     u"""-----------------------------
         Shimehari.core.cachestore.SimpleCacheStore
@@ -388,7 +406,7 @@ class MemcachedCacheStore(BaseCacheStore):
             key = key.encode('utf-8')
         if self.key_prefix:
             key = self.key_prefix + key
-        self._client.add(key, value, timeout)
+        self._client.set(key, value, timeout)
         
 
 
@@ -422,7 +440,7 @@ class MemcachedCacheStore(BaseCacheStore):
         キャッシュを上書き
 
     ------------------------------"""
-    def add(self, key, vlaue, timeout=None):
+    def add(self, key, value, timeout=None):
         if timeout is None:
             timeout = self.default_timeout
         if isinstance(key, unicode):
