@@ -76,9 +76,9 @@ class TestCache(ShimehariTestCase):
 
     def testSetCacheStore(self):
         cache = Cache()
-        self.assertIsInstance(cache.store, NullCacheStore)
+        self.assert_(isinstance(cache.store, NullCacheStore))
         cache.setCacheStore(SimpleCacheStore())
-        self.assertIsInstance(cache.store, SimpleCacheStore)
+        self.assert_(isinstance(cache.store, SimpleCacheStore))
 
     def testCacheLimit(self):
         cache = Cache(storetype='simple')
