@@ -678,7 +678,6 @@ class Shimehari(_Kouzi):
                 rule = req.urlRule
                 rv = self.controllers[rule.endpoint](**req.viewArgs)
         except Exception, e:
-            print e
             rv = self.makeResponse(self.handleUserException(e))
 
         response = self.makeResponse(rv)
