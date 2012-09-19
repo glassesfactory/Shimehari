@@ -107,5 +107,4 @@ $ shimehari generate controller Example
     
 and more...
 ---
-より詳しい使い方や、その他の API については [wiki](https://github.com/glassesfactory/Shimehari/wiki) を参照してください。
-*※整備中*
+より詳しい使い方や、その他の API については [wiki](https://github.com/glassesfactory/Shimehari/wiki) を参照してください。s
