@@ -93,9 +93,8 @@ def importPreferredMemcachedClient(servers):
     else:
         return memcache.Client()
 
+    raise RuntimeError('no memcache modules.')
 
-
-    
         
 
 

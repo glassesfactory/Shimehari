@@ -50,6 +50,21 @@ ConfigManager.addConfigs([
 
         'PERMANENT_SESSION_LIFETIME':timedelta(days=31),
 
+        #キャッシュ
+        'CACHE_STORE':None,
+
+        'CACHE_DEFAULT_TIMEOUT': 300,
+
+        'CACHE_THRESHOLD':500,
+
+        'CACHE_KEY_PREFIX':None,
+
+        'CACHE_DIR':None,
+
+        'CACHE_OPTIONS':None,
+        
+        'CACHE_ARGS':[],
+
         'LOG_FILE_OUTPUT':False,
         
         'LOG_FILE_ROTATE':False,

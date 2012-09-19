@@ -11,19 +11,28 @@ u"""
 ===============================
 """
 
+
+import os
+try:
+    from hashlib import md5
+except ImportError, e:
+    from md5 import new as md5
 import tempfile
 
 from itertools import izip
 from time import time
 
 
+
+
 try:
-    import msgpack as msg
+    import cPickle as msg
 except ImportError, e:
-    try:
-        import cPickle as msg
-    except ImportError, e:
-        import pickle as msg
+    import pickle as msg
+
+
+def _items(mappp):
+    return mappp.iteritems() if hasattr(mappp, 'iteritems') else mappp
 
 
 u"""-----------------------------
@@ -144,7 +153,7 @@ class BaseCacheStore(object):
 
     ------------------------------"""
     def setMany(self, mapping, timeout=None):
-        for k, v in mapping:
+        for k, v in _items(mapping):
             self.set(k, v,timeout)
 
 
@@ -227,7 +236,7 @@ class SimpleCacheStore(BaseCacheStore):
         now = time()
         expires, value = self._cache.get(key, (0, None))
         if expires > time():
-            msg.loads(value)
+            return msg.loads(value)
 
 
 
@@ -240,7 +249,7 @@ class SimpleCacheStore(BaseCacheStore):
 
     ------------------------------"""
     def set(self, key, value, timeout=None):
-        if timeout:
+        if timeout is None:
             timeout = self.default_timeout
 
         self._prune()
@@ -342,7 +351,7 @@ class MemcachedCacheStore(BaseCacheStore):
             for k in keys:
                 if k not in rv:
                     rv[k] = None
-        return None
+        return rv
 
 
 
@@ -395,7 +404,7 @@ class MemcachedCacheStore(BaseCacheStore):
         if timeout is None:
             timeout = self.default_timeout
         newMap = {}
-        for k, v in _ites(mapping):
+        for k, v in _items(mapping):
             if isinstance(k, unicode):
                 k = k.encode('utf-8')
             if self.key_prefix:
@@ -466,8 +475,7 @@ class MemcachedCacheStore(BaseCacheStore):
     def clear(self):
         self._client.flush_all()
 
-import os
-import md5
+
 
 u"""-----------------------------
     Shimehari.core.cachestore.FileSystemCacheStore
@@ -484,7 +492,7 @@ class FileSystemCacheStore(BaseCacheStore):
         self._threshold = threshold
         self._mode = mode
 
-        if not os.path.exist(self._cacheDir):
+        if not os.path.exists(self._cacheDir):
             os.makedirs(self._cacheDir)
 
 
@@ -593,17 +601,17 @@ class FileSystemCacheStore(BaseCacheStore):
     def set(self, key, value, timeout=None):
         if timeout is None:
             timeout = self.default_timeout
-        fn = self._getFileName()
+        fn = self._getFileName(key)
         self._prune()
         try:
             fd, tmp = tempfile.mkstemp(suffix=_fsTransactionSuffix, dir=self._cacheDir)
             f = os.fdopen(fd, 'wb')
             try:
-                msg.dump(int(time + timeout, f, 1))
+                msg.dump(int(time() + timeout), f, 1)
                 msg.dump(value, f, msg.HIGHEST_PROTOCOL)
             finally:
                 f.close()
-            rename(tmp, fn)
+            os.rename(tmp, fn)
             os.chmod(fn, self._mode)
         except (IOError, OSError), e:
             pass
@@ -641,7 +649,7 @@ class FileSystemCacheStore(BaseCacheStore):
     ------------------------------"""
     def delete(self, key):
         try:
-            os.remove(self._getfileName(key))
+            os.remove(self._getFileName(key))
         except (IOError, OSError):
             pass
 
@@ -672,6 +680,7 @@ u"""-----------------------------
 ------------------------------"""
 class RedisCacheStore(BaseCacheStore):
     def __init__(self, host='localhost', port=6379, passwd=None, default_timeout=300, key_prefix=None):
+        BaseCacheStore.__init__(self, default_timeout)
         if isinstance(host, basestring):
             try:
                 import redis
@@ -796,9 +805,9 @@ class RedisCacheStore(BaseCacheStore):
         if timeout is None:
             timeout = self.default_timeout
         pipe = self._client.pipeline()
-        for k, v in items(mapping):
+        for k, v in _items(mapping):
             dump = self.dump(v)
-            pipe.setex(self.key_prefix + k, v)
+            pipe.setex(self.key_prefix + k, v, timeout)
         pipe.execute()
 
 
@@ -871,7 +880,4 @@ class RedisCacheStore(BaseCacheStore):
             if keys:
                 self._client.delete(*keys)
         self._client.flushdb()
-
-
-
 
