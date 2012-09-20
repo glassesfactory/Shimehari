@@ -26,6 +26,8 @@ u"""
 ===============================
 """
 class AbstractRouter(Map):
+    u"""Shimehari アプリケーションで使用するルーターの抽象クラス
+    """
     def __init__(self,rules=[], defaultSubdomain='', charset='utf-8',
                 strict_slashes=True, redirectDefaults=True,
                 converters=None, sortParameters=False, sortKey=None,
@@ -42,14 +44,11 @@ class AbstractRouter(Map):
             self.add(rule)
 
 
-    u"""-----------------------------
-        Shimehari.AbstractRouter.dump
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        現在定義されているルーティングを出力します。
-        [return]
-            :str 定義されているルーティング
-    ------------------------------"""
+    
     def dump(self):
+        u"""
+        現在定義されているルーティングを出力します。
+        """
         _map = ''
         for rule in self._rules:
             method = list(rule.methods.copy())
@@ -64,48 +63,23 @@ class AbstractRouter(Map):
         return _map
 
 
-u"""
-===============================
-    Shimehari.routing.RESTfulRouter
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    リソースを指定して自動的にルーティング生成
 
-    Constructor
-
-    :resources
-        ルーティングを登録したいリソース。
-            => Shimehari.routing.Resource
-
-    :defaultSubdomain
-        prefix として指定するサブドメインを設定します。
-
-    :charset
-        文字コードを設定します。
-
-    :strictSlashes
-        ほげほげ
-
-    :redirectDefaults
-        ほげほげ
-
-    :converters
-        こんばーたーをしてい
-
-    :sortParameters
-        ほげほげ
-
-    :sortKey
-        ふがふが
-
-    :encordingErrors
-        ほげほげ
-
-    :hostMatching
-        ああああ
-
-===============================
-"""
 class RESTfulRouter(AbstractRouter):
+    u"""リソースを指定して自動的にルーティング生成
+
+
+    :param resources:           ルーティングを登録したいリソース。 => :ref:`Shimehari.routing.Resource`
+    :param defaultSubdomain:    prefix として指定するサブドメインを設定します。
+    :param charset:             文字コードを設定します。
+    :param strictSlashes:       ほげほげ
+    :param redirectDefaults:    ほげほげ
+    :param converters:          こんばーたーをしてい
+    :param sortParameters:      ほげほげ
+    :param sortKey:             ふがふが
+    :param encordingErrors:     ほげほげ
+    :param hostMatching:        ああああ
+
+    """
     def __init__(self, resources=[], defaultSubdomain='', charset='utf-8',
                 strict_slashes=True, redirectDefaults=True,
                 converters=None, sortParameters=False, sortKey=None,
@@ -140,22 +114,6 @@ class Root(Rule):
 
 
 
-u"""
-===============================
-
-    Shimehari.routing.RESTfulRule
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    CRUD 準拠 URL ルール
-    こういうのはどうだろう…
-    :index
-        index
-    :show
-        show
-    :edit
-        edit
-
-===============================
-"""
 
 class RESTfulRule(object):
 
@@ -218,25 +176,19 @@ class RESTfulRule(object):
             raise ValueError('RESTfulRule')
 
 
-u"""
-===============================
-    Shimehari.routing.Resource
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~
-    リソース
-    [args]
-    :controller
-        type::AbstractController or Dictionary
-        リソースとして指定するコントローラー
 
-
-===============================
-"""
 class Resource(Map):
+    u"""リソース
+    
+    :param controller:  リソースとして指定するコントローラー
+    :param children:    aaa
+    :param name:        namae
+    :param only:        
 
-    u"""親"""
+    """
+    
     parent = None
 
-    u"""名前"""
     baseName = None
 
     orgName = None
@@ -350,18 +302,6 @@ class Resource(Map):
         return controller
 
     #みなおし
-    u"""----------------------------------------
-
-        [private]
-        ::pkg:: Shimehari.routing
-        _addRuleFromController
-        ~~~~~~~~~~~~~~~~~~~~~~
-        渡されたコントローラーから URL ルールを生成、追加します。
-
-        [args]
-            :controller ルールを追加したいコントローラー
-
-    ---------------------------------------------"""
     def _addRuleFromController(self, controller):
         actions = RESTFUL_ACTIONS.copy()
         if self.only is not None:
@@ -383,16 +323,6 @@ class Resource(Map):
 
 
 
-    u"""----------------------------------------
-
-        _addRuleFromRules
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        Rule が格納されたディクショナリをルールに追加します。
-
-        [args]
-            :rules 追加したい Rule を格納したディクショナリ
-
-    ---------------------------------------------"""
     def _addRuleFromRules(self, rules):
         for rule in rules:
             if not isinstance(rule, RuleBase):
@@ -400,20 +330,15 @@ class Resource(Map):
             self._rules.append(rule)
 
 
-    #aaaaa
-    u"""----------------------------------------
 
-        add
-        ~~~
+    def add(self, controller):
+        u"""コントローラー、もしくはルールを追加します。
+
         
-        コントローラー、もしくはルールを追加します。
-        [args]
-            :controller 
-                ルールを追加したいコントローラー、もしくは
-                RESTfulRule、ルールを格納したディクショナリ
+        :param controller:  ルールを追加したいコントローラー、もしくは
+                            RESTfulRule、ルールを格納したディクショナリ
 
-    ---------------------------------------------"""
-    def add(self,controller):
+        """
         import inspect
         if inspect.isclass(controller):
             controller = controller(controller.__name__)
@@ -436,6 +361,13 @@ class Resource(Map):
 
 
     def addRule(self, name, handler, methods=[], *args, **kwargs):
+        u"""リソースに対してルールを追加します。
+
+        :param name:        名前
+        :param handler:     処理
+        :param methods:     使用する HTTP メソッド
+
+        """
         rule = Rule(name, defaults=self.defaults, endpoint=handler, 
                             subdomain=self.subdomain, methods=methods, build_only=self.buildOnly,
                             strict_slashes=self.strict_slashes, redirect_to=self.redirectTo, alias=self.alias, host=self.host)
@@ -448,8 +380,15 @@ class Resource(Map):
         print self._rules
 
 
-    u"""アクション名から URL Name を生成します"""
+    
     def getNameFromRESTAction(self, name, action, root=False):
+        u"""アクション名から URL Name を生成します。
+        
+        :param name:    名前
+        :param action:  アクション
+        :param root:    ルートかどうか
+        """
+
         if self.namespace:
             name = self.namespace + '/' + name
 

@@ -45,6 +45,30 @@ def setupMethod(f):
 
 
 class Shimehari(_Kouzi):
+    u"""Shimehari Object は WSGI アプリケーションとして必要な機能を実装しており、
+    アプリケーションの中心となるオブジェクトです。 
+
+    メインモジュール、または __init__.py ファイルの中で以下のように書くことで
+    Shimehari インスタンスを生成することができます。
+
+    .. code-block:: python
+
+        from shimehari import Shimehari
+        app = Shimehari(__name__)
+
+    ただし、Shimehari では通常コマンドラインでアプリケーションを生成することを推奨しているので
+    あなたが直接インスタンス生成のコードを書くことはそうそうないと思われます。
+
+    :param importName: アプリケーションのパッケージ名
+    :param staticURL: サイト内共通、静的ファイルの URL
+    :param staticFolder: 静的ファイルが格納されているディレクトリ
+    :param appFolder: アプリケーション全体が格納されているディレクトリ
+    :param controllerFolder: コントローラーが格納されているディレクトリ
+    :param viewFolder: ビューが格納されているディレクトリ
+    :param assetsFolder: アセットファイルが格納されているディレクトリ
+    :param instancePath: アプリケーションのための代替インスタンスパス
+
+    """
 
     currentEnv = getEnviron()
     debug = None
@@ -166,11 +190,10 @@ class Shimehari(_Kouzi):
             return rv
 
 
-    u"""--------------------------------------
-        ルーティング
-    --------------------------------------"""
+   
     def router():
-        doc = "The router property."
+        
+        doc = u"""アプリケーションのルーティングを管理するルーターを設定します。"""
         def fget(self):
             return self._router
         def fset(self, value):
@@ -183,23 +206,8 @@ class Shimehari(_Kouzi):
     router = property(**router())
 
 
-
-    """
-    ===============================
-        methods
-    ===============================
-    """
-
-    u"""-----------------------------
-        ::pkg:: Shimehari.app
-        getInstancePath
-        ~~~~~~~~~~~~~~~
-
-        インスタンスパスを返します。
-        [return]
-            :str インスタンスパス
-    ------------------------------"""
     def getInstancePath(self):
+        u"""インスタンスパスを返します。"""
         prefix, pkgPath = findPackage(self.importName)
         if prefix is None:
             return os.path.join(pkgPath, 'instance')
@@ -207,16 +215,8 @@ class Shimehari(_Kouzi):
 
 
 
-    u"""-----------------------------
-        ::pkg:: Shimehari.app
-        getConfig
-        ~~~~~~~~~
-
-        現在の コンフィグ を返します。
-        [return]
-            :Config 現在のコンフィグ
-    ------------------------------"""
     def getConfig(self):
+        u"""現在アプリケーションに適用されているコンフィグを返します。"""
         configs = ConfigManager.getConfigs()
         try:
             from .config import config
@@ -233,6 +233,10 @@ class Shimehari(_Kouzi):
 
 
     def saveSession(self, session, response):
+        u"""セッションを保存します。
+        :param session:     保存したいセッション
+        :param response:    レスポンス
+        """
         if session.should_save:
             self.sessionStore.save(session, response)
             response.set_cookie(self.sessionKey, session.sid)
@@ -248,17 +252,12 @@ class Shimehari(_Kouzi):
             return self.sessionStore.get(sid)
 
 
-    u"""-----------------------------
-        ::pkg:: Shimehari.app
-        setControllerFromRouter
-        ~~~~~~~~~~~~~~~~~~~~~~~
 
-        ルーターからコントローラーを設定します。
-        [args]
-        :router
-            るーたー
-    ------------------------------"""
     def setControllerFromRouter(self, router):
+        u"""設定されたルーターからコントローラーをバインディングします。
+
+        :param router: ルーター
+        """
         if not self.controllers:
             self.controllers = {}
         for rule in router._rules:
@@ -266,19 +265,13 @@ class Shimehari(_Kouzi):
 
 
 
-    u"""-----------------------------
-        ::pkg:: Shimehari.app
-        addController
-        ~~~~~~~~~~~~~
-
-        [args]
-        :controller
-            追加したいコントローラー
-            追加されたコントローラーは
-            アプリケーションの管理下に置かれ、
-            ルーティングが自動生成されます。
-    ------------------------------"""
     def addController(self, controller):
+        u"""アプリケーションにコントローラーを追加します。
+
+        :param controller:  追加したいコントローラー。
+                            追加されたコントローラーはアプリケーションの管理下に置かれ、
+                            ルーティングが自動生成されます。
+        """
         for action in RESTFUL_ACTIONS:
             handler = getHandlerAction(controller, action)
             if handler is not None:
@@ -334,17 +327,11 @@ class Shimehari(_Kouzi):
 
 
 
-    u"""-----------------------------
-        ::pkg:: Shimehari.app
-        setup
-        ~~~~~
-
-        アプリケーションをセットアップします。
-        指定された app ディレクトリ配下にある
-        コントローラー、ルーターを探し出しバインドします。
-
-    ------------------------------"""
+    
     def setup(self):
+        u"""アプリケーションをセットアップします。
+            指定された app ディレクトリ配下にあるコントローラー、ルーターを探し出しバインドします。
+        """
         self.appPath = os.path.join(self.rootPath, self.appFolder)
         if not os.path.isdir(self.appPath):
             raise ShimehariSetupError('Application directory is not found\n%s' % self.rootPath)
@@ -364,15 +351,10 @@ class Shimehari(_Kouzi):
         except Exception, e:
             raise ShimehariSetupError('setup template engine was failed... \n%s' % e)
 
-    u"""-----------------------------
-        ::pkg:: Shimehari.app
-        setupBindController
-        ~~~~~~~~~~~~~~~~~~~
+    
 
-        コントローラーをバインドします
-        
-    ------------------------------"""
     def setupBindController(self):
+        u"""コントローラーをバインドします"""
         self.controllerPath = os.path.join(self.appPath, self.controllerFolder)
         if not os.path.isdir(self.controllerPath):
             raise ShimehariSetupError('Controller in the specified directory does not exist. %s' % self.controllerPath)
@@ -386,15 +368,8 @@ class Shimehari(_Kouzi):
 
 
 
-    u"""-----------------------------
-        ::pkg:: Shimehari.app
-        setupBindRouter
-        ~~~~~~~~~~~~~~~
-
-        ルーターをバインドします
-
-    ------------------------------"""
     def setupBindRouter(self):
+        u"""ルーターをバインドします。"""
         try:
             routerFile = self.appFolder + '.' + 'router'
             routerMod = __import__(routerFile, fromlist=['router'])
@@ -404,73 +379,46 @@ class Shimehari(_Kouzi):
             raise ShimehariSetupError('Failed to setup the router ...\n details::\n%s' % e)
 
 
-
-    u"""-----------------------------
-        ::pkg:: Shimehari.app
-        beforeRequest
-        ~~~~~~~~~~~~~
-
-        リクエスト処理を行う前にする処理を
-        登録します。
-        [args]
-        :f
-            実行したい処理
-        [return]
-        :function
-            登録した処理
-    ------------------------------"""
+    
     @setupMethod
     def beforeRequest(self, f):
+        u"""リクエストを処理する前に実行したいメソッドを登録します。
+        
+        :param f: リクエスト処理前に実行させたい処理
+        """
         self.beforeRequestFuncs.setdefault(None,[]).append(f)
         return f
 
 
 
-    u"""-----------------------------
-        ::pkg:: Shimehari.app
-        beforeFirstRequest
-        ~~~~~~~~~~~~~~~~~~
-
-        最初のリクエスト処理を行う前にする処理
-        [args]
-        :f
-            実行したい処理
-    ------------------------------"""
     @setupMethod
     def beforeFirstRequest(self, f):
+        u"""アプリケーションに対し初めてリクエストがあったときのみ、
+            リクエストを処理する前に実行したいメソッドを登録します。
+
+        :param f: 初めてのリクエスト処理前に実行したい処理
+        """
         self.beforeFirstRequestFuncs.append(f)
 
 
 
-    u"""-----------------------------
-        ::pkg:: Shimehari.app
-        afterRequest
-        ~~~~~~~~~~~~
-
-        リクエストの後に処理
-        [args]
-        :f
-            実行したい処理
-    ------------------------------"""
     @setupMethod
     def afterRequest(self, f):
+        u"""リクエスト処理が終わった後に実行したいメソッドを登録します。
+        
+        :param f: リクエスト処理後に実行したい処理
+        """
         self.afterRequestFuncs.setdefault(None,[]).append(f)
         return f
 
 
 
-    u"""-----------------------------
-        ::pkg:: Shimehari.app
-        urlValuePreprocessor
-        ~~~~~~~~~~~~~~~~~~~~
-
-        リクエストの前に処理
-        [args]
-        :f
-            実行したい処理
-    ------------------------------"""
     @setupMethod
     def urlValuePreprocessor(self, f):
+        u"""リクエストの前に実行したい処理を登録します。
+
+        :param f: 実行したい処理
+        """
         self.urlValuePreprocesors.setdefault(None, []).append(f)
         return f
 
@@ -500,14 +448,10 @@ class Shimehari(_Kouzi):
             self.errorHandlerSpec.setdefault(key, {}).setdefault(None,[]).append((codeOrException, f))
 
 
-    u"""-----------------------------
-        ::pkg:: Shimehari.app
-        tryTriggerBeforeFirstRequest
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        最初のリクエストがあった時のみに行う処理を実行します。
-    ------------------------------"""
     def tryTriggerBeforeFirstRequest(self):
+        u"""アプリケーションに対し最初のリクエストがあった時のみに行う処理を
+            実際に実行します。
+        """
         if self._gotFirstRequest:
             return 
         with self._beforeRequestLock:
@@ -518,20 +462,14 @@ class Shimehari(_Kouzi):
 
 
 
-    u"""-----------------------------
-        ::pkg:: Shimehari.app
-        createAdapter
-        ~~~~~~~~~~~~~
-
-        url adapter を生成します
-        [args]
-        :request
-            元となるリクエスト
-        [return]
-        :adapter
-            アダプター
-    ------------------------------"""
+    
     def createAdapter(self, request):
+        u"""url adapter を生成します
+        
+        :param request: 元となるリクエストオブジェクト
+
+
+        """
         if request is not None:
             return self.router.bind_to_environ(request.environ)
         #なんのこっちゃ
@@ -543,43 +481,22 @@ class Shimehari(_Kouzi):
 
 
 
-    u"""-----------------------------
-        ::pkg:: Shimehari.app
-        appContext
-        ~~~~~~~~~~
-        アプリケーションコンテキストを返します。
-        [args]
-        :environ
-            環境変数
-    ------------------------------"""
-    def appContext(self):
+    
+    def appContext(self): 
+        u"""アプリケーションコンテキストを返します。"""
         return AppContext(self)
 
 
-
-    u"""-----------------------------
-        ::pkg:: Shimehari.app
-        requestContext
-        ~~~~~~~~~~~~~~
-        リクエストコンテキストを返します。
-        [args]
-        :environ
-            リクエスト環境変数
-    ------------------------------"""
+    
     def requestContext(self,environ):
+        u"""リクエストコンテキストを返します。
+        
+        :param environ: リクエスト環境変数
+        """
         return RequestContext(self, environ)
 
 
 
-    u"""-----------------------------
-        ::pkg:: Shimehari.app
-        doAppContextTearDonw
-        ~~~~~~~~~~~~~~~~~~~~
-        アプリケーションコンテキストがティアーダウンしたとき実行します。
-        [args]
-        :exc
-            
-    ------------------------------"""
     def doAppContextTearDonw(self,exc=None):
         if exc is None:
             exc = sys.exc_info()[1]
@@ -589,16 +506,7 @@ class Shimehari(_Kouzi):
 
 
 
-    u"""-----------------------------
-        ::pkg:: Shimehari.app
-        doRequestContextTearDown
-        ~~~~~~~~~~~~~~
-        リクエストコンテキストを返します。
-        未実装
-        [args]
-        :environ
-            環境変数
-    ------------------------------"""
+    
     def doRequestContextTearDown(self,exc=None):
         if exc is None:
             exc = sys.exc_info()[1]
@@ -608,17 +516,12 @@ class Shimehari(_Kouzi):
 
 
 
-    u"""-----------------------------
-        ::pkg:: Shimehari.app
-        preprocessRequest
-        ~~~~~~~~~~~~~~~~~
-
-        リクエスト前に実行したい処理たちを実行します。
-        [return]
-        :rv
-            登録した処理
-    ------------------------------"""
+    
     def preprocessRequest(self):
+        u"""リクエスト前に処理したい登録済みのメソッドを実行します。
+        
+        :param rv: 登録した処理
+        """
         for func in self.urlValuePreprocesors.get(None, ()):
             func(request.endpoint, request.viewArgs) 
         self.csrf.checkCSRFExempt()
@@ -630,16 +533,11 @@ class Shimehari(_Kouzi):
 
 
 
-    u"""-----------------------------
-        ::pkg:: Shimehari.app
-        processResponse
-        ~~~~~~~~~~~~~~~
-        レスポンス前に行いたい処理を実行します。
-        [return]
-        :response
-            レスポンス
-    ------------------------------"""
     def processResponse(self,response):
+        u"""レスポンスを返す前に処理したい登録済みのメソッドをを実行します。
+        
+        :param response: レスポンス
+        """
         context = _requestContextStack.top
         funcs = ()
 
@@ -654,20 +552,12 @@ class Shimehari(_Kouzi):
 
 
 
-    u"""-----------------------------
-        ::pkg:: Shimehari.app
-        dispatchRequest
-        ~~~~~~~~~~~~~~~
-        リクエストだす
-        [args]
-        :request
-            リクエスト
-
-        [return]
-        :response
-            レスポンス
-    ------------------------------"""
     def dispatchRequest(self):
+        u"""リクエストをもとに、レスポンスを発行します。
+
+        :param request: リクエスト
+
+        """
         self.tryTriggerBeforeFirstRequest()
         try:
             rv = self.preprocessRequest()
@@ -687,19 +577,13 @@ class Shimehari(_Kouzi):
 
 
 
-    u"""-----------------------------
-        ::pkg:: Shimehari.app
-        makeResponse
-        ~~~~~~~~~~~~
-        レスポンスを生成して返します。
-        [args]
-        :rv
-            リクエスト
-        [return]
-        :rv
-            レスポンス
-    ------------------------------"""
+    
     def makeResponse(self, rv):
+        u"""レスポンスを生成して返します。
+        
+        :param rv: リクエスト
+        
+        """
         status = headers = None
 
         if isinstance(rv,tuple):
@@ -725,19 +609,12 @@ class Shimehari(_Kouzi):
 
 
 
-    u"""-----------------------------
-        ::pkg:: Shimehari.app
-        handleException
-        ~~~~~~~~~~~~~~~
-        エラーをハンドリングします。
-
-        [args]
-        :e
-            エラー内容
-        [return]
-
-    ------------------------------"""
     def handleException(self, e):
+        u"""エラーをハンドリングします。
+
+        :param e: エラー内容
+        
+        """
 
         excType, excValue, excTb = sys.exc_info()
         handler = self.errorHandlerSpec[None].get(500)
@@ -762,12 +639,15 @@ class Shimehari(_Kouzi):
         return handler(e)
 
 
+
     def trapHTTPException(self, e):
         if self.config['TRAP_HTTP_EXCEPTIONS']:
             return True
         if self.config['TRAP_BAD_REQUEST_ERRORS']:
             return isinstance(e, BadRequest)
         return False
+
+
 
     def handleUserException(self,e):
         excType, excValue, tb = sys.exc_info()
@@ -781,6 +661,7 @@ class Shimehari(_Kouzi):
             if isinstance(e, typecheck):
                 return handler(e)
         raise excType, excValue, tb
+
 
 
     def raiseRoutingException(self, request):
@@ -798,6 +679,7 @@ class Shimehari(_Kouzi):
         finally:
             builder.close()
 
+
     def handleBuildError(self, error, endpoint, **kwargs):
         if self.buildErrorHandlers is None:
             excType, excValue, tb = sys.exc_info()
@@ -810,19 +692,13 @@ class Shimehari(_Kouzi):
 
 
 
-    u"""-----------------------------
-        ::pkg:: Shimehari.app
-        wsgiApp
-        ~~~~~~~
-
-        WSGI アプリとして実行します。(であってるのか)
-        [args]
-        :environ
-            環境変数
-        :startResponse
-            hoge
-    ------------------------------"""
     def wsgiApp(self, environ, startResponse):
+        u"""WSGI アプリとして実行します。(であってるのか)
+
+        :param environ:         環境変数
+        :param startResponse:   hoge
+
+        """
         with self.requestContext(environ):
             try:
                 response = self.dispatchRequest()
@@ -832,23 +708,14 @@ class Shimehari(_Kouzi):
         
 
 
-    u"""--------------------------------------
-        ::pkg:: Shimehari.app
-        drink
-        ~~~~~    
-
-        アプリを走らせます。
-        [args]
-        :host
-            ホスト名
-        :port
-            ポート番号
-        :debug
-            デバッグモードとして起動するかどうか
-        :options
-            kwargs
-    --------------------------------------"""
     def drink(self, host=None, port=None, debug=None, **options):
+        u"""アプリを実行します。
+        
+        :param host:    ホスト名
+        :param port:    ポート番号
+        :param debug:   デバッグモードとして起動するかどうか
+        :param options: kwargs
+        """
         from werkzeug.serving import run_simple
         if host is None:
             host = '127.0.0.1'
@@ -867,17 +734,11 @@ class Shimehari(_Kouzi):
 
 
 
-    u"""--------------------------------------
-        ::pkg:: Shimenari.app
-        run
-        ~~~
-
-        アプリを走らせます。
-        drink のラッパー。
-        WSGI 周りのライブラリとかで
-        run を自動的に呼ぶ物対策
-    --------------------------------------"""
     def run(self,host=None,port=None, debug=None, **options):
+        u"""アプリを実行します。
+            単純に drink メソッドをラップしているだけです。
+            WSGI 周りのライブラリや既存のコードで run を自動的に呼ぶ物がおおいので念のため。
+        """
         self.drink(host,port,debug,options)
 
 

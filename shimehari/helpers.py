@@ -65,17 +65,11 @@ _missing = object()
 
 _toJsonFilter = json.dumps
 
-u"""-----------------------------
-    ::pkg:: Shimehari.helpers
-    getHandlerAction
-    ~~~~~~~~~~~~~~~~
-
-    [args]
-    :resource
-
-        
-----------------------------------"""
 def getHandlerAction(resource, action):
+    u"""与えられたコントローラーとアクション名からマッチするハンドラを返します。
+    :param resource:    ハンドラを抱えているコントローラー
+    :param action:      ハンドラを取得したいアクション
+    """
     try:
         handler = getattr(resource, action)
         if callable(handler):
@@ -84,31 +78,20 @@ def getHandlerAction(resource, action):
         pass
 
 
-u"""-----------------------------
-    ::pkg:: Shimehari.helpers
-    getHostName
-    ~~~~~~~~~~~
-
-    URL からホスト名を取得します。
-    [args]
-    :url
-        ホスト名を抜き出したい URL
-        
-----------------------------------"""
 def getHostName(url):
+    u"""URL からホスト名を取得します。
+    
+    :param url: ホスト名を抜き出したい URL
+        
+    """
     return urlparse.urlparse(url).netloc
 
 
 
-u"""--------------------------------------
-    ::pkg:: Shimehari.helpers
-    stripTags
-    ~~~~~~~~~
 
-    HTML タグを除去
---------------------------------------"""
 import sgmllib
 class Stripper(sgmllib.SGMLParser):
+    u"""与えられたストリングから HTML タグを除去するクラス。"""
     def __init__(self):
         sgmllib.SGMLParser.___init__(self)
 
@@ -292,20 +275,16 @@ def safeJoin(directory, filename):
 
 
 
-u"""-----------------------------
-    ::pkg:: Shimehari.helpers
-    sendFile
-    ~~~~~~~~
 
-    静的ファイルをレスポンスとして返します。
-    [return]
-    :response
-        静的ファイル
-        
-----------------------------------"""
 def sendFile(filenameOrFp, mimetype=None, asAttachment=False,
              attachmentFilename=None, addEtags=True,
              cacheTimeout=None, conditional=False):
+    u"""静的ファイルをレスポンスとして返します。
+    
+    :param filenameOrFp:    送りたいファイル名
+    :param mimetype:        mimetype
+    
+    """
     mtime = None
     if isinstance(filenameOrFp, basestring):
         filename = filenameOrFp
