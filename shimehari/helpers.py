@@ -38,6 +38,7 @@ from werkzeug.datastructures import Headers
 from werkzeug.wsgi import wrap_file
 from werkzeug.urls import url_quote
 from werkzeug.routing import BuildError
+from werkzeug.exceptions import NotFound
 from shimehari.shared import currentApp, request, _appContextStack, _requestContextStack
 from shimehari.core.helpers import importFromString
 
@@ -258,6 +259,7 @@ def getEnviron():
 def sendFromDirectory(directory, filename, **options):
     filename = safeJoin(directory, filename)
     if not os.path.isfile(filename):
+        print filename
         raise NotFound()
     options.setdefault('conditional',True)
     return sendFile(filename, **options)

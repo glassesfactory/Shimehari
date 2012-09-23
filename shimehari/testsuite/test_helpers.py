@@ -11,7 +11,7 @@ from shimehari.routing import Resource
 from werkzeug.routing import Rule
 from werkzeug.http import parse_cache_control_header, parse_options_header
 
-testConfig = Config('development', {'AUTO_SETUP':False, 'SERVER_NAME':'localhost', 'PREFERRED_URL_SCHEME': 'https', })
+testConfig = Config('development', {'AUTO_SETUP':False, 'SERVER_NAME':'localhost', 'PREFERRED_URL_SCHEME': 'https', 'APP_DIRECTORY':'testApp'})
 
 def hasEncoding(name):
     try:
@@ -230,9 +230,13 @@ class SendFileTestCase(ShimehariTestCase):
             self.assertEqual(options['filename'], 'index.txt')
 
     def testStaticFile(self):
+        ConfigManager.removeConfig('development')
+        ConfigManager.addConfig(testConfig)
         app = shimehari.Shimehari(__name__)
         app.staticFolder = 'static'
         with app.testRequestContext():
+            print app.appFolder
+            print app.staticFolder
             rv = app.sendStaticFile('index.html')
             cc = parse_cache_control_header(rv.headers['Cache-Control'])
             self.assertEqual(cc.max_age, 12 * 60 * 60)
