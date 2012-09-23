@@ -63,6 +63,7 @@ class TemplateRenderableMixIn(object):
 
 
 
+from shimehari.template import renderTemplate
 
 u"""
 ===============================
@@ -93,7 +94,7 @@ class ApplicationController(TemplateRenderableMixIn, AbstractController):
 		AbstractController.__init__(self,name)
 
 	def renderTemplate(self,templateName):
-		return
+		return renderTemplate(templateName)
 
 	def httpMethodNotAllowed(self,templateName='405.html'):
 		pass

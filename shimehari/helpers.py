@@ -448,7 +448,7 @@ class _Kouzi(object):
 
     def _getStaticFolder(self):
         if self._staticFolder is not None:
-            return os.path.join(self.rootPath, self._staticFolder)
+            return os.path.join(self.rootPath, self.appFolder, self._staticFolder)
     def _setStaticFolder(self, value):
         self._staticFolder = value
     staticFolder = property(_getStaticFolder, _setStaticFolder)

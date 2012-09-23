@@ -39,8 +39,7 @@ class Command(CreatableCommand):
     help = ("Generate Shimehari Modules")
     option_list = CreatableCommand.option_list + (
             make_option('--path', '-p', action='store', type='string', dest='path', help='generating target path'),
-            make_option('--namespace', '-ns', action='store', type='string', dest='prefix', help='prefix generetiong target path')
-        )
+         )
 
     def handle(self, moduleType, name, *args, **options):
         if not moduleType == 'controller':
@@ -63,22 +62,17 @@ class Command(CreatableCommand):
         if not os.path.isdir(path):
            raise CommandError('Given path is invalid')
 
-        prefix = options.get('prefix')
-        if prefix is not None:
-            path = prefix + path
-            #うーむ
-            #os.path.join(path,prefix)
-
         ctrlTemplate = os.path.join(shimehari.__path__[0], 'core','conf', 'controller_template.org.py')
         
-        name, filename = self.filenameValidation(name)
-        newPath = os.path.join(path,filename)
+
+        name, filename = self.filenameValidation(path, name)
+        newPath = os.path.join(path, filename)
 
         self.readAndCreateFileWithRename(ctrlTemplate, newPath, name)
 
 
 
-    def filenameValidation(self, name):
+    def filenameValidation(self, path,name):
         if name.endswith(('.pyc','.pyo', '.py.class')):
             raise CommandError('invalid name....')
         if not name.endswith('.py'):
@@ -87,6 +81,8 @@ class Command(CreatableCommand):
             filename = name
             name = name.replace('.py', '')
 
+        name = self.checkDirectory(path, name)
+
         import re
         if re.search(r"\W", name) or re.match(r"\d", name[0]):
             raise CommandError('file name is invalid')
@@ -94,20 +90,37 @@ class Command(CreatableCommand):
         return name, filename
 
 
+    def checkDirectory(self, path, name):
+        sep = None
+        if '.' in name:
+            sep = '.'
+        elif '/' in name:
+            sep = '/'
+        else:
+            pass
 
-    u"""-----------------------------
-        ::pkg:: Shimehari.core.manage.commands.generate.Command
-        readAndCreateFileWithRename
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        if sep is not None:
+            names = name.split(sep)
+        name = names.pop()
+        d = "/".join(names)
+        td = os.path.join(path, d)
+        if not os.path.isdir(td):
+            try:
+                os.makedirs(td)
+            except (IOError, OSError),e:
+                raise CommandError('invaild name... %s' % e)
+        return name
 
-        指定されたディレクトリからテンプレートファイルを読み込み
-        新たに生成したい指定ディレクトリへファイルを生成します。
-        [args]
-            :old テンプレートファイルのパス
-            :new 生成したいディレクトリへのパスとファイル名
-            :name 変更したいクラス名
-    ------------------------------"""
+
+
     def readAndCreateFileWithRename(self, old, new, name):
+        u"""指定されたディレクトリからテンプレートファイルを読み込み
+        新たに生成したい指定ディレクトリへファイルを生成します。
+
+        :param old: テンプレートファイルのパス
+        :param new: 生成したいディレクトリへのパスとファイル名
+        :param name: 変更したいクラス名
+        """
         if os.path.exists(new):
             raise CommandError('Controller already exists.')
 
