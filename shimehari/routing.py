@@ -68,7 +68,7 @@ class RESTfulRouter(AbstractRouter):
     u"""リソースを指定して自動的にルーティング生成
 
 
-    :param resources:           ルーティングを登録したいリソース。 => :ref:`Shimehari.routing.Resource`
+    :param resources:           ルーティングを登録したいリソース。
     :param defaultSubdomain:    prefix として指定するサブドメインを設定します。
     :param charset:             文字コードを設定します。
     :param strictSlashes:       ほげほげ
