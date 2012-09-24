@@ -75,15 +75,13 @@ class CommandLineExecuter(object):
         except:
             subcommand = 'help'
 
-        if subcommand == 'help':
-            pass
-        elif subcommand == 'version':
+        if subcommand == 'version':
             from shimehari import getVersion
             sys.stdout.write('shimehari version: ' + getVersion() + '\n')
         elif self.argv[1:] == ['--version']:
-            pass
+            sys.stdout.write('shimehari version: ' + getVersion() + '\n')
         elif self.argv[1:] in (['--help'], ['-h']):
-            pass
+            self.fetchCommand('help').runFromArgv(self.argv)
         else:
             self.fetchCommand(subcommand).runFromArgv(self.argv)
         

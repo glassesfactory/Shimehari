@@ -25,6 +25,10 @@ DEFAULT_HOST = '127.0.0.1'
 
 
 class BaseDrinkCommand(AbstractCommand):
+    name = 'drink'
+    summary = 'Present a web page at http://127.0.0.1:5959/'
+    usage = "Usage: %prog COMMAND [OPTIONS]"
+ 
     option_list = AbstractCommand.option_list + (
         make_option('--port', '-p', action='store', type='int', dest='port', help='port number.'),
         make_option('--host', action='store', type='string', dest='host', help='host name.'),
@@ -32,6 +36,7 @@ class BaseDrinkCommand(AbstractCommand):
     )
 
     def __init__(self):
+        super(BaseDrinkCommand, self).__init__()
         self.port = DEFAULT_PORT
         self.host = DEFAULT_HOST
         self.debug = False
@@ -92,6 +97,9 @@ class BaseDrinkCommand(AbstractCommand):
             self.host = host
         self.debug = options.get('debug')
         self.run(*args, **options)
+
+BaseDrinkCommand()
+
 
 class Command(BaseDrinkCommand):
     def getHandler(self):

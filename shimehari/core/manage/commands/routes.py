@@ -20,6 +20,13 @@ from shimehari.configuration import ConfigManager, Config
 from shimehari.helpers import getEnviron
 
 class Command(AbstractCommand):
+	name = 'routes'
+	summary = "Show Application routing"
+	usage = "Usage: %prog [OPTIONS]"
+
+	def __init__(self):
+		super(Command, self).__init__()
+
 	def handle(self, *args, **options):
 		try:
 			importFromString('config')
@@ -46,4 +53,4 @@ class Command(AbstractCommand):
 		sys.stdout.write(router.appRoutes.dump())
 		sys.stdout.write('\n')
 
-
+Command()

@@ -36,10 +36,16 @@ u"""
 ===============================
 """
 class Command(CreatableCommand):
-    help = ("Generate Shimehari Modules")
+    name = 'generate'
+    summary = 'Generate Shimehari Modules'
+    usage = "Usage: %prog MODULE_NAME [OPTIONS]"
+
     option_list = CreatableCommand.option_list + (
             make_option('--path', '-p', action='store', type='string', dest='path', help='generating target path'),
-         )
+        )
+
+    def __init__(self):
+        super(Command, self).__init__()
 
     def handle(self, moduleType, name, *args, **options):
         if not moduleType == 'controller':
@@ -139,3 +145,5 @@ class Command(CreatableCommand):
             self.toWritable(new)
         except OSError:
             sys.stderr.write('can not setting permission')
+
+Command()

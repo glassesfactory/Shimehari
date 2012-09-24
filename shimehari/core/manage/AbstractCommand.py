@@ -20,32 +20,32 @@ import shimehari
 
 from shimehari.core.exceptions import CommandError
 
+command_dict = {}
+
 class AbstractCommand(object):
+    name = None
+    help = ''
+    usage = 'Usage: shimehari COMMAND [ARGUMENTS...] [OPTIONS]'
+    summary = 'Shimehari is a framework for Python'
+    hidden = False
     option_list = (
             make_option('--traceback', action='store_true', help='Print traceback on exception'),
         )
-    help = ''
-    args = ''
+
+    def __init__(self):
+        self.parser = OptionParser(
+            usage=self.usage,
+            prog='shimehari %s' % self.name,
+            version=self.getVersion(),
+            option_list=self.option_list)
+        if not self.name == None:
+            command_dict[self.name] = self
 
     def getVersion(self):
         return shimehari.getVersion()
 
-    def usage(self, subcommand):
-        usage = '%%prog %s [options] %s' % (subcommand, self.args)
-        if self.help:
-            return '%s\n\n%s' %(usage, self.help)
-        else:
-            return usage
-
-    def createParser(self, progName, subcommand):
-        return OptionParser(prog=progName, 
-                            usage=self.usage(subcommand),
-                            version=self.getVersion(),
-                            option_list=self.option_list)
-
     def runFromArgv(self, argv):
-        parser = self.createParser(argv[0], argv[1])
-        options, args = parser.parse_args(argv[2:])
+        options, args = self.parser.parse_args(argv[2:])
         self.execute(*args, **options.__dict__)
 
     def execute(self, *args, **options):

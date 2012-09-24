@@ -39,11 +39,16 @@ u"""
 ===============================
 """
 class Command(CreatableCommand):
-    help = ("Create Shimehari Application.")
+    name = 'create'
+    summary = 'Create Shimehari Application'
+    usage = "Usage: %prog APPLICATION_NAME [OPTIONS]"
     option_list = CreatableCommand.option_list + (
             make_option('--path', '-p', action='store', type='string', dest='path', help='target create path'),
             make_option('--template', '-t', action='store', type='string', dest='template', help='using project tempalte')
         )
+    
+    def __init__(self):
+        super(Command, self).__init__()
 
     def handle(self, appDir='app', *args, **options):
         try:
@@ -164,8 +169,4 @@ class Command(CreatableCommand):
             os.mkdir(targetName)
             sys.stdout.write("Creating: %s\n" % targetName) 
 
-
-
-
-
-    
+Command()
