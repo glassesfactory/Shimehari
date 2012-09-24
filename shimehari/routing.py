@@ -25,15 +25,17 @@ u"""
     ルーター
 ===============================
 """
+
+
 class AbstractRouter(Map):
     u"""Shimehari アプリケーションで使用するルーターの抽象クラス
     """
-    def __init__(self,rules=[], defaultSubdomain='', charset='utf-8',
+    def __init__(self, rules=[], defaultSubdomain='', charset='utf-8',
                 strict_slashes=True, redirectDefaults=True,
                 converters=None, sortParameters=False, sortKey=None,
                 encodingErrors='replace', hostMatching=False):
 
-        Map.__init__(self, rules=rules,default_subdomain=defaultSubdomain, charset=charset,
+        Map.__init__(self, rules=rules, default_subdomain=defaultSubdomain, charset=charset,
                     strict_slashes=strict_slashes, redirect_defaults=redirectDefaults,
                     converters=converters, sort_parameters=sortParameters, sort_key=sortKey,
                     encoding_errors=encodingErrors, host_matching=hostMatching)
@@ -43,8 +45,6 @@ class AbstractRouter(Map):
         for rule in rules:
             self.add(rule)
 
-
-    
     def dump(self):
         u"""
         現在定義されているルーティングを出力します。
@@ -59,9 +59,8 @@ class AbstractRouter(Map):
             _map += '[action => '
             _map += rule.endpoint.__name__
             clsName = rule.endpoint.im_class.__name__
-            _map +=  ', controller => ' + clsName + ']\n'
+            _map += ', controller => ' + clsName + ']\n'
         return _map
-
 
 
 class RESTfulRouter(AbstractRouter):
@@ -85,7 +84,7 @@ class RESTfulRouter(AbstractRouter):
                 converters=None, sortParameters=False, sortKey=None,
                 encodingErrors='replace', hostMatching=False):
 
-        AbstractRouter.__init__(self, rules=[],defaultSubdomain=defaultSubdomain, charset=charset,
+        AbstractRouter.__init__(self, rules=[], defaultSubdomain=defaultSubdomain, charset=charset,
                     strict_slashes=strict_slashes, redirectDefaults=redirectDefaults,
                     converters=converters, sortParameters=sortParameters, sortKey=sortKey,
                     encodingErrors=encodingErrors, hostMatching=hostMatching)
@@ -93,7 +92,6 @@ class RESTfulRouter(AbstractRouter):
         self._rules = []
 
         for resource in resources:
-            rules = []
             if isinstance(resource, (Resource, RESTfulRule)):
                 for rule in resource._rules:
                     self.add(rule)
@@ -106,13 +104,11 @@ class RESTfulRouter(AbstractRouter):
                 raise TypeError('resources rule is invalid.')
 
 
-
 class Root(Rule):
     root = True
+
     def __init__(self, endpoint, methods=['get']):
         Rule.__init__(self, '/', endpoint=endpoint, methods=methods)
-
-
 
 
 class RESTfulRule(object):
@@ -130,9 +126,9 @@ class RESTfulRule(object):
         if index is not None:
             rules.append(Rule(self.getName(name, 'index'), endpoint=index, methods=['get']))
         if show is not None:
-            rules.append(Rule(self.getName(name, 'show'), endpoint=show, methods=['get','post']))
+            rules.append(Rule(self.getName(name, 'show'), endpoint=show, methods=['get', 'post']))
         if edit is not None:
-            rules.append(Rule(self.getName(name, 'edit'), endpoint=edit, methods=['get','post']))
+            rules.append(Rule(self.getName(name, 'edit'), endpoint=edit, methods=['get', 'post']))
         if new is not None:
             rules.append(Rule(self.getName(name, 'new'), endpoint=new, methods=['get']))
         if create is not None:
@@ -143,20 +139,18 @@ class RESTfulRule(object):
             rules.append(Rule(self.getName(name, 'destroy'), endpoint=destroy, methods=['delete']))
         self._rules = rules
 
-
     def refresh(self):
         for rule in self._rules:
             if self.parent:
                 rule.rule = self.parent.baseName + '/' + rule.rule
             # rule.refresh()
 
-
     #uアクション名から URL Name を生成します
     def getNameFromRESTAction(self, name, action, root=False):
         if not name.startswith('/') and len(name) > 1:
             name = '/' + name
         if name.endswith('/') and len(name) > 1:
-            name = name[:len(name)-1]
+            name = name[:len(name) - 1]
 
         if root:
             name = ''
@@ -176,28 +170,26 @@ class RESTfulRule(object):
             raise ValueError('RESTfulRule')
 
 
-
 class Resource(Map):
     u"""リソース
-    
+
     :param controller:  リソースとして指定するコントローラー
     :param children:    aaa
     :param name:        namae
-    :param only:        
+    :param only:
 
     """
-    
+
     parent = None
 
     baseName = None
 
     orgName = None
 
-
-    def __init__(self, controller=None, children=[], name=None, only=[], excepts=[], root=False, 
+    def __init__(self, controller=None, children=[], name=None, only=[], excepts=[], root=False,
                 subdomain=None, buildOnly=False, strict_slashes=None, redirectTo=None,
                 alias=False, host=None, defaults=None, namespace=None):
-      
+
         Map.__init__(self, rules=[], default_subdomain='', charset='utf-8',
                  strict_slashes=True, redirect_defaults=True,
                  converters=None, sort_parameters=False, sort_key=None,
@@ -239,9 +231,9 @@ class Resource(Map):
             if self.namespace.startswith('/'):
                 self.namespace = self.namespace[1:]
             if self.namespace.endswith('/'):
-                self.namespace = self.namespace[:len(self.namespace)-1]
+                self.namespace = self.namespace[:len(self.namespace) - 1]
         #ディレクトリが深かった時自動で
-        elif controller is not None: 
+        elif controller is not None:
             config = ConfigManager.getConfig()
             if config['CONTROLLER_AUTO_NAMESPACE'] and type(controller) is not int:
                 pkgs = controller.__module__.split('.')
@@ -252,10 +244,10 @@ class Resource(Map):
                 if controllerFolder in pkgs:
                     pkgs.remove(controllerFolder)
 
-                self.orgName = pkgs[len(pkgs)-1]
-                pkgs = pkgs[:len(pkgs)-1]
+                self.orgName = pkgs[len(pkgs) - 1]
+                pkgs = pkgs[:len(pkgs) - 1]
                 self.namespace = "/".join(pkgs)
-            
+
         if controller:
             controller = self._checkControllerType(controller)
             if not name:
@@ -281,7 +273,6 @@ class Resource(Map):
                 if isinstance(child, Resource):
                     self._rules = self._rules + child._rules
 
-
     def _checkControllerType(self, controller):
         from shimehari.controllers import AbstractController
         if isinstance(controller, str):
@@ -306,7 +297,7 @@ class Resource(Map):
         actions = RESTFUL_ACTIONS.copy()
         if self.only is not None:
             actions = RESTFUL_ACTIONS.intersection(self.only)
-        if self.excepts is not None:    
+        if self.excepts is not None:
             actions = RESTFUL_ACTIONS.difference(self.excepts)
 
         for action in actions:
@@ -315,26 +306,23 @@ class Resource(Map):
                 name = self.getName(self.baseName, action, self.root)
 
                 methods = RESTFUL_METHODS_MAP[action.lower()]
-                rule = Rule(name, defaults=self.defaults, endpoint=handler, 
+                rule = Rule(name, defaults=self.defaults, endpoint=handler,
                             subdomain=self.subdomain, methods=methods, build_only=self.buildOnly,
                             strict_slashes=self.strict_slashes, redirect_to=self.redirectTo, alias=self.alias, host=self.host)
 
                 self._rules.append(rule)
 
-
-
     def _addRuleFromRules(self, rules):
         for rule in rules:
+            # FIXME: undefined name "RuleBase"
             if not isinstance(rule, RuleBase):
                 raise TypeError('Rule type is invalid')
             self._rules.append(rule)
 
-
-
     def add(self, controller):
         u"""コントローラー、もしくはルールを追加します。
 
-        
+
         :param controller:  ルールを追加したいコントローラー、もしくは
                             RESTfulRule、ルールを格納したディクショナリ
 
@@ -352,13 +340,10 @@ class Resource(Map):
         else:
             raise ValueError('out!')
 
-
     def refresh(self):
         for rule in self._rules:
             if self.parent:
                 rule.rule = '/' + self.parent.baseName + rule.rule
-
-
 
     def addRule(self, name, handler, methods=[], *args, **kwargs):
         u"""リソースに対してルールを追加します。
@@ -368,7 +353,7 @@ class Resource(Map):
         :param methods:     使用する HTTP メソッド
 
         """
-        rule = Rule(name, defaults=self.defaults, endpoint=handler, 
+        rule = Rule(name, defaults=self.defaults, endpoint=handler,
                             subdomain=self.subdomain, methods=methods, build_only=self.buildOnly,
                             strict_slashes=self.strict_slashes, redirect_to=self.redirectTo, alias=self.alias, host=self.host)
         self._rules.append(rule)
@@ -379,11 +364,9 @@ class Resource(Map):
     def overRideRule(self, action, name, handler=None, methods=[], *args, **kwargs):
         print self._rules
 
-
-    
     def getNameFromRESTAction(self, name, action, root=False):
         u"""アクション名から URL Name を生成します。
-        
+
         :param name:    名前
         :param action:  アクション
         :param root:    ルートかどうか
@@ -395,10 +378,10 @@ class Resource(Map):
         if not name.startswith('/') and len(name) > 1:
             name = '/' + name
         if name.endswith('/') and len(name) > 1:
-            name = name[:len(name)-1]
+            name = name[:len(name) - 1]
 
         if root:
-            name = '' 
+            name = ''
 
         _act = action.lower()
         if _act == 'index' or _act == 'create':
@@ -418,6 +401,8 @@ class Resource(Map):
 u"""
 werkzeug の中に似たのがあるっぽい…
 """
+
+
 class Group(object):
     def __init__(self, name, children):
         for child in children:
@@ -430,8 +415,6 @@ class Group(object):
                 child.refresh()
             else:
                 raise RuntimeError('settei dekimasen.')
-
-
 
 
 #defaultRouterClass

@@ -9,22 +9,22 @@ from controllers import IndexController
 #
 # from shimehari.routing import RESTfulRouter
 # appRoutes = RESTfulRouter([
-#        Resource(IndexController,root=True),
-#        Resource(SomeOtherController),
-#        Resource(SomethingElseController, expect=['edit', 'destroy'])
-#    ])
+#    Resource(IndexController,root=True),
+#    Resource(SomeOtherController),
+#    Resource(SomethingElseController, expect=['edit', 'destroy'])
+#])
 
 
 appRoutes = Router([
-		Resource(IndexController, root=True)
-	])
+    Resource(IndexController, root=True)
+])
 
 #
 # You can routing like werkzeug style.
-# 
+#
 # from shimehari import BasicRouter
 # appRoutes = BasicRouter([
-#        {'/':IndexController.list},
-#        {'/hoge':SomeOtherController.list},
-#        {'/hoge/<int:id>':SomeOtherController.show}
-#    ])
+#    {'/': IndexController.list},
+#    {'/hoge': SomeOtherController.list},
+#    {'/hoge/<int:id>': SomeOtherController.show}
+#])

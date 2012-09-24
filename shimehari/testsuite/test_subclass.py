@@ -10,8 +10,10 @@ from shimehari.testsuite import ShimehariTestCase
 from werkzeug.routing import Rule
 from shimehari.configuration import ConfigManager, Config
 
-testConfig = Config('development', {'AUTO_SETUP':False, 'SERVER_NAME':'localhost', 'PREFERRED_URL_SCHEME': 'https'})
+
+testConfig = Config('development', {'AUTO_SETUP': False, 'SERVER_NAME': 'localhost', 'PREFERRED_URL_SCHEME': 'https'})
 ConfigManager.addConfig(testConfig)
+
 
 class ShimehariSubclassingTestCase(ShimehariTestCase):
     def testSuperessedExceptionLogging(self):
@@ -24,7 +26,7 @@ class ShimehariSubclassingTestCase(ShimehariTestCase):
         app.logger.addHandler(StreamHandler(out))
 
         def index():
-            1/0
+            1 / 0
 
         app.router = shimehari.Router([Rule('/', endpoint='index', methods=['GET'])])
         app.controllers['index'] = index
@@ -35,6 +37,7 @@ class ShimehariSubclassingTestCase(ShimehariTestCase):
 
         err = out.getvalue()
         self.assertEqual(err, '')
+
 
 def suite():
     suite = unittest.TestSuite()

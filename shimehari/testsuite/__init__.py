@@ -17,11 +17,12 @@ from contextlib import contextmanager
 from werkzeug.utils import import_string, find_modules
 import shimehari
 
+
 def addToPath(path):
     if not os.path.isdir(path):
         raise RuntimeError('存在しないパスです')
 
-    def _samefile(x,y):
+    def _samefile(x, y):
         try:
             return os.path.samefile(x, y)
         except (IOError, OSError):
@@ -36,6 +37,7 @@ def iterSuites():
         if hasattr(mod, 'siote'):
             yield mod.suite()
 
+
 def findAllTests(suite):
     suites = [suite]
     while suites:
@@ -49,6 +51,7 @@ def findAllTests(suite):
                     s._testMethodName
                 )
 
+
 @contextmanager
 def catchWarnings():
     warnings.simplefilter('default', category=DeprecationWarning)
@@ -56,6 +59,7 @@ def catchWarnings():
     warnings.filters = filters[:]
     oldShowWarnings = warnings.showwarning
     log = []
+
     def showwarning(message, category, filename, lineno, file=None):
         log.append(locals())
     try:
@@ -64,7 +68,6 @@ def catchWarnings():
     finally:
         warnings.filters = filters
         warnings.showwarning = oldShowWarnings
-
 
 
 @contextmanager
@@ -76,7 +79,6 @@ def catchStdErr():
     finally:
         sys.strerr = oldStderr
 
-        
 
 class ShimehariTestCase(unittest.TestCase):
 
@@ -121,6 +123,7 @@ class _ExceptionCatcher(object):
             raise excType, excValue, tb
         return True
 
+
 class BetterLoader(unittest.TestLoader):
     def getRootSuite(self):
         return suite()
@@ -148,21 +151,22 @@ class BetterLoader(unittest.TestLoader):
             rv.addTest(test)
         return rv
 
+
 def setupPath():
     addToPath(os.path.abspath(os.path.join(os.path.dirname(__file__), 'testApps')))
+
 
 def suite():
 
     setupPath()
-    suite = uinittest.TestSuite()
+    suite = unittest.TestSuite()
     for otherSuite in iterSuites():
         suite.addTest(otherSuite)
     return suite
+
 
 def main():
     try:
         unittest.main(testLoader=BetterLoader(), defaultTest='suite')
     except Exception, e:
         print 'Error: %s' % e
-
-

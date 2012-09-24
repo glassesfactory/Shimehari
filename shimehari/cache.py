@@ -7,7 +7,7 @@ u"""
     ~~~~~~~~~~~~~~~~~~~~~~~
 
     キャッシュオブジェクト
-    
+
 ===============================
 """
 
@@ -25,8 +25,11 @@ u"""
     キャッシュ
 ===============================
 """
+
+
 class Cache(object):
     store = None
+
     def __init__(self, storetype=None):
         config = ConfigManager.getConfig(getEnviron())
 
@@ -34,9 +37,8 @@ class Cache(object):
             store = config['CACHE_STORE']
         else:
             store = storetype
-    
-        self.store = self._importCacheStore(store)
 
+        self.store = self._importCacheStore(store)
 
     u"""-----------------------------
         Shimehari.cache.Cache
@@ -77,7 +79,6 @@ class Cache(object):
 
     def clear(self):
         self.store.clear()
-
 
     def setCacheStore(self, store):
         self.store = store
@@ -127,4 +128,3 @@ class Cache(object):
         if storetype == 'redis':
             return RedisCacheStore()
         return NullCacheStore()
-        

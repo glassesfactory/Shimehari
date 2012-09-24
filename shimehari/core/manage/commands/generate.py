@@ -9,7 +9,7 @@ u"""
 
     各コマンドモジュールは共通インターフェースとして
     Command クラスを持ちます。
-    
+
 ===============================
 """
 import os
@@ -25,16 +25,19 @@ from shimehari.core.manage import CreatableCommand
 from shimehari.helpers import getEnviron
 from shimehari.configuration import ConfigManager, Config
 
+
 u"""
 ===============================
     ::pkg:: Shimehari.core.manage.commands.generate
     Command
     ~~~~~~~
-    
+
     コマンドの実装
-    
+
 ===============================
 """
+
+
 class Command(CreatableCommand):
     name = 'generate'
     summary = 'Generate Shimehari Modules'
@@ -50,7 +53,7 @@ class Command(CreatableCommand):
     def handle(self, moduleType, name, *args, **options):
         if not moduleType == 'controller':
             raise CommandError('ない')
-    
+
         path = options.get('path')
         if path is None:
             currentPath = os.getcwd()
@@ -66,20 +69,17 @@ class Command(CreatableCommand):
             path = os.path.join(currentPath, config['APP_DIRECTORY'], config['CONTROLLER_DIRECTORY'])
 
         if not os.path.isdir(path):
-           raise CommandError('Given path is invalid')
+            raise CommandError('Given path is invalid')
 
-        ctrlTemplate = os.path.join(shimehari.__path__[0], 'core','conf', 'controller_template.org.py')
-        
+        ctrlTemplate = os.path.join(shimehari.__path__[0], 'core', 'conf', 'controller_template.org.py')
 
         name, filename = self.filenameValidation(path, name)
         newPath = os.path.join(path, filename)
 
         self.readAndCreateFileWithRename(ctrlTemplate, newPath, name)
 
-
-
-    def filenameValidation(self, path,name):
-        if name.endswith(('.pyc','.pyo', '.py.class')):
+    def filenameValidation(self, path, name):
+        if name.endswith(('.pyc', '.pyo', '.py.class')):
             raise CommandError('invalid name....')
         if not name.endswith('.py'):
             filename = name + '.py'
@@ -94,7 +94,6 @@ class Command(CreatableCommand):
             raise CommandError('file name is invalid')
         name = name[0].upper() + name[1:]
         return name, filename
-
 
     def checkDirectory(self, path, name):
         sep = None
@@ -113,11 +112,9 @@ class Command(CreatableCommand):
         if not os.path.isdir(td):
             try:
                 os.makedirs(td)
-            except (IOError, OSError),e:
+            except (IOError, OSError), e:
                 raise CommandError('invaild name... %s' % e)
         return name
-
-
 
     def readAndCreateFileWithRename(self, old, new, name):
         u"""指定されたディレクトリからテンプレートファイルを読み込み
@@ -135,13 +132,13 @@ class Command(CreatableCommand):
             if '%s' in content:
                 content = content % name
                 content = content[3:]
-                content = content[:len(content) -3]
+                content = content[:len(content) - 3]
         with open(new, 'w') as newFile:
             newFile.write(content)
         sys.stdout.write("Genarating New Controller: %s\n" % new)
 
         try:
-            shutil.copymode(old,new)
+            shutil.copymode(old, new)
             self.toWritable(new)
         except OSError:
             sys.stderr.write('can not setting permission')

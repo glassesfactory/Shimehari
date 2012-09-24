@@ -6,14 +6,14 @@ u"""
     Shimehari.core.manage.commands
     drink
     ~~~~~
-    
+
     Shimehari App を起動します。
 
 ===============================
 """
 
 import os
-from optparse import OptionParser, make_option
+from optparse import make_option
 
 from shimehari.core.manage import AbstractCommand
 from shimehari.core.helpers import importFromString
@@ -28,7 +28,7 @@ class BaseDrinkCommand(AbstractCommand):
     name = 'drink'
     summary = 'Present a web page at http://127.0.0.1:5959/'
     usage = "Usage: %prog COMMAND [OPTIONS]"
- 
+
     option_list = AbstractCommand.option_list + (
         make_option('--port', '-p', action='store', type='int', dest='port', help='port number.'),
         make_option('--host', action='store', type='string', dest='host', help='host name.'),
@@ -40,8 +40,6 @@ class BaseDrinkCommand(AbstractCommand):
         self.port = DEFAULT_PORT
         self.host = DEFAULT_HOST
         self.debug = False
-
-
 
     def run(self, *args, **options):
         try:
@@ -62,7 +60,7 @@ class BaseDrinkCommand(AbstractCommand):
             if not self.debug and currentConfig['DEBUG']:
                 self.debug = True
 
-            def openBrowser(host,port):
+            def openBrowser(host, port):
                 url = 'http://'
                 if not host:
                     url += '127.0.0.1'
@@ -76,16 +74,12 @@ class BaseDrinkCommand(AbstractCommand):
                 import webbrowser
                 webbrowser.open(url)
             import threading
-            timer = threading.Timer(0.5,openBrowser,args=[self.host,self.port])
+            timer = threading.Timer(0.5, openBrowser, args=[self.host, self.port])
             timer.start()
             app.drink(host=self.host, port=int(self.port), debug=self.debug)
-            
-            
 
-            
         except Exception, e:
             raise CommandError(e)
-
 
     def handle(self, *args, **options):
         port = options.get('port')

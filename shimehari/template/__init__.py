@@ -15,9 +15,11 @@ def _defaultTemplateCtxProcessor():
         shared=reqctx.shared
     )
 
+
 def _render(template, context):
     rv = template.render(context)
     return rv
+
 
 def renderTemplate(templateNameOrList, **context):
     ctx = _requestContextStack.top
@@ -25,11 +27,11 @@ def renderTemplate(templateNameOrList, **context):
     return _render(ctx.app.templateEnv.get_or_select_template(templateNameOrList),
         context)
 
+
 def renderTempalteString(source, **context):
     ctx = _requestContextStack.top
     ctx.app.updateTemplateContext(context)
     return _render(ctx.app.templateEnv.from_string(source), context)
-
 
 
 u"""
@@ -40,13 +42,15 @@ u"""
 
     各テンプレートエンジンに共通のインターフェースをもたらす
     アダプターのベーシッククラス
-    
+
 ===============================
 """
+
+
 class AbstractTemplater(object):
     templateOptions = ImmutableDict()
 
-    def __init__(self,app, *args, **options):
+    def __init__(self, app, *args, **options):
         self.app = app
 
         if 'templateOptions' in options:
@@ -62,7 +66,7 @@ class AbstractTemplater(object):
     def createTemplateEnvironment(self):
         raise NotImplementedError()
 
-    def dispatchLoader(self,app):
+    def dispatchLoader(self, app):
         raise NotImplementedError()
 
     def updateTemplateContext(self, context):

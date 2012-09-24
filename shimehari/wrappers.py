@@ -28,8 +28,6 @@ class Request(RequestBase):
         if self.urlRule is not None:
             return self.urlRule.endpoint
 
-
-
     @cached_property
     def json(self):
         if __debug__:
@@ -43,21 +41,19 @@ class Request(RequestBase):
             except ValueError, error:
                 return self.jsonLoadFailedHandler(error)
 
-
-
     def jsonLoadFailedHandler(self, error):
         raise JSONBadRequest()
-
-
 
     def _load_from_data(self):
         RequestBase._load_from_data(self)
 
+        # FIXME: Undefined name "_requestContextStack"
         context = _requestContextStack
 
         if context is not None and context.app.debug and \
             self.mimetype != 'multipart/form-data' and not self.files:
                 attachEnctypeErrorMultidict(self)
+
 
 class Response(ResponseBase):
     default_mimetype = 'text/html'

@@ -8,7 +8,8 @@ from optparse import make_option
 from shimehari.core.exceptions import CommandError
 from shimehari.core.manage import AbstractCommand
 from shimehari.core.helpers import importFromString
-from shimehari.configuration import ConfigManager, Config
+from shimehari.configuration import ConfigManager
+
 
 class Command(AbstractCommand):
     name = 'checkconfig'
@@ -31,7 +32,7 @@ class Command(AbstractCommand):
         env = options.get('env')
         if env is None:
             env = 'development'
-        
+
         sys.stdout.write('\nYour Shimehari App Current Config.\n\n')
         sys.stdout.write('-------------------------------------------------\n')
         sys.stdout.write(ConfigManager.getConfig(env).dump())

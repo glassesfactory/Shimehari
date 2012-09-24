@@ -5,17 +5,16 @@ import unittest
 from shimehari.testsuite import ShimehariTestCase
 from shimehari.configuration import ConfigManager, Config
 
+
 class TestConfigManager(ShimehariTestCase):
     def testHasNotConfig(self):
         ConfigManager.configrations = {}
         rv = ConfigManager.hasConfig()
         self.assertEqual(rv, False)
 
-
     def testAddConfig(self):
         config = Config()
         self.assertNotEqual(ConfigManager.addConfig(config), TypeError)
-
 
     def testAddConfigRaiseTypeError(self):
         dummy = u'|/ﾟUﾟ|丿'
@@ -25,8 +24,7 @@ class TestConfigManager(ShimehariTestCase):
         configA = Config()
         configB = Config('production')
         configC = Config('test')
-        self.assertNotEqual(ConfigManager.addConfigs([configA,configB, configC]), TypeError)
-
+        self.assertNotEqual(ConfigManager.addConfigs([configA, configB, configC]), TypeError)
 
     def testHasConfig(self):
         config = Config()
@@ -34,11 +32,10 @@ class TestConfigManager(ShimehariTestCase):
         rv = ConfigManager.hasConfig()
         self.assertEqual(rv, True)
 
-
     def testGetConfigs(self):
         configA = Config()
         configB = Config('production')
-        ConfigManager.addConfigs([configA,configB])
+        ConfigManager.addConfigs([configA, configB])
         self.assertNotEqual(ConfigManager.getConfigs(), {})
 
     def testGetConfig(self):
@@ -50,8 +47,6 @@ class TestConfigManager(ShimehariTestCase):
 
 def suite():
     suite = unittest.TestSuite()
+    # FIXME: Undefined name "ConfigManagerTestCase"
     suite.addTest(unittest.makeSuite(ConfigManagerTestCase))
     return suite
-
-
-#test

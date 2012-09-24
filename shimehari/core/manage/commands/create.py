@@ -6,16 +6,15 @@ u"""
     Shimehari.core.manage.commands.create
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     アプリケーションを新たに作成する create コマンド
-    
+
     各コマンドモジュールは共通インターフェースとして
     Command クラスを持ちます。
-    
+
 ===============================
 """
 
 import os
 import sys
-import random
 import errno
 import shutil
 from optparse import make_option
@@ -25,9 +24,10 @@ from shimehari.core.manage import CreatableCommand
 from shimehari.core.helpers import importFromString
 from shimehari.core.exceptions import CommandError
 
-debugFormat = "('-' * 80 + '\\n' + '%(levelname)s in %(module)s [%(pathname)s:%(lineno)d]:\\n' + '%(message)s\\n' + '-' * 80)" 
+debugFormat = "('-' * 80 + '\\n' + '%(levelname)s in %(module)s [%(pathname)s:%(lineno)d]:\\n' + '%(message)s\\n' + '-' * 80)"
 
 outputFormat = "('%(asctime)s %(levelname)s in %(module)s [%(pathname)s:%(lineno)d]:\\n' + '%(message)s\\n' + '-' * 80)"
+
 
 u"""
 ===============================
@@ -35,9 +35,11 @@ u"""
     Command
     ~~~~~~~
     コマンドの実装
-    
+
 ===============================
 """
+
+
 class Command(CreatableCommand):
     name = 'create'
     summary = 'Create Shimehari Application'
@@ -46,7 +48,7 @@ class Command(CreatableCommand):
             make_option('--path', '-p', action='store', type='string', dest='path', help='target create path'),
             make_option('--template', '-t', action='store', type='string', dest='template', help='using project tempalte')
         )
-    
+
     def __init__(self):
         super(Command, self).__init__()
 
@@ -76,7 +78,7 @@ class Command(CreatableCommand):
 
         template = options.get('template')
         if template is None:
-            appTemplateDir = os.path.join(shimehari.__path__[0], 'core','conf', 'app_template')
+            appTemplateDir = os.path.join(shimehari.__path__[0], 'core', 'conf', 'app_template')
         else:
             appTemplateDir = template
 
@@ -84,9 +86,9 @@ class Command(CreatableCommand):
 
         for root, dirs, files in os.walk(appTemplateDir):
             pathRest = root[prefixLen:]
-            relativeDir = pathRest.replace('app_name','app')
+            relativeDir = pathRest.replace('app_name', 'app')
             if relativeDir:
-                targetDir = os.path.join(appRootDir,relativeDir)
+                targetDir = os.path.join(appRootDir, relativeDir)
                 if not os.path.exists(targetDir):
                     os.mkdir(targetDir)
 
@@ -95,7 +97,7 @@ class Command(CreatableCommand):
                     dirs.remove(dirname)
 
             for filename in files[:]:
-                if filename.endswith(('.pyo','.pyc','.py.class')):
+                if filename.endswith(('.pyo', '.pyc', '.py.class')):
                     continue
                 oldPath = os.path.join(root, filename)
                 newPath = os.path.join(appRootDir, relativeDir, filename.replace('app_name', 'app'))
@@ -108,14 +110,12 @@ class Command(CreatableCommand):
         self.createDirectory(appRootDir, 'log')
 
         #generate config file
-        confOrgPath = os.path.join(shimehari.__path__[0], 'core', 'conf','config.org.py')
+        confOrgPath = os.path.join(shimehari.__path__[0], 'core', 'conf', 'config.org.py')
         newConfPath = os.path.join(os.getcwd(), 'config.py')
-        self.readAndCreateFileWithRename(confOrgPath, newConfPath, 
+        self.readAndCreateFileWithRename(confOrgPath, newConfPath,
                                             (appDir, appDir, debugFormat, outputFormat))
-        
+
         sys.stdout.write("New App Create Complete. enjoy!\n")
-
-
 
     u"""-----------------------------
         ::pkg:: Shimehari.core.manage.commands.create.Command
@@ -139,11 +139,10 @@ class Command(CreatableCommand):
         sys.stdout.write(u"Creating: %s\n" % new)
 
         try:
-            shutil.copymode(old,new)
+            shutil.copymode(old, new)
             self.toWritable(new)
         except OSError:
             sys.stderr.write('permission error')
-
 
     def readAndCreateFileWithRename(self, old, new, name):
         if os.path.exists(new):
@@ -158,7 +157,7 @@ class Command(CreatableCommand):
         sys.stdout.write("Creating: %s\n" % new)
 
         try:
-            shutil.copymode(old,new)
+            shutil.copymode(old, new)
             self.toWritable(new)
         except OSError:
             sys.stderr.write('can not setting permission')
@@ -167,6 +166,6 @@ class Command(CreatableCommand):
         targetName = os.path.join(rootDir, dirname)
         if not os.path.exists(targetName):
             os.mkdir(targetName)
-            sys.stdout.write("Creating: %s\n" % targetName) 
+            sys.stdout.write("Creating: %s\n" % targetName)
 
 Command()

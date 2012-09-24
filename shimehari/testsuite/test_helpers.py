@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import unittest
 import os
 import shimehari
 from logging import StreamHandler
@@ -11,7 +12,8 @@ from shimehari.routing import Resource
 from werkzeug.routing import Rule
 from werkzeug.http import parse_cache_control_header, parse_options_header
 
-testConfig = Config('development', {'AUTO_SETUP':False, 'SERVER_NAME':'localhost', 'PREFERRED_URL_SCHEME': 'https', 'APP_DIRECTORY':'testApp'})
+testConfig = Config('development', {'AUTO_SETUP': False, 'SERVER_NAME': 'localhost', 'PREFERRED_URL_SCHEME': 'https', 'APP_DIRECTORY': 'testApp'})
+
 
 def hasEncoding(name):
     try:
@@ -26,23 +28,23 @@ class JSONTestCase(ShimehariTestCase):
     def testJSONBadRequests(self):
         ConfigManager.addConfig(testConfig)
         app = shimehari.Shimehari(__name__)
+
         def returnJSON(*args, **kwargs):
             return unicode(shimehari.request.json)
         app.router = shimehari.Router([Rule('/json', endpoint='returnJSON', methods=['POST'])])
-        app.controllers['returnJSON']= returnJSON
+        app.controllers['returnJSON'] = returnJSON
         c = app.testClient()
         rv = c.post('/json', data='malformed', content_type='application/json')
         self.assertEqual(rv.status_code, 400)
 
-
-
     def testJSONBadRequestsContentType(self):
         ConfigManager.addConfig(testConfig)
         app = shimehari.Shimehari(__name__)
+
         def returnJSON(*args, **kwargs):
             return unicode(shimehari.request.json)
         app.router = shimehari.Router([Rule('/json', endpoint='returnJSON', methods=['POST'])])
-        app.controllers['returnJSON']= returnJSON
+        app.controllers['returnJSON'] = returnJSON
         c = app.testClient()
         rv = c.post('/json', data='malformed', content_type='application/json')
         self.assertEqual(rv.status_code, 400)
@@ -50,28 +52,29 @@ class JSONTestCase(ShimehariTestCase):
         self.assert_('description' in shimehari.json.loads(rv.data))
         self.assert_('<p>' not in shimehari.json.loads(rv.data)['description'])
 
-
-
     def jsonBodyEncoding(self):
         ConfigManager.addConfig(testConfig)
         app = shimehari.Shimehari(__name__)
+        # FIXME: Undefined name "testJSONBadRequests"
         app.testing = testJSONBadRequests
+
         def returnJSON(*args, **kwargs):
             return shimehari.request.json
         app.router = shimehari.Router([Rule('/json', endpoint='returnJSON', methods=['GET'])])
-        app.controllers['returnJSON']= returnJSON
+        app.controllers['returnJSON'] = returnJSON
         c = app.testClient()
         resp = c.get('/', data=u"はひ".encode('iso-8859-15'), content_type='application/json; charset=iso-8859-15')
-        sekf,assertEqual(reso.data, u'はひ'.encode('utf-8'))
-
+        self.assertEqual(resp.data, u'はひ'.encode('utf-8'))
 
     def testJsoniFy(self):
-        d = dict(a=23, b=42, c=[1,2,3])
+        d = dict(a=23, b=42, c=[1, 2, 3])
         ConfigManager.addConfig(testConfig)
         app = shimehari.Shimehari(__name__)
+
         #hum
         def returnKwargs():
             return shimehari.jsonify(**d)
+
         def returnDict():
             return shimehari.jsonify(d)
 
@@ -81,7 +84,7 @@ class JSONTestCase(ShimehariTestCase):
         ])
         app.controllers['returnKwargs'] = returnKwargs
         app.controllers['returnDict'] = returnDict
-        
+
         c = app.testClient()
         for url in '/kw', '/dict':
             rv = c.get(url)
@@ -89,19 +92,18 @@ class JSONTestCase(ShimehariTestCase):
             self.assertEqual(rv.mimetype, 'application/json')
             self.assertEqual(shimehari.json.loads(rv.data), d)
 
-
     def testJSONAttr(self):
         ConfigManager.addConfig(testConfig)
         app = shimehari.Shimehari(__name__)
+
         def returnJSON(*args, **kwargs):
             return unicode(shimehari.request.json['a'] + shimehari.request.json['b'])
         app.router = shimehari.Router([Rule('/add', endpoint='returnJSON', methods=['POST'])])
-        app.controllers['returnJSON']= returnJSON
+        app.controllers['returnJSON'] = returnJSON
 
         c = app.testClient()
-        rv = c.post('/add', data=shimehari.json.dumps({'a':1, 'b': 2}), content_type='application/json')
+        rv = c.post('/add', data=shimehari.json.dumps({'a': 1, 'b': 2}), content_type='application/json')
         self.assertEqual(rv.data, '3')
-
 
     def testTemplateEscaping(self):
         ConfigManager.addConfig(testConfig)
@@ -125,7 +127,7 @@ class JSONTestCase(ShimehariTestCase):
             return shimehari.request.args['foo']
 
         app.router = shimehari.Router([Rule('/', endpoint='index', methods=['GET'])])
-        app.controllers['index']= index
+        app.controllers['index'] = index
 
         rv = app.testClient().get(u'/?foo=ほげほげ'.encode('euc-jp'))
         self.assertEqual(rv.status_code, 200)
@@ -141,7 +143,7 @@ class SendFileTestCase(ShimehariTestCase):
         with app.testRequestContext():
             rv = shimehari.sendFile(os.path.join(app.rootPath, 'static/index.html'))
             self.assert_(rv.direct_passthrough)
-            self.assertEqual( rv.mimetype, 'text/html')
+            self.assertEqual(rv.mimetype, 'text/html')
             with app.openFile('static/index.html') as f:
                 self.assertEqual(rv.data, f.read())
 
@@ -151,10 +153,9 @@ class SendFileTestCase(ShimehariTestCase):
         with app.testRequestContext():
             rv = shimehari.sendFile(os.path.join(app.rootPath, 'static/index.html'))
             self.assert_(rv.direct_passthrough)
-            self.assert_( 'x-sendfile' in rv.headers )
-            self.assertEqual( rv.headers['x-sendfile'], os.path.join(app.rootPath, 'static/index.html'))
+            self.assert_('x-sendfile' in rv.headers)
+            self.assertEqual(rv.headers['x-sendfile'], os.path.join(app.rootPath, 'static/index.html'))
             self.assertEqual(rv.mimetype, 'text/html')
-
 
     def testSendFileObject(self):
         app = shimehari.Shimehari(__name__)
@@ -190,8 +191,8 @@ class SendFileTestCase(ShimehariTestCase):
             with catchWarnings() as captured:
                 f = StringIO('Test')
                 rv = shimehari.sendFile(f, mimetype='text/plain')
-                self.assertEqual( rv.data, 'Test')
-                self.assertEqual( rv.mimetype, 'text/plain')
+                self.assertEqual(rv.data, 'Test')
+                self.assertEqual(rv.mimetype, 'text/plain')
             self.assertEqual(len(captured), 1)
 
         app.useXSendFile = True
@@ -202,21 +203,19 @@ class SendFileTestCase(ShimehariTestCase):
                 self.assert_('x-sendfile' not in rv.headers)
             self.assertEqual(len(captured), 1)
 
-
-
     def testAttachment(self):
         app = shimehari.Shimehari(__name__)
         with catchWarnings() as captured:
             with app.testRequestContext():
                 f = open(os.path.join(app.rootPath, 'static/index.html'))
-                rv= shimehari.sendFile(f,asAttachment=True)
+                rv = shimehari.sendFile(f, asAttachment=True)
                 value, options = parse_options_header(rv.headers['Content-Disposition'])
                 self.assertEqual(value, 'attachment')
             self.assertEqual(len(captured), 2)
 
         with app.testRequestContext():
             self.assertEqual(options['filename'], 'index.html')
-            rv = shimehari.sendFile(os.path.join(app.rootPath,'static/index.html'), asAttachment=True)
+            rv = shimehari.sendFile(os.path.join(app.rootPath, 'static/index.html'), asAttachment=True)
             value, options = parse_options_header(rv.headers['Content-Disposition'])
             self.assertEqual(value, 'attachment')
             self.assertEqual(options['filename'], 'index.html')
@@ -251,6 +250,7 @@ class SendFileTestCase(ShimehariTestCase):
             rv = shimehari.sendFile(os.path.join(app.rootPath, 'static/index.html'))
             cc = parse_cache_control_header(rv.headers['Cache-Control'])
             self.assertEqual(cc.max_age, 3600)
+
         class StaticFileApp(shimehari.Shimehari):
             def getSendFileMaxAge(self, filename):
                 return 10
@@ -272,7 +272,7 @@ class LoggingTestCase(ShimehariTestCase):
         self.assert_(app.logger is logger1)
         self.assertEqual(logger1.name, __name__)
         app.loggerName = __name__ + 'aaaa'
-        self.assert_( app.logger is not logger1)
+        self.assert_(app.logger is not logger1)
 
     def testDebugLog(self):
         app = shimehari.Shimehari(__name__)
@@ -282,8 +282,9 @@ class LoggingTestCase(ShimehariTestCase):
             app.logger.warning('the standard library is dead')
             app.logger.debug('this is a debug statement')
             return ''
+
         def exc():
-            1/0
+            1 / 0
 
         app.router = shimehari.Router([
             Rule('/', endpoint='index', methods=['GET']),
@@ -321,7 +322,7 @@ class LoggingTestCase(ShimehariTestCase):
         app.logger.addHandler(StreamHandler(out))
 
         def index():
-            1/0
+            1 / 0
 
         app.router = shimehari.Router([Rule('/', endpoint='index', methods=['GET'])])
         app.controllers['index'] = index
@@ -335,15 +336,16 @@ class LoggingTestCase(ShimehariTestCase):
 
     def testProcessorExceptions(self):
         app = shimehari.Shimehari(__name__)
+
         @app.beforeRequest
         def beforeReq():
             if trigger == 'before':
-                1/0
+                1 / 0
 
         @app.afterRequest
         def afterRequest(response):
             if trigger == 'after':
-                1/0
+                1 / 0
             return response
 
         def index():
@@ -362,6 +364,7 @@ class LoggingTestCase(ShimehariTestCase):
 
     def testURLForWithAnchro(self):
         app = shimehari.Shimehari(__name__)
+
         def index():
             return '42'
         app.router = shimehari.Router([Rule('/', endpoint='index', methods=['GET'])])
@@ -369,7 +372,6 @@ class LoggingTestCase(ShimehariTestCase):
 
         with app.testRequestContext():
             self.assertEqual(shimehari.urlFor('index', _anchor='x y'), '/#x%20y')
-
 
 
 class NoImportsTestCase(ShimehariTestCase):

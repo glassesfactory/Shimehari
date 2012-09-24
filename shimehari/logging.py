@@ -21,6 +21,7 @@ from logging import getLogger, StreamHandler, Formatter, getLoggerClass, DEBUG
 from shimehari.configuration import ConfigManager,Config
 from shimehari.helpers import getEnviron
 
+
 def createLogger(loggerName='shimehariLoagger'):
 
     Logger = getLoggerClass()
@@ -32,14 +33,14 @@ def createLogger(loggerName='shimehariLoagger'):
             return Logger.getEffectiveLevel(x)
 
     class DebugHandler(StreamHandler):
-        def emit(x,record):
-            StreamHandler.emit(x,record) if config['DEBUG'] else None
+        def emit(x, record):
+            StreamHandler.emit(x, record) if config['DEBUG'] else None
     config = ConfigManager.getConfig(getEnviron())
     if config['LOG_FILE_OUTPUT']:
-        fn = os.path.join(config['LOG_FILE_DIRECTORY'],getEnviron() ) + '.log'
+        fn = os.path.join(config['LOG_FILE_DIRECTORY'], getEnviron()) + '.log'
         if config['LOG_FILE_ROTATE']:
             from logging import RotateFileHandler
-            handler = RotateFileHandler(fn,'a', config['LOG_ROTATE_MAX_BITE'], config['LOG_ROTATE_COUNT'])
+            handler = RotateFileHandler(fn, 'a', config['LOG_ROTATE_MAX_BITE'], config['LOG_ROTATE_COUNT'])
         else:
             from logging import FileHandler
             handler = FileHandler(fn, 'a')
@@ -50,7 +51,7 @@ def createLogger(loggerName='shimehariLoagger'):
         handler = DebugHandler()
         handler.setFormatter(Formatter(config['LOG_DEBUG_FORMAT']))
         logger = getLogger(loggerName)
-    
+
     logger.setLevel(DEBUG)
 
     del logger.handlers[:]

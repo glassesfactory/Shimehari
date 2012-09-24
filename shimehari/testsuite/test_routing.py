@@ -9,14 +9,16 @@ from shimehari.testsuite.testApp.controllers import IndexController, ChildContro
 
 
 class testResource(ShimehariTestCase):
-    def testMakeResource(self):        
-        self.assertNotEqual(Resource(IndexController),Exception)
-        def index(*args,**kwargs):
+    def testMakeResource(self):
+        self.assertNotEqual(Resource(IndexController), Exception)
+
+        def index(*args, **kwargs):
             return 'index'
+
         def show(*args, **kwargs):
             return 'show'
         rule = RESTfulRule('hoge', index=index, show=show)
-        self.assertNotEqual(Resource(rule),Exception)
+        self.assertNotEqual(Resource(rule), Exception)
         self.assertRaises(ValueError, Resource, 1)
 
     def testExceptsAndOnly(self):
@@ -24,20 +26,19 @@ class testResource(ShimehariTestCase):
 
     def testMakeResourceWithChildren(self):
         res = Resource(ChildController)
-        self.assertNotEqual(Resource(IndexController, children=[res]),Exception)
+        self.assertNotEqual(Resource(IndexController, children=[res]), Exception)
 
     def testAdd(self):
         res = Resource()
         self.assertNotEqual(res.add(IndexController), Exception)
         self.assertRaises(ValueError, res.add, 'puuuu')
 
-
     def testAddRule(self):
         res = Resource(IndexController)
+
         def testUserID(*args, **kwargs):
             return userid
         res.addRule('/<userid>', testUserID)
-        
 
     def testRefresh(self):
         res = Resource(IndexController)
@@ -45,33 +46,35 @@ class testResource(ShimehariTestCase):
 
     def testGetNameFromRESTAction(self):
         res = Resource()
-        self.assertEqual(res.getNameFromRESTAction('megane','show'),'/megane/<int:id>')
-        self.assertEqual(res.getNameFromRESTAction('megane','index',root=True),'/')
-        self.assertRaises(ValueError,res.getNameFromRESTAction, 'megane', 'ninja')
-
-    
-
-
+        self.assertEqual(res.getNameFromRESTAction('megane', 'show'), '/megane/<int:id>')
+        self.assertEqual(res.getNameFromRESTAction('megane', 'index', root=True), '/')
+        self.assertRaises(ValueError, res.getNameFromRESTAction, 'megane', 'ninja')
 
 
 class testRESTfulRule(ShimehariTestCase):
     def testMakeRESTfulRule(self):
         def index(*args, **kwargs):
             return 'index'
+
         def show(*args, **kwargs):
             return 'show'
+
         def edit(*args, **kwargs):
             return 'edit'
+
         def new(*args, **kwargs):
             return 'new'
+
         def create(*args, **kwargs):
             return 'create'
+
         def update(*args, **kwargs):
             return 'update'
+
         def destroy(*args, **kwargs):
             return 'destroy'
 
-        rule = RESTfulRule('test',index, show, edit, new, create, update,destroy)
+        rule = RESTfulRule('test', index, show, edit, new, create, update, destroy)
 
         self.assertNotEqual(rule._rules, [])
         self.assertNotEqual(len(rule._rules), 0)
@@ -84,13 +87,13 @@ class testRESTfulRule(ShimehariTestCase):
         self.assertNotEqual(rule.refresh(), Exception)
 
 
-
-
 class testRESTfulRouter(ShimehariTestCase):
     def testBeInstanseRouter(self):
         self.assertNotEqual(RESTfulRouter([Resource(IndexController)]), TypeError)
-        def index(*args,**kwargs):
+
+        def index(*args, **kwargs):
             return 'index'
+
         def show(*args, **kwargs):
             return 'show'
         self.assertNotEqual(RESTfulRouter([RESTfulRule('test', index, show)]), Exception)
@@ -100,10 +103,8 @@ class testRESTfulRouter(ShimehariTestCase):
                 RESTfulRule('test', index, show)
             ]), Exception)
 
-        self.assertRaises(TypeError, RESTfulRouter, [1,2,3])
+        self.assertRaises(TypeError, RESTfulRouter, [1, 2, 3])
 
     def testDump(self):
         router = RESTfulRouter([Resource(IndexController)])
-        self.assertEqual(isinstance(router.dump(),basestring), True)
-
-    
+        self.assertEqual(isinstance(router.dump(), basestring), True)

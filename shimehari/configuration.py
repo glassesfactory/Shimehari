@@ -10,7 +10,7 @@ u"""
 
     アプリケーション内の様々な設定や環境情報を保持する
     Config クラスを提供します。
-    
+
 ===============================
 """
 
@@ -25,7 +25,7 @@ class ConfigManager(object):
     @classmethod
     def hasConfig(cls):
         u"""Config インスタンスが登録されているかどうか
-        
+
         :param bool: Config インスタンスが登録されているかどうかを返します。
         """
         if not cls.configrations or len(cls.configrations) < 1:
@@ -33,17 +33,15 @@ class ConfigManager(object):
         else:
             return True
 
-
     @classmethod
     def getConfigs(cls):
         u"""Config インスタンスが格納されたディクショナリを返します。"""
         return cls.configrations
 
-
     @classmethod
     def getConfig(cls, environ=None):
         u"""Config インスタンスを取得します。
-        
+
         :param environ: 取得したい環境。
                         指定されない場合は現在の環境に合わせた Config が返されます。
         """
@@ -53,31 +51,27 @@ class ConfigManager(object):
             return cls.configrations[environ]
         return None
 
-
-
     @classmethod
-    def addConfigs(cls,configs=[]):
+    def addConfigs(cls, configs=[]):
         u"""複数の Config インスタンスをまとめて登録します。
-        
+
         :param configs: Config インスタンスを格納したディクショナリ
         """
         [cls.addConfig(c) for c in configs]
 
-
     @classmethod
     def addConfig(cls, config):
         u"""Config インスタンスを登録します。
-        
+
         :param config: 登録したいコンフィグインスタンス
         """
         if isinstance(config, Config):
-            cls.configrations.setdefault(config.environment,config)
+            cls.configrations.setdefault(config.environment, config)
         else:
             raise TypeError('config じゃない')
 
-
     @classmethod
-    def removeConfig(cls,environment):
+    def removeConfig(cls, environment):
         u"""Config インスタンスを削除します。
 
         :param enviroment: 削除したい環境
@@ -86,22 +80,22 @@ class ConfigManager(object):
             cls.configrations.pop(environment)
 
 
-
-
 u"""
 ===============================
     ::pkg:: Shimehari.coniguration
-    
+
     Config
     ~~~~~~
     アプリケーションな設定や環境情報を保持する
     コンフィグクラス
-    
+
 ===============================
 """
 from datetime import timedelta
+
+
 class Config(dict):
-    u"""Config クラスはアプリケーションの設定を保存します。  
+    u"""Config クラスはアプリケーションの設定を保存します。
     初期値として、以下の設定を保持しています。
 
     :param DEBUG: アプリケーションをデバッグモードとして起動するかどうか。
@@ -109,7 +103,7 @@ class Config(dict):
                   一時的にデバッグモードで起動したい場合は以下のコマンドを用いたほうが便利です。
 
                   ::
-                  
+
                     $ shimehari drink -d
 
     :param TEST:                        アプリケーションをテストモードとして起動するかどうか。
@@ -150,53 +144,52 @@ class Config(dict):
     :param LOG_DEBUG_FORMAT:                ログをコンソール上に出力する際のフォーマットを指定します。
     :param LOG_OUTPUT_FORMAT:               ログをファイルに出力する際のフォーマットを指定します。
     """
-    defaults ={
-        'DEBUG':False,
-        'TEST':False,
-        'APP_ROOT':None,
-        'APP_DIRECTORY':'app',
-        'MAIN_SCRIPT':'main',
-        'APP_INSTANCE_NAME':'app',
-        'CONTROLLER_DIRECTORY':'controllers',
-        'VIEW_DIRECTORY':'views',
-        'MODEL_DIRECTORY':'models',
-        'ASSETS_DIRECTORY':'assets',
-        'PREFERRED_URL_SCHEME':'http',
-        'AUTO_SETUP':True,
-        'CONTROLLER_AUTO_NAMESPACE':True,
-        'TEMPLATE_ENGINE':'jinja2',
-        'USE_X_SENDFILE':False,
-        'SECRET_KEY':'_secret_shimehari',
-        'SERVER_NAME':None,
-        'TRAP_HTTP_EXCEPTIONS':False,
-        'TRAP_BAD_REQUEST_ERRORS':False,
-        'PRESERVE_CONTEXT_ON_EXCEPTION':None,
+    defaults = {
+        'DEBUG': False,
+        'TEST': False,
+        'APP_ROOT': None,
+        'APP_DIRECTORY': 'app',
+        'MAIN_SCRIPT': 'main',
+        'APP_INSTANCE_NAME': 'app',
+        'CONTROLLER_DIRECTORY': 'controllers',
+        'VIEW_DIRECTORY': 'views',
+        'MODEL_DIRECTORY': 'models',
+        'ASSETS_DIRECTORY': 'assets',
+        'PREFERRED_URL_SCHEME': 'http',
+        'AUTO_SETUP': True,
+        'CONTROLLER_AUTO_NAMESPACE': True,
+        'TEMPLATE_ENGINE': 'jinja2',
+        'USE_X_SENDFILE': False,
+        'SECRET_KEY': '_secret_shimehari',
+        'SERVER_NAME': None,
+        'TRAP_HTTP_EXCEPTIONS': False,
+        'TRAP_BAD_REQUEST_ERRORS': False,
+        'PRESERVE_CONTEXT_ON_EXCEPTION': None,
         'SEND_FILE_MAX_AGE_DEFAULT': 12 * 60 * 60,
-        'PERMANENT_SESSION_LIFETIME':timedelta(days=31),
+        'PERMANENT_SESSION_LIFETIME': timedelta(days=31),
         #キャッシュ
-        'CACHE_STORE':None,
+        'CACHE_STORE': None,
         'CACHE_DEFAULT_TIMEOUT': 300,
-        'CACHE_THRESHOLD':500,
-        'CACHE_KEY_PREFIX':None,
-        'CACHE_DIR':None,
-        'CACHE_OPTIONS':None,
-        'CACHE_ARGS':[],
+        'CACHE_THRESHOLD': 500,
+        'CACHE_KEY_PREFIX': None,
+        'CACHE_DIR': None,
+        'CACHE_OPTIONS': None,
+        'CACHE_ARGS': [],
         #ログ周り
-        'LOG_FILE_OUTPUT':False,
-        'LOG_FILE_ROTATE':False,
-        'LOG_ROTATE_MAX_BITE':(5*1024*1024),
-        'LOG_ROTATE_COUNT':5,
-        'LOG_FILE_DIRECTORY':'app/log',
-        'LOG_DEBUG_FORMAT':('-' * 80 + '\n' +
+        'LOG_FILE_OUTPUT': False,
+        'LOG_FILE_ROTATE': False,
+        'LOG_ROTATE_MAX_BITE': (5 * 1024 * 1024),
+        'LOG_ROTATE_COUNT': 5,
+        'LOG_FILE_DIRECTORY': 'app/log',
+        'LOG_DEBUG_FORMAT': ('-' * 80 + '\n' +
         '%(levelname)s in %(module)s [%(pathname)s:%(lineno)d]:\n' +
         '%(message)s\n' +
         '-' * 80),
-        'LOG_OUTPUT_FORMAT':(
+        'LOG_OUTPUT_FORMAT': (
         '%(asctime)s %(levelname)s in %(module)s [%(pathname)s:%(lineno)d]:\n' +
         '%(message)s\n' +
         '-' * 80)
     }
-
 
     def __init__(self, environment='development', defaults={}):
         d = self.defaults.copy()
@@ -210,5 +203,3 @@ class Config(dict):
         for k, v in self.defaults.items():
             _conf += k + ' => ' + str(v) + '\n'
         return _conf
-
-

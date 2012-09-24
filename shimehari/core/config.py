@@ -5,7 +5,7 @@ u"""
 ===============================
     Shimehari.core.config
     ~~~~~~~~~~~~~~~~~~~~~
-    shimehari core config settings 
+    shimehari core config settings
 ===============================
 """
 
@@ -25,11 +25,11 @@ u"""
     RESTful アクションごとに許可する HTTP メソッドの対応マップ
 """
 RESTFUL_METHODS_MAP = ImmutableDict({
-    'index':['get'],
-    'show':['get','post'],
-    'edit':['get','post'],
-    'new':['get'],
-    'create':['post'],
-    'update':['put'],
-    'destroy':['delete']
-    })
+    'index': ['get'],
+    'show': ['get', 'post'],
+    'edit': ['get', 'post'],
+    'new': ['get'],
+    'create': ['post'],
+    'update': ['put'],
+    'destroy': ['delete']
+})

@@ -9,6 +9,7 @@ from shimehari.core.cachestore import NullCacheStore, SimpleCacheStore
 from shimehari.testsuite import ShimehariTestCase
 from shimehari.testsuite.testApp.controllers import IndexController, ChildController
 
+
 class TestCache(ShimehariTestCase):
     def testCacheGetterSetter(self):
         cache = Cache(storetype='simple')
@@ -19,7 +20,7 @@ class TestCache(ShimehariTestCase):
 
     def testCacheGetAndSetMany(self):
         cache = Cache(storetype='simple')
-        cache.setMany({'sake':'shimehari', 'osake':'kagetora'})
+        cache.setMany({'sake': 'shimehari', 'osake': 'kagetora'})
         rv = cache.get('sake')
         self.assertEqual(rv, 'shimehari')
         rv = cache.get('osake')
@@ -27,21 +28,21 @@ class TestCache(ShimehariTestCase):
         rv = cache.getMany('sake', 'osake')
         self.assertEqual(rv, ['shimehari', 'kagetora'])
         rv = cache.getDict('sake', 'osake')
-        self.assertEqual(rv, {'sake':'shimehari', 'osake':'kagetora'})
+        self.assertEqual(rv, {'sake': 'shimehari', 'osake': 'kagetora'})
 
     def testCacheDelete(self):
         cache = Cache(storetype='simple')
-        cache.set('sake','shimehari')
+        cache.set('sake', 'shimehari')
         rv = cache.get('sake')
-        self.assertEqual(rv,'shimehari')
+        self.assertEqual(rv, 'shimehari')
         cache.delete('sake')
         rv = cache.get('sake')
         self.assert_(rv is None)
 
-        cache.setMany({'sake':'shimehari', 'osake':'kagetora'})
+        cache.setMany({'sake': 'shimehari', 'osake': 'kagetora'})
         rv = cache.getMany('sake', 'osake')
         self.assertEqual(rv, ['shimehari', 'kagetora'])
-        cache.deleteMany('sake','osake')
+        cache.deleteMany('sake', 'osake')
         rv = cache.get('sake')
         self.assert_(rv is None)
         rv = cache.get('osake')
@@ -61,11 +62,11 @@ class TestCache(ShimehariTestCase):
     def testCacheClear(self):
         cache = Cache('simple')
         d = {}
-        [d.setdefault(str(x),x) for x in range(100)]
+        [d.setdefault(str(x), x) for x in range(100)]
         cache.setMany(d)
         keys = [str(x) for x in range(100)]
         rv = cache.getMany(*keys)
-        self.assert_( None not in rv )
+        self.assert_(None not in rv)
         cache.clear()
         flg = True
         for x in cache.getMany(*keys):
@@ -82,12 +83,7 @@ class TestCache(ShimehariTestCase):
 
     def testCacheLimit(self):
         cache = Cache(storetype='simple')
-        cache.set('sake', 'shimehari' ,timeout=3)
+        cache.set('sake', 'shimehari', timeout=3)
         self.assertEqual(cache.get('sake'), 'shimehari')
         time.sleep(4)
         self.assert_(cache.get('sake') is None)
-
-
-
-
-

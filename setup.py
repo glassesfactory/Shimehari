@@ -5,6 +5,7 @@
 from setuptools import Command, setup
 from shimehari import VERSION, AUTHOR
 
+
 class runAudit(Command):
     def initialize_options(self):
         pass
@@ -24,10 +25,10 @@ setup(
     author=AUTHOR,
     author_email='megane@glasses-factory.net',
     description='middle framework based on Flask, Werkzeug, Jinja2 ',
-    packages=['shimehari','shimehari.core', 'shimehari.template', 'shimehari.core.conf','shimehari.core.conf.app_template',
-                'shimehari.core.conf.app_template.controllers','shimehari.core.conf.app_template.models',
+    packages=['shimehari', 'shimehari.core', 'shimehari.template', 'shimehari.core.conf', 'shimehari.core.conf.app_template',
+                'shimehari.core.conf.app_template.controllers', 'shimehari.core.conf.app_template.models',
                 'shimehari.template.jinja2',
-                'shimehari.core.manage','shimehari.core.manage.commands'],
+                'shimehari.core.manage', 'shimehari.core.manage.commands'],
     scripts=['shimehari/core/conf/shimehari'],
     include_package_data=True,
     zip_safe=False,
@@ -47,6 +48,6 @@ setup(
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
         'Topic :: Software Development :: Libraries :: Python Modules'
     ],
-    cmdclass={'audit':runAudit},
+    cmdclass={'audit': runAudit},
     test_suite='shimehari.testsuite.suite'
 )

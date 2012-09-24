@@ -9,12 +9,15 @@ from shimehari.testsuite import ShimehariTestCase
 from shimehari.testsuite.testApp.controllers import IndexController
 from werkzeug.routing import Rule, Map
 
-testConfig = Config('development', {'AUTO_SETUP':False, 'SERVER_NAME':'localhost', 'PREFERRED_URL_SCHEME': 'https'})
+
+testConfig = Config('development', {'AUTO_SETUP': False, 'SERVER_NAME': 'localhost', 'PREFERRED_URL_SCHEME': 'https'})
+
 
 class TestAppContext(ShimehariTestCase):
     def testGenerateURL(self):
         ConfigManager.addConfig(testConfig)
         app = shimehari.Shimehari(__name__)
+
         def index(*args, **kwargs):
             return 'index'
         app.router = shimehari.Router([Rule('/', endpoint='index', methods=['GET'])])
@@ -22,7 +25,6 @@ class TestAppContext(ShimehariTestCase):
         with app.appContext():
             rv = shimehari.urlFor('index')
             self.assertEqual(rv, 'https://localhost/')
-        
 
     def testRaiseErrorGenerateURLRequireServerName(self):
         app = shimehari.Shimehari(__name__)
@@ -39,19 +41,20 @@ class TestAppContext(ShimehariTestCase):
         ConfigManager.addConfig(testConfig)
         app = shimehari.Shimehari(__name__)
         with app.testRequestContext():
-            self.assertEqual(shimehari.currentApp._get_current_object(),app)
+            self.assertEqual(shimehari.currentApp._get_current_object(), app)
         self.assertEqual(shimehari._appContextStack.top, None)
 
     def testAppContextProvidesCurrentApp(self):
         ConfigManager.addConfig(testConfig)
         app = shimehari.Shimehari(__name__)
         with app.appContext():
-            self.assertEqual(shimehari.currentApp._get_current_object(),app)
+            self.assertEqual(shimehari.currentApp._get_current_object(), app)
         self.assertEqual(shimehari._appContextStack.top, None)
 
     def testAppTearingDown(self):
         cleanStuff = []
         app = shimehari.Shimehari(__name__)
+
         @app.tearDownAppContext
         def cleanup(exception):
             cleanStuff.append(exception)
@@ -75,4 +78,3 @@ def suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(TestAppContext))
     return suite
-

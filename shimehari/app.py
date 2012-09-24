@@ -36,8 +36,9 @@ from shimehari.core.signals import appContextTearingDown, requestContextTearingD
 
 _loggerLock = Lock()
 
+
 def setupMethod(f):
-    def wrapperFunc(self, *args,**kwargs):
+    def wrapperFunc(self, *args, **kwargs):
         if self.debug or self._gotFirstRequest:
             raise AssertionError('Setup seems to have already completed ...')
         return f(self, *args, **kwargs)
@@ -46,7 +47,7 @@ def setupMethod(f):
 
 class Shimehari(_Kouzi):
     u"""Shimehari Object は WSGI アプリケーションとして必要な機能を実装しており、
-    アプリケーションの中心となるオブジェクトです。 
+    アプリケーションの中心となるオブジェクトです。
 
     メインモジュール、または __init__.py ファイルの中で以下のように書くことで
     Shimehari インスタンスを生成することができます。
@@ -82,20 +83,20 @@ class Shimehari(_Kouzi):
     teardownAppContextFuncs = []
 
     defaultConfig = {
-        'DEBUG':False,
-        'TEST':False,
-        'APP_DIRECTORY':'app',
-        'CONTROLLER_DIRECTORY':'controllers',
-        'VIEW_DIRECTORY':'views',
+        'DEBUG': False,
+        'TEST': False,
+        'APP_DIRECTORY': 'app',
+        'CONTROLLER_DIRECTORY': 'controllers',
+        'VIEW_DIRECTORY': 'views',
         #for daiginjou
-        'MODEL_DIRECTORY':'models',
-        'PREFERRED_URL_SCHEME':'http',
-        'AUTO_SETUP':True,
-        'TEMPLATE_ENGINE':'jinja2',
-        'TRAP_HTTP_EXCEPTIONS':False,
-        'SERVER_NAME':None,
-        'PERMANENT_SESSION_LIFETIME':timedelta(days=31),
-        'SECRET_KEY':'_secret_shimehari'
+        'MODEL_DIRECTORY': 'models',
+        'PREFERRED_URL_SCHEME': 'http',
+        'AUTO_SETUP': True,
+        'TEMPLATE_ENGINE': 'jinja2',
+        'TRAP_HTTP_EXCEPTIONS': False,
+        'SERVER_NAME': None,
+        'PERMANENT_SESSION_LIFETIME': timedelta(days=31),
+        'SECRET_KEY': '_secret_shimehari'
     }
 
     templateOptions = {}
@@ -104,15 +105,15 @@ class Shimehari(_Kouzi):
 
     sharedRequestClass = _SharedRequestClass
 
-    def __init__(self, importName, 
+    def __init__(self, importName,
                  staticURL=None, staticFolder='static',
-                 appFolder='app', controllerFolder='controllers', 
+                 appFolder='app', controllerFolder='controllers',
                  viewFolder='views', assetsFolder='assets',
-                 instancePath=None, isRelativeConfig=False,templateOptions={}):
+                 instancePath=None, isRelativeConfig=False, templateOptions={}):
 
-        _Kouzi.__init__(self, importName, appFolder=appFolder, 
+        _Kouzi.__init__(self, importName, appFolder=appFolder,
                         controllerFolder=controllerFolder, viewFolder=viewFolder)
-        
+
         if instancePath is None:
             self._instancePath = self.getInstancePath()
 
@@ -121,7 +122,6 @@ class Shimehari(_Kouzi):
 
         self.config = self.getConfig()
 
-
         self.controllers = {}
         self.urlValuePreprocesors = {}
         self.beforeRequestFuncs = {}
@@ -129,7 +129,7 @@ class Shimehari(_Kouzi):
         self.urlDefaultFuncs = {}
         self.afterRequestFuncs = {}
         self._errorHandlers = {}
-        self.errorHandlerSpec = {None:self._errorHandlers}
+        self.errorHandlerSpec = {None: self._errorHandlers}
         self.buildErrorHandlers = None
         self.teardownRequestContextFuncs = {}
 
@@ -153,22 +153,17 @@ class Shimehari(_Kouzi):
         self.useXSendFile = self.config['USE_X_SENDFILE']
 
         self.templateOptions = templateOptions
-        
+
         if self.config['AUTO_SETUP']:
             self.setup()
 
-
     @property
-    def gotFirstRequest(self):        
+    def gotFirstRequest(self):
         return self._gotFirstRequest
-
-
 
     @property
     def propagateExceptions(self):
         return self.testing or self.debug
-
-
 
     @property
     def preserveContextOnException(self):
@@ -176,7 +171,6 @@ class Shimehari(_Kouzi):
         if rv is not None:
             return rv
         return self.debug
-
 
     @property
     def logger(self):
@@ -189,22 +183,20 @@ class Shimehari(_Kouzi):
             self._logger = rv = createLogger(self.loggerName)
             return rv
 
-
-   
     def router():
-        
-        doc = u"""アプリケーションのルーティングを管理するルーターを設定します。"""
+        u"""アプリケーションのルーティングを管理するルーターを設定します。"""
         def fget(self):
             return self._router
+
         def fset(self, value):
             self.setControllerFromRouter(value)
             self._router = value
+
         def fdel(self):
             self.controllers = {}
             del self._router
         return locals()
     router = property(**router())
-
 
     def getInstancePath(self):
         u"""インスタンスパスを返します。"""
@@ -213,13 +205,11 @@ class Shimehari(_Kouzi):
             return os.path.join(pkgPath, 'instance')
         return os.path.join(prefix, 'var', self.name + '-instance')
 
-
-
     def getConfig(self):
         u"""現在アプリケーションに適用されているコンフィグを返します。"""
         configs = ConfigManager.getConfigs()
         try:
-            from .config import config
+            # from .config import config
             configs = ConfigManager.getConfigs()
         except ImportError:
             pass
@@ -229,8 +219,6 @@ class Shimehari(_Kouzi):
             return cfg
         else:
             return configs[self.currentEnv]
-
-
 
     def saveSession(self, session, response):
         u"""セッションを保存します。
@@ -242,16 +230,12 @@ class Shimehari(_Kouzi):
             response.set_cookie(self.sessionKey, session.sid)
         return response
 
-
-
     def openSession(self, request):
         sid = request.cookies.get(self.sessionKey, None)
         if sid is None:
             return self.sessionStore.new()
         else:
             return self.sessionStore.get(sid)
-
-
 
     def setControllerFromRouter(self, router):
         u"""設定されたルーターからコントローラーをバインディングします。
@@ -262,8 +246,6 @@ class Shimehari(_Kouzi):
             self.controllers = {}
         for rule in router._rules:
             self.controllers[rule.endpoint] = rule.endpoint
-
-
 
     def addController(self, controller):
         u"""アプリケーションにコントローラーを追加します。
@@ -277,57 +259,38 @@ class Shimehari(_Kouzi):
             if handler is not None:
                 self.controllers[handler] = handler
 
-
-
     def addRoute(self, url, func, methods=None, **options):
         rule = Rule(url, endpoint=func.__name__, methods=methods)
         self.controllers[func.__name__] = func
         self.router.add(rule)
 
-
-
     def logException(self, excInfo):
         self.logger.error('excepts on %s [%s]' % (request.path, request.method), exc_info=excInfo)
 
-
-
     def injectURLDefaults(self, endpoint, values):
-        funcs = self.urlDefaultFuncs.get(None,())
+        funcs = self.urlDefaultFuncs.get(None, ())
         for func in funcs:
-            func(endpoint, vlaues)
-
-
+            func(endpoint, values)
 
     @lockedCachedProperty
     def templateLoader(self):
         return self.templater.templateLoader
-
-
 
     @lockedCachedProperty
     def templateEnv(self):
         rv = self.templater.templateEnv()
         return rv
 
-
-
     def createTemplateEnvironment(self):
         rv = self.templater.createTemplateEnvironment()
         return rv
 
-
-
     def createGlobalTemplateLoader(self):
         return self.templater.dispatchLoader(self)
 
-
-
-    def updateTemplateContext(self,context):
+    def updateTemplateContext(self, context):
         self.templater.updateTemplateContext(context)
 
-
-
-    
     def setup(self):
         u"""アプリケーションをセットアップします。
             指定された app ディレクトリ配下にあるコントローラー、ルーターを探し出しバインドします。
@@ -337,21 +300,18 @@ class Shimehari(_Kouzi):
             raise ShimehariSetupError('Application directory is not found\n%s' % self.rootPath)
             sys.exit(0)
         try:
-            apps = __import__(self.appFolder)
+            __import__(self.appFolder)
             self.setupTemplater()
             self.setupBindController()
             self.setupBindRouter()
         except (ImportError, AttributeError):
             raise ShimehariSetupError('Application directory is invalid')
 
-
     def setupTemplater(self):
         try:
-            self.templater = getTemplater(self, self.config['TEMPLATE_ENGINE'],templateOptions=self.templateOptions)
+            self.templater = getTemplater(self, self.config['TEMPLATE_ENGINE'], templateOptions=self.templateOptions)
         except Exception, e:
             raise ShimehariSetupError('setup template engine was failed... \n%s' % e)
-
-    
 
     def setupBindController(self):
         u"""コントローラーをバインドします"""
@@ -361,12 +321,10 @@ class Shimehari(_Kouzi):
 
         try:
             ctrlDir = self.appFolder + '.' + self.controllerFolder
-            ctrlMod = __import__(ctrlDir)
-            ctrls = getModulesFromPyFile(self.controllerPath, self.rootPath)
+            __import__(ctrlDir)
+            getModulesFromPyFile(self.controllerPath, self.rootPath)
         except (ImportError, AttributeError), error:
             raise ShimehariSetupError('setup controller was failed... \n%s' % error)
-
-
 
     def setupBindRouter(self):
         u"""ルーターをバインドします。"""
@@ -376,22 +334,18 @@ class Shimehari(_Kouzi):
             if hasattr(routerMod, 'appRoutes'):
                 self.router = routerMod.appRoutes
             if self.hasStaticFolder:
-                self.addRoute(self.staticURL + '/<path:filename>',self.sendStaticFile)
+                self.addRoute(self.staticURL + '/<path:filename>', self.sendStaticFile)
         except (ImportError, AttributeError), e:
             raise ShimehariSetupError('Failed to setup the router ...\n details::\n%s' % e)
 
-
-    
     @setupMethod
     def beforeRequest(self, f):
         u"""リクエストを処理する前に実行したいメソッドを登録します。
-        
+
         :param f: リクエスト処理前に実行させたい処理
         """
-        self.beforeRequestFuncs.setdefault(None,[]).append(f)
+        self.beforeRequestFuncs.setdefault(None, []).append(f)
         return f
-
-
 
     @setupMethod
     def beforeFirstRequest(self, f):
@@ -402,18 +356,14 @@ class Shimehari(_Kouzi):
         """
         self.beforeFirstRequestFuncs.append(f)
 
-
-
     @setupMethod
     def afterRequest(self, f):
         u"""リクエスト処理が終わった後に実行したいメソッドを登録します。
-        
+
         :param f: リクエスト処理後に実行したい処理
         """
-        self.afterRequestFuncs.setdefault(None,[]).append(f)
+        self.afterRequestFuncs.setdefault(None, []).append(f)
         return f
-
-
 
     @setupMethod
     def urlValuePreprocessor(self, f):
@@ -424,13 +374,10 @@ class Shimehari(_Kouzi):
         self.urlValuePreprocesors.setdefault(None, []).append(f)
         return f
 
-
-
     @setupMethod
     def tearDownAppContext(self, f):
         self.teardownAppContextFuncs.append(f)
         return f
-
 
     @setupMethod
     def errorHandler(self, codeOrException):
@@ -447,27 +394,23 @@ class Shimehari(_Kouzi):
             assert codeOrException != 500 or key is None
             self.errorHandlerSpec.setdefault(key, {})[codeOrException] = f
         else:
-            self.errorHandlerSpec.setdefault(key, {}).setdefault(None,[]).append((codeOrException, f))
-
+            self.errorHandlerSpec.setdefault(key, {}).setdefault(None, []).append((codeOrException, f))
 
     def tryTriggerBeforeFirstRequest(self):
         u"""アプリケーションに対し最初のリクエストがあった時のみに行う処理を
             実際に実行します。
         """
         if self._gotFirstRequest:
-            return 
+            return
         with self._beforeRequestLock:
             if self._gotFirstRequest:
-                return 
+                return
             self._gotFirstRequest = True
             [f() for f in self.beforeFirstRequestFuncs]
 
-
-
-    
     def createAdapter(self, request):
         u"""url adapter を生成します
-        
+
         :param request: 元となるリクエストオブジェクト
 
 
@@ -477,67 +420,52 @@ class Shimehari(_Kouzi):
         #なんのこっちゃ
         if self.config['SERVER_NAME'] is not None:
             return self.router.bind(
-                self.config['SERVER_NAME'], 
+                self.config['SERVER_NAME'],
                 script_name=self.config['APP_ROOT'] or '/',
                 url_scheme=self.config['PREFERRED_URL_SCHEME'])
 
-
-
-    
-    def appContext(self): 
+    def appContext(self):
         u"""アプリケーションコンテキストを返します。"""
         return AppContext(self)
 
-
-    
-    def requestContext(self,environ):
+    def requestContext(self, environ):
         u"""リクエストコンテキストを返します。
-        
+
         :param environ: リクエスト環境変数
         """
         return RequestContext(self, environ)
 
-
-
-    def doAppContextTearDonw(self,exc=None):
+    def doAppContextTearDonw(self, exc=None):
         if exc is None:
             exc = sys.exc_info()[1]
         for func in reversed(self.teardownAppContextFuncs):
             func(exc)
         appContextTearingDown.send(self, exc)
 
-
-
-    
-    def doRequestContextTearDown(self,exc=None):
+    def doRequestContextTearDown(self, exc=None):
         if exc is None:
             exc = sys.exc_info()[1]
-        for func in reversed(self.teardownRequestContextFuncs.get(None,())):
-            rv = func(exc)
-        requestContextTearingDown.send(self,exc=exc)
+        for func in reversed(self.teardownRequestContextFuncs.get(None, ())):
+            func(exc)
+        requestContextTearingDown.send(self, exc=exc)
 
-
-
-    
     def preprocessRequest(self):
         u"""リクエスト前に処理したい登録済みのメソッドを実行します。
-        
+
         :param rv: 登録した処理
         """
         for func in self.urlValuePreprocesors.get(None, ()):
-            func(request.endpoint, request.viewArgs) 
+            func(request.endpoint, request.viewArgs)
         self.csrf.checkCSRFExempt()
         self.csrf.csrfProtect()
         for func in self.beforeRequestFuncs.get(None, ()):
             rv = func()
-            if rv is not None:                
+            if rv is not None:
                 return rv
 
-
-
-    def processResponse(self,response):
+    def processResponse(self, response):
         u"""レスポンスを返す前に処理したい登録済みのメソッドをを実行します。
-        
+
         :param response: レスポンス
         """
         context = _requestContextStack.top
@@ -547,12 +475,10 @@ class Shimehari(_Kouzi):
             funcs = self.afterRequestFuncs[None]
         for handler in funcs:
             response = handler(response)
-        
+
         if not self.sessionStore.isNullSession(context.session):
             self.saveSession(context.session, response)
         return response
-
-
 
     def dispatchRequest(self):
         u"""リクエストをもとに、レスポンスを発行します。
@@ -574,22 +500,19 @@ class Shimehari(_Kouzi):
 
         response = self.makeResponse(rv)
         response = self.processResponse(response)
-        
+
         return response
 
-
-
-    
     def makeResponse(self, rv):
         u"""レスポンスを生成して返します。
-        
+
         :param rv: リクエスト
-        
+
         """
         status = headers = None
 
-        if isinstance(rv,tuple):
-            rv, status, headers = rv + (None,) * (3-len(rv))
+        if isinstance(rv, tuple):
+            rv, status, headers = rv + (None,) * (3 - len(rv))
 
         if rv is None:
             raise ValueError('view function does not return a response.')
@@ -599,7 +522,7 @@ class Shimehari(_Kouzi):
                 rv = self.responseClass(rv, headers=headers, status=status)
                 headers = status = None
             else:
-                rv = self.responseClass.force_type(rv,request.environ)
+                rv = self.responseClass.force_type(rv, request.environ)
         if status is not None:
             if isinstance(status, basestring):
                 rv.status = status
@@ -609,13 +532,11 @@ class Shimehari(_Kouzi):
             rv.headers.extend(headers)
         return rv
 
-
-
     def handleException(self, e):
         u"""エラーをハンドリングします。
 
         :param e: エラー内容
-        
+
         """
 
         excType, excValue, excTb = sys.exc_info()
@@ -627,20 +548,16 @@ class Shimehari(_Kouzi):
             else:
                 raise e
 
-        self.logException((excType,excValue,excTb))
+        self.logException((excType, excValue, excTb))
         if handler is None:
             return InternalServerError()
         return handler(e)
-
-
 
     def handleHTTPException(self, e):
         handler = self.errorHandlerSpec[None].get(e.code)
         if handler is None:
             return e
         return handler(e)
-
-
 
     def trapHTTPException(self, e):
         if self.config['TRAP_HTTP_EXCEPTIONS']:
@@ -649,12 +566,10 @@ class Shimehari(_Kouzi):
             return isinstance(e, BadRequest)
         return False
 
-
-
-    def handleUserException(self,e):
+    def handleUserException(self, e):
         excType, excValue, tb = sys.exc_info()
         assert excValue is e
-        
+
         if isinstance(e, HTTPException) and not self.trapHTTPException(e):
             return self.handleHTTPException(e)
 
@@ -664,14 +579,10 @@ class Shimehari(_Kouzi):
                 return handler(e)
         raise excType, excValue, tb
 
-
-
     def raiseRoutingException(self, request):
         if not self.debug or not isinstance(request.routingException, RequestRedirect) \
            or request.method in ('GET', 'HEAD', 'OPTIONS'):
             raise request.routingException
-
-
 
     def testRequestContext(self, *args, **kwargs):
         from shimehari.testing import makeTestEnvironBuilder
@@ -681,18 +592,14 @@ class Shimehari(_Kouzi):
         finally:
             builder.close()
 
-
     def handleBuildError(self, error, endpoint, **kwargs):
         if self.buildErrorHandlers is None:
             excType, excValue, tb = sys.exc_info()
-            if excValue is error :
+            if excValue is error:
                 raise excType, excValue, tb
             else:
                 raise error
         return self.buildErrorHandlers(error, endpoint, **kwargs)
-
-
-
 
     def wsgiApp(self, environ, startResponse):
         u"""WSGI アプリとして実行します。(であってるのか)
@@ -707,12 +614,10 @@ class Shimehari(_Kouzi):
             except Exception, e:
                 response = self.makeResponse(self.handleException(e))
             return response(environ, startResponse)
-        
-
 
     def drink(self, host=None, port=None, debug=None, **options):
         u"""アプリを実行します。
-        
+
         :param host:    ホスト名
         :param port:    ポート番号
         :param debug:   デバッグモードとして起動するかどうか
@@ -729,20 +634,17 @@ class Shimehari(_Kouzi):
         options.setdefault('use_debugger', self.debug)
         try:
             from werkzeug._internal import _log
-            _log('info',' * Shimehari GKGK!')
+            _log('info', ' * Shimehari GKGK!')
             run_simple(host, port, self, **options)
         finally:
             self._gotFirstRequest = False
 
-
-
-    def run(self,host=None,port=None, debug=None, **options):
+    def run(self, host=None, port=None, debug=None, **options):
         u"""アプリを実行します。
             単純に drink メソッドをラップしているだけです。
             WSGI 周りのライブラリや既存のコードで run を自動的に呼ぶ物がおおいので念のため。
         """
-        self.drink(host,port,debug,options)
-
+        self.drink(host, port, debug, options)
 
     def testClient(self, useCookies=True):
         cls = self.testClientCls
@@ -750,13 +652,8 @@ class Shimehari(_Kouzi):
             from shimehari.testing import ShimehariClient as cls
         return cls(self, self.responseClass, use_cookies=useCookies)
 
-
-
-    def __call__(self,environ,startResponse):
-        return self.wsgiApp(environ,startResponse)
-
-
+    def __call__(self, environ, startResponse):
+        return self.wsgiApp(environ, startResponse)
 
     def __str__(self):
         return 'Shimehari WSGI Application Framework!'
-

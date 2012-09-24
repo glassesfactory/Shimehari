@@ -6,7 +6,7 @@ u"""
     [[Shimehari Config]]
     config
     ~~~~~~
-    
+
 ===============================
 """
 
@@ -15,68 +15,68 @@ from shimehari.configuration import Config, ConfigManager
 
 ConfigManager.addConfigs([
     Config('development', {
-        'DEBUG':False,
+        'DEBUG': False,
 
-        'TEST':False,
+        'TEST': False,
 
         #アプリのディレクトリ名
-        'APP_DIRECTORY':'%s',
+        'APP_DIRECTORY': '%s',
 
-        'MAIN_SCRIPT':'main',
+        'MAIN_SCRIPT': 'main',
 
         #アプリケーションinstanceの名前
-        'APP_INSTANCE_NAME':'app',
+        'APP_INSTANCE_NAME': 'app',
 
-        'CONTROLLER_DIRECTORY':'controllers',
+        'CONTROLLER_DIRECTORY': 'controllers',
 
-        'VIEW_DIRECTORY':'views',
+        'VIEW_DIRECTORY': 'views',
 
         #for daiginjou
-        'MODEL_DIRECTORY':'models',
+        'MODEL_DIRECTORY': 'models',
 
-        'PREFERRED_URL_SCHEME':'http',
+        'PREFERRED_URL_SCHEME': 'http',
 
-        'AUTO_SETUP':True,
+        'AUTO_SETUP': True,
 
-        'CONTROLLER_AUTO_NAMESPACE':True,
+        'CONTROLLER_AUTO_NAMESPACE': True,
 
-        'TEMPLATE_ENGINE':'jinja2',
+        'TEMPLATE_ENGINE': 'jinja2',
 
-        'SECRET_KEY':'_secret_shimehari',
+        'SECRET_KEY': '_secret_shimehari',
 
-        'SERVER_NAME':None,
+        'SERVER_NAME': None,
 
-        'PRESERVE_CONTEXT_ON_EXCEPTION':None,
+        'PRESERVE_CONTEXT_ON_EXCEPTION': None,
 
-        'PERMANENT_SESSION_LIFETIME':timedelta(days=31),
+        'PERMANENT_SESSION_LIFETIME': timedelta(days=31),
 
         #キャッシュ
-        'CACHE_STORE':None,
+        'CACHE_STORE': None,
 
         'CACHE_DEFAULT_TIMEOUT': 300,
 
-        'CACHE_THRESHOLD':500,
+        'CACHE_THRESHOLD': 500,
 
-        'CACHE_KEY_PREFIX':None,
+        'CACHE_KEY_PREFIX': None,
 
-        'CACHE_DIR':None,
+        'CACHE_DIR': None,
 
-        'CACHE_OPTIONS':None,
-        
-        'CACHE_ARGS':[],
+        'CACHE_OPTIONS': None,
 
-        'LOG_FILE_OUTPUT':False,
-        
-        'LOG_FILE_ROTATE':False,
+        'CACHE_ARGS': [],
 
-        'LOG_ROTATE_MAX_BITE':(5*1024*1024),
-        
-        'LOG_ROTATE_COUNT':5,
+        'LOG_FILE_OUTPUT': False,
 
-        'LOG_FILE_DIRECTORY':'%s/log',
+        'LOG_FILE_ROTATE': False,
 
-        'LOG_DEBUG_FORMAT':%s,
+        'LOG_ROTATE_MAX_BITE': (5 * 1024 * 1024),
 
-        'LOG_OUTPUT_FORMAT':%s
+        'LOG_ROTATE_COUNT': 5,
+
+        'LOG_FILE_DIRECTORY': '%s/log',
+
+        'LOG_DEBUG_FORMAT': '%s',
+
+        'LOG_OUTPUT_FORMAT': '%s'
     })
 ])

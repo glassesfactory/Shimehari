@@ -6,14 +6,15 @@ u"""
     Shimehari.core
     helpers
     ~~~~~~~
-    
+
     主に Shimehari 内部で使われることを
-    想定した helper 
+    想定した helper
 
 ===============================
 """
 
 import sys
+
 
 u"""--------------------------------------
     ::pkg:: Shimenari.core.helpers
@@ -21,12 +22,14 @@ u"""--------------------------------------
     ~~~~~~~~~~~~~~~~
 
 --------------------------------------"""
+
+
 def importFromString(targetName):
     if isinstance(targetName, unicode):
         targetName = str(targetName)
     try:
         if '.' in targetName:
-            pkgs, obj = targetName.rsplit('.',1)
+            pkgs, obj = targetName.rsplit('.', 1)
         else:
             return __import__('config')
         try:
@@ -35,7 +38,7 @@ def importFromString(targetName):
             pkgName = pkgs + '.' + obj
             __import__(pkgName)
             return sys.modules[pkgName]
-        
+
     except ImportError, error:
         raise ImportError(error)
 
@@ -43,7 +46,7 @@ def importFromString(targetName):
 class DebugFilesKeyError(KeyError, AssertionError):
     def __init__(self, request, key):
         formMatches = request.form.getlist(key)
-        buf = ['aaaa %s %s' %(key, request.mimetype)]
+        buf = ['aaaa %s %s' % (key, request.mimetype)]
 
         if formMatches:
             buf.append('\n\n %s' % ''.join('"%s"' % x for x in formMatches))
@@ -51,15 +54,16 @@ class DebugFilesKeyError(KeyError, AssertionError):
 
     def __str__(self):
         return self.msg
-        
+
 
 def attachEnctypeErrorMultidict(request):
     oldCls = request.files.__class__
+
     class newCls(oldCls):
-        def __getitem__(self,key):
+        def __getitem__(self, key):
             try:
                 return oldCls.__getitem__(self, key)
-            except KeyError, error:
+            except KeyError, e:
                 if key not in request.form:
                     raise
                 raise DebugFilesKeyError(request, key)
@@ -94,8 +98,3 @@ def importPreferredMemcachedClient(servers):
         return memcache.Client()
 
     raise RuntimeError('no memcache modules.')
-
-        
-
-
-

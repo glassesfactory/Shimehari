@@ -25,12 +25,12 @@ _exemptions = []
 https://github.com/sjl/flask-csrf
 """
 
+
 class CSRF(object):
 
     def __init__(self, app, csrfHandler=None):
         self.app = app
         self.csrfHandler = csrfHandler
-
 
     def checkCSRFExempt(self):
         try:
@@ -38,7 +38,6 @@ class CSRF(object):
             shared._csrfExempt = dest in _exemptions
         except NotFound:
             shared._csrfExempt = False
-
 
     #token の有効期限チェック
     def checkCSRFExpire(self, token):
@@ -50,7 +49,6 @@ class CSRF(object):
         if term > expire:
             return False
         return True
-
 
     def csrfProtect(self):
         if not shared._csrfExempt:
@@ -64,7 +62,6 @@ class CSRF(object):
                         abort(400)
 
 
-
 def generateCSRFToken():
     if '_csrfToken' not in session:
         session['_csrfToken'] = genereateToken()
@@ -72,12 +69,14 @@ def generateCSRFToken():
         session['_csrfTokenAdded'] = time.mktime(now.timetuple())
     return session['_csrfToken']
 
+
 import string
 import random
+
+
 def genereateToken():
     def randstr(n):
         return ''.join(random.choice(string.digits + string.letters) for i in xrange(n))
     token = sha1(session.sid + randstr(6)).hexdigest()
     token = uuid.uuid5(uuid.NAMESPACE_URL, token)
     return token
-

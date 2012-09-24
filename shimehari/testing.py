@@ -50,7 +50,7 @@ class ShimehariClient(Client):
             resp = app.responseClass()
             if not app.sessionStore.isNullSession(sess):
                 app.saveSession(sess, resp)
-            headers = reqp.get_wsgi_headers(c.request.environ)
+            headers = resp.get_wsgi_headers(c.request.environ)
             self.cookie_jar.extract_wsgi(c.request.environ, headers)
 
     def open(self, *args, **kwargs):

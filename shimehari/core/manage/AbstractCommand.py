@@ -22,6 +22,7 @@ from shimehari.core.exceptions import CommandError
 
 command_dict = {}
 
+
 class AbstractCommand(object):
     name = None
     help = ''
@@ -49,17 +50,17 @@ class AbstractCommand(object):
         self.execute(*args, **options.__dict__)
 
     def execute(self, *args, **options):
-        
+
         showTraceback = options.get('traceback', False)
 
         try:
             self.stdout = options.get('stdout', sys.stdout)
             self.stderror = options.get('stderr', sys.stderr)
 
-            output = self.handle(*args,**options)
+            output = self.handle(*args, **options)
             if output:
                 self.stdout.write(output)
-        except (TypeError,CommandError), e:
+        except (TypeError, CommandError), e:
             if showTraceback:
                 traceback.print_exc()
             else:
@@ -76,7 +77,9 @@ class AbstractCommand(object):
     def getAppConfig(self):
         pass
 
+
 import os
+
 
 class CreatableCommand(AbstractCommand):
 
@@ -89,12 +92,12 @@ class CreatableCommand(AbstractCommand):
         [args]
             :filename 対象ファイル名
     ------------------------------"""
-    def toWritable(self,filename):
+    def toWritable(self, filename):
         if sys.platform.startswith('java'):
             return
 
         if not os.access(filename, os.W_OK):
             st = os.stat(filename)
+            # Undefined name "start"
             newPermission = stat.S_IMODE(st.st_mode)
             os.chmod(filename, newPermission)
-

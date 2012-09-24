@@ -7,7 +7,7 @@ u"""
     ~~~~~~~~~~~~~~~~~~~~~~~
 
     キャッシュストア
-    
+
 ===============================
 """
 
@@ -21,8 +21,6 @@ import tempfile
 
 from itertools import izip
 from time import time
-
-
 
 
 try:
@@ -41,11 +39,12 @@ u"""-----------------------------
     キャッシュストアの抽象クラス
 
 ------------------------------"""
+
+
 class BaseCacheStore(object):
 
     def __init__(self, default_timeout=300):
         self.default_timeout = default_timeout
-
 
     u"""-----------------------------
         Shimehari.core.cachestore.BaseCacheStore
@@ -60,8 +59,6 @@ class BaseCacheStore(object):
     def get(self, key):
         pass
 
-
-
     u"""-----------------------------
         Shimehari.core.cachestore.BaseCacheStore
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -74,8 +71,6 @@ class BaseCacheStore(object):
     ------------------------------"""
     def getMany(self, *keys):
         return map(self.get, keys)
-
-
 
     u"""-----------------------------
         Shimehari.core.cachestore.BaseCacheStore
@@ -90,8 +85,6 @@ class BaseCacheStore(object):
     def getDict(self, *keys):
         return dict(izip(keys, self.getMany(*keys)))
 
-
-
     u"""-----------------------------
         Shimehari.core.cachestore.BaseCacheStore
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -104,8 +97,6 @@ class BaseCacheStore(object):
     ------------------------------"""
     def delete(self, key):
         pass
-
-
 
     u"""-----------------------------
         Shimehari.core.cachestore.BaseCacheStore
@@ -122,8 +113,6 @@ class BaseCacheStore(object):
     def set(self, key, value, timeout=None):
         pass
 
-
-
     u"""-----------------------------
         Shimehari.core.cachestore.BaseCacheStore
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -139,8 +128,6 @@ class BaseCacheStore(object):
     def add(self, key, value, timeout=None):
         pass
 
-
-
     u"""-----------------------------
         Shimehari.core.cachestore.BaseCacheStore
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -154,9 +141,7 @@ class BaseCacheStore(object):
     ------------------------------"""
     def setMany(self, mapping, timeout=None):
         for k, v in _items(mapping):
-            self.set(k, v,timeout)
-
-
+            self.set(k, v, timeout)
 
     u"""-----------------------------
         Shimehari.core.cachestore.BaseCacheStore
@@ -169,9 +154,7 @@ class BaseCacheStore(object):
 
     ------------------------------"""
     def deleteMany(self, *keys):
-        [ self.delete(k) for k in keys ]
-
-
+        [self.delete(k) for k in keys]
 
     u"""-----------------------------
         Shimehari.core.cachestore.BaseCacheStore
@@ -190,6 +173,7 @@ class BaseCacheStore(object):
 class NullCacheStore(BaseCacheStore):
     pass
 
+
 u"""-----------------------------
     Shimehari.core.cachestore.SimpleCacheStore
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -197,14 +181,14 @@ u"""-----------------------------
     メモリ上に突っ込むシンプルなキャッシュ
 
     ------------------------------"""
+
+
 class SimpleCacheStore(BaseCacheStore):
     def __init__(self, threshold=500, default_timeout=300):
         BaseCacheStore.__init__(self, default_timeout)
         self._cache = {}
         self.clear = self._cache.clear
         self._threshold = threshold
-
-
 
     u"""-----------------------------
         Shimehari.core.cachestore._prune
@@ -220,9 +204,8 @@ class SimpleCacheStore(BaseCacheStore):
             now = time()
             for ind, (expires, _) in enumerate(self._cache.items()):
                 if expires <= now or ind % 3 == 0:
+                    # FIXME: Undefined name "key"
                     self._cache.pop(key, None)
-
-
 
     u"""-----------------------------
         Shimehari.core.cachestore.SimpleCacheStore
@@ -235,10 +218,8 @@ class SimpleCacheStore(BaseCacheStore):
     def get(self, key):
         now = time()
         expires, value = self._cache.get(key, (0, None))
-        if expires > time():
+        if expires > now:
             return msg.loads(value)
-
-
 
     u"""-----------------------------
         Shimehari.core.cachestore.SimpleCacheStore
@@ -254,7 +235,6 @@ class SimpleCacheStore(BaseCacheStore):
 
         self._prune()
         self._cache[key] = (time() + timeout, msg.dumps(value, msg.HIGHEST_PROTOCOL))
-
 
     u"""-----------------------------
         Shimehari.core.cachestore.SimpleCacheStore
@@ -273,8 +253,6 @@ class SimpleCacheStore(BaseCacheStore):
         item = (time() + timeout, msg.dumps(value, msg.HIGHEST_PROTOCOL))
         self._cache.setdefault(key, item)
 
-
-
     u"""-----------------------------
         Shimehari.core.cachestore.SimpleCacheStore
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -289,17 +267,23 @@ class SimpleCacheStore(BaseCacheStore):
 
 import re
 from shimehari.core.helpers import importPreferredMemcachedClient
+
+
 u"""-----------------------------
     Shimehari.core.cachestore.MemcachedCacheStore
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    
+
     Memcache を使ったキャッシュストア
     ------------------------------"""
+
+
 _testMemcachedKey = re.compile(r'[^\x00-\x21\xff]{1,250}$').match
+
+
 class MemcachedCacheStore(BaseCacheStore):
     def __init__(self, servers=None, default_timeout=300, key_prefix=None):
         BaseCacheStore.__init__(self, default_timeout)
-        if servers is None or isinstance(servers, (list,tuple)):
+        if servers is None or isinstance(servers, (list, tuple)):
             if servers is None:
                 servers = ['127.0.0.1:11211']
             self._client = importPreferredMemcachedClient(servers)
@@ -309,8 +293,6 @@ class MemcachedCacheStore(BaseCacheStore):
             self._client = servers
 
         self.key_prefix = key_prefix
-
-
 
     u"""-----------------------------
         Shimehari.core.cachestore.MemcachedCacheStore
@@ -325,15 +307,13 @@ class MemcachedCacheStore(BaseCacheStore):
 
     ------------------------------"""
     def get(self, key):
-        if isinstance(key,unicode):
+        if isinstance(key, unicode):
             key = key.encode('utf-8')
         if self.key_prefix:
             key = self.key_prefix + key
 
         if _testMemcachedKey(key):
             return self._client.get(key)
-
-
 
     u"""-----------------------------
         Shimehari.core.cachestore.MemcachedCacheStore
@@ -371,8 +351,6 @@ class MemcachedCacheStore(BaseCacheStore):
                     rv[k] = None
         return rv
 
-
-
     u"""-----------------------------
         Shimehari.core.cachestore.MemcachedCacheStore
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -383,9 +361,7 @@ class MemcachedCacheStore(BaseCacheStore):
     ------------------------------"""
     def getMany(self, *keys):
         d = self.getDict(*keys)
-        return [d[k] for k in keys ]
-
-
+        return [d[k] for k in keys]
 
     u"""-----------------------------
         Shimehari.core.cachestore.MemcachedCacheStore
@@ -407,8 +383,6 @@ class MemcachedCacheStore(BaseCacheStore):
         if self.key_prefix:
             key = self.key_prefix + key
         self._client.set(key, value, timeout)
-        
-
 
     u"""-----------------------------
         Shimehari.core.cachestore.MemcachedCacheStore
@@ -430,8 +404,6 @@ class MemcachedCacheStore(BaseCacheStore):
             newMap[k] = v
         self._client.set_multi(newMap, timeout)
 
-
-
     u"""-----------------------------
         Shimehari.core.cachestore.MemcachedCacheStore
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -448,8 +420,6 @@ class MemcachedCacheStore(BaseCacheStore):
         if self.key_prefix:
             key = self.key_prefix + key
         self._client.add(key, value, timeout)
-
-
 
     u"""-----------------------------
         Shimehari.core.cachestore.MemcachedCacheStore
@@ -468,8 +438,6 @@ class MemcachedCacheStore(BaseCacheStore):
             key = self.key_prefix + key
         if _testMemcachedKey(key):
             self._client.delete(key)
-
-
 
     u"""-----------------------------
         Shimehari.core.cachestore.MemcachedCacheStore
@@ -494,7 +462,6 @@ class MemcachedCacheStore(BaseCacheStore):
         self._client.flush_all()
 
 
-
 u"""-----------------------------
     Shimehari.core.cachestore.FileSystemCacheStore
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -502,7 +469,11 @@ u"""-----------------------------
     FileSystem を使ったキャッシュストア
 
 ------------------------------"""
-_fsTransactionSuffix ='.__sakekasu'
+
+
+_fsTransactionSuffix = '.__sakekasu'
+
+
 class FileSystemCacheStore(BaseCacheStore):
     def __init__(self, cacheDir, threshold=500, default_timeout=300, mode=0600):
         BaseCacheStore.__init__(self, default_timeout)
@@ -512,7 +483,6 @@ class FileSystemCacheStore(BaseCacheStore):
 
         if not os.path.exists(self._cacheDir):
             os.makedirs(self._cacheDir)
-
 
     u"""-----------------------------
         Shimehari.core.cachestore.FileSystemCacheStore
@@ -525,8 +495,6 @@ class FileSystemCacheStore(BaseCacheStore):
     def _getFileList(self):
         return [os.path.join(self._cacheDir, fn) for fn in os.listdir(self._cacheDir) if not fn.endswith(_fsTransactionSuffix)]
 
-
-
     u"""-----------------------------
         Shimehari.core.cachestore.FileSystemCacheStore
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -538,8 +506,6 @@ class FileSystemCacheStore(BaseCacheStore):
     def _getFileName(self, key):
         hash = md5(key).hexdigest()
         return os.path.join(self._cacheDir, hash)
-
-
 
     u"""-----------------------------
         Shimehari.core.cachestore.FileSystemCacheStore
@@ -575,8 +541,6 @@ class FileSystemCacheStore(BaseCacheStore):
                     except (IOError, OSError):
                         pass
 
-
-
     u"""-----------------------------
         Shimehari.core.cachestore.FileSystemCacheStore
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -601,8 +565,6 @@ class FileSystemCacheStore(BaseCacheStore):
             os.remove(fn)
         except Exception:
             return None
-
-
 
     u"""-----------------------------
         Shimehari.core.cachestore.FileSystemCacheStore
@@ -634,8 +596,6 @@ class FileSystemCacheStore(BaseCacheStore):
         except (IOError, OSError), e:
             pass
 
-
-
     u"""-----------------------------
         Shimehari.core.cachestore.FileSystemCacheStore
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -653,8 +613,6 @@ class FileSystemCacheStore(BaseCacheStore):
         if not os.path.exists(fn):
             self.set(key, value, timeout)
 
-
-
     u"""-----------------------------
         Shimehari.core.cachestore.FileSystemCacheStore
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -670,8 +628,6 @@ class FileSystemCacheStore(BaseCacheStore):
             os.remove(self._getFileName(key))
         except (IOError, OSError):
             pass
-
-
 
     u"""-----------------------------
         Shimehari.core.cachestore.FileSystemCacheStore
@@ -689,13 +645,14 @@ class FileSystemCacheStore(BaseCacheStore):
                 pass
 
 
-
 u"""-----------------------------
     Shimehari.core.cachestore.RedisCacheStore
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     Redis を使ったキャッシュストア
 
 ------------------------------"""
+
+
 class RedisCacheStore(BaseCacheStore):
     def __init__(self, host='localhost', port=6379, passwd=None, default_timeout=300, key_prefix=None):
         BaseCacheStore.__init__(self, default_timeout)
@@ -709,14 +666,12 @@ class RedisCacheStore(BaseCacheStore):
             self._client = host
         self.key_prefix = key_prefix or ''
 
-
-
     u"""-----------------------------
         Shimehari.core.cachestore.RedisCacheStore
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         dump
 
-        与えられた値をシリアライズします。  
+        与えられた値をシリアライズします。
         [args]
             :value  シリアライズしたい値
 
@@ -727,8 +682,6 @@ class RedisCacheStore(BaseCacheStore):
             return str(value)
         else:
             return '!' + msg.dumps(value)
-
-
 
     u"""-----------------------------
         Shimehari.core.cachestore.RedisCacheStore
@@ -750,7 +703,6 @@ class RedisCacheStore(BaseCacheStore):
         except ValueError:
             return value
 
-
     u"""-----------------------------
         Shimehari.core.cachestore.RedisCacheStore
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -766,8 +718,6 @@ class RedisCacheStore(BaseCacheStore):
     ------------------------------"""
     def get(self, key):
         return self.load(self._client.get(self.key_prefix + key))
-
-
 
     u"""-----------------------------
         Shimehari.core.cachestore.RedisCacheStore
@@ -785,8 +735,6 @@ class RedisCacheStore(BaseCacheStore):
         if self.key_prefix:
             keys = [self.key_prefix + k for k in keys]
         return [self.load(x) for x in self._client.mget(keys)]
-
-
 
     u"""-----------------------------
         Shimehari.core.cachestore.RedisCacheStore
@@ -806,8 +754,6 @@ class RedisCacheStore(BaseCacheStore):
         dump = self.dump(value)
         self._client.setex(self.key_prefix + key, dump, timeout)
 
-
-
     u"""-----------------------------
         Shimehari.core.cachestore.RedisCacheStore
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -824,11 +770,9 @@ class RedisCacheStore(BaseCacheStore):
             timeout = self.default_timeout
         pipe = self._client.pipeline()
         for k, v in _items(mapping):
-            dump = self.dump(v)
+            self.dump(v)
             pipe.setex(self.key_prefix + k, v, timeout)
         pipe.execute()
-
-
 
     u"""-----------------------------
         Shimehari.core.cachestore.RedisCacheStore
@@ -843,12 +787,10 @@ class RedisCacheStore(BaseCacheStore):
     def add(self, key, value, timeout=None):
         if timeout is None:
             timeout = self.default_timeout
-        dump = self.dump(value)
+        self.dump(value)
         added = self._client.setnx(self.key_prefix + key, value)
         if added:
             self._client.expire(self.key_prefix + key, timeout)
-
-
 
     u"""-----------------------------
         Shimehari.core.cachestore.RedisCacheStore
@@ -862,8 +804,6 @@ class RedisCacheStore(BaseCacheStore):
     ------------------------------"""
     def delete(self, key):
         self._client.delete(self.key_prefix + key)
-
-
 
     u"""-----------------------------
         Shimehari.core.cachestore.RedisCacheStore
@@ -882,8 +822,6 @@ class RedisCacheStore(BaseCacheStore):
             keys = [self.key_prefix + k for k in keys]
         self._client.delete(*keys)
 
-
-
     u"""-----------------------------
         Shimehari.core.cachestore.RedisCacheStore
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -898,4 +836,3 @@ class RedisCacheStore(BaseCacheStore):
             if keys:
                 self._client.delete(*keys)
         self._client.flushdb()
-

@@ -29,4 +29,5 @@ class %sController(ApplicationController):
 
     def destroy(self, *args, **kwargs):
         pass
+
 """

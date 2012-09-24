@@ -19,7 +19,7 @@ from shimehari.core.helpers import importPreferredMemcachedClient
 try:
     import msgpack as msg
 except ImportError:
-    try: 
+    try:
         import cpickle as msg
     except ImportError:
         import pickle as msg
@@ -29,7 +29,6 @@ except ImportError:
         from shimehari.helpers import json as msg
 
 
-
 u"""
 ===============================
     ::pkg:: Shimehari.sessions
@@ -37,9 +36,11 @@ u"""
     ~~~~~~~~~~~~
 
     セッションの機能をもたせます
-    
+
 ===============================
 """
+
+
 class SessionMixin(object):
     def _get_permanent(self):
         return self.get('_permanent', False)
@@ -54,7 +55,6 @@ class SessionMixin(object):
     modified = True
 
 
-
 u"""
 ===============================
     ::pkg:: Shimehari.sessions
@@ -62,10 +62,12 @@ u"""
     ~~~~~~~~~~~~~~~~~~~
 
     SecureCookie を使ったセッション
-    
+
 ===============================
 """
-class SecureCookieSession(SecureCookie, SessionMixin):    
+
+
+class SecureCookieSession(SecureCookie, SessionMixin):
     u"""Secure Cookie つかった session"""
     def __init__(self,  initial=None, sid=None, new=False):
         def on_update(self):
@@ -76,9 +78,6 @@ class SecureCookieSession(SecureCookie, SessionMixin):
         self.modified = False
 
 
-
-
-
 u"""
 ===============================
     ::pkg:: Shimehari.sessions
@@ -86,16 +85,17 @@ u"""
     ~~~~~~~~~~~
 
     物言わぬセッション
-    
+
 ===============================
 """
+
+
 class NullSession(Session):
     def _fail(self, *args, **kwargs):
         raise RuntimeError('Null Session!!!')
 
     __setitem__ = __delitem__ = clear = pop = popitem = setdefault = update = _fail
     del _fail
-
 
 
 u"""
@@ -105,9 +105,11 @@ u"""
     ~~~~~~~~~~~~~
 
     werkzeug のセッションストアに多少機能を追加します。
-    
+
 ===============================
 """
+
+
 class _SessionStore(SessionStoreBase):
     nullSessionClass = NullSession
 
@@ -121,7 +123,6 @@ class _SessionStore(SessionStoreBase):
         return self.nullSessionClass()
 
 
-
 u"""
 ===============================
     ::pkg:: Shimehari.sessions
@@ -130,16 +131,20 @@ u"""
 
     セッションの保存先として Memcache を
     使用します。
-    
+
 ===============================
 """
+
+
 from pickle import HIGHEST_PROTOCOL
+
+
 class MemcachedSessionStore(_SessionStore):
     """session store using memcache"""
-    def __init__(self,servers=None, keyPrefix=None, defaultTimeout=300, session_class=None):
-        _SessionStore.__init__(self,session_class=session_class)
+    def __init__(self, servers=None, keyPrefix=None, defaultTimeout=300, session_class=None):
+        _SessionStore.__init__(self, session_class=session_class)
 
-        if isinstance(servers, (list,tuple)):
+        if isinstance(servers, (list, tuple)):
             client = importPreferredMemcachedClient(servers)
         elif servers is not None:
             client = servers
@@ -165,12 +170,13 @@ class MemcachedSessionStore(_SessionStore):
         key = self._getMemcacheKey(sid)
         data = self._memcacheClient.get(key)
         try:
+            # FIXME: Undefined name "packed"
             data = msg.loads(packed)
         except TypeError:
             data = {}
         return self.session_class(data, sid, False)
 
-    def _getMemcacheKey(self,sid):
+    def _getMemcacheKey(self, sid):
         if self._memcacheKeyPrefix:
             key = self._memcacheKeyPrefix + sid
         else:
@@ -180,7 +186,6 @@ class MemcachedSessionStore(_SessionStore):
         return key
 
 
-
 u"""
 ===============================
     ::pkg:: Shimehari.sessions
@@ -188,13 +193,15 @@ u"""
     ~~~~~~~~~~~~~~~~~~~~~~~~
 
     SecureCookieSession を利用したセッションストア
-    
+
 ===============================
 """
 from shimehari.shared import request
+
+
 class SecureCookieSessionStore(_SessionStore):
     def __init__(self, key='session', expire=0):
-        _SessionStore.__init__(self,session_class=SecureCookieSession)
+        _SessionStore.__init__(self, session_class=SecureCookieSession)
         self.key = key
         #直せ
         self.path = '/'
@@ -220,20 +227,18 @@ class SecureCookieSessionStore(_SessionStore):
             return self.session_class.load_cookie(request, self.key, secret_key=self.key)
 
 
-
-
-
 u"""
 ===============================
     ::pkg:: Shimehari.session
     RedisSessionStore
     ~~~~~~~~~~~~~~~~~
 
-    Author: @soundkitchen Izukawa Takanobu 
+    Author: @soundkitchen Izukawa Takanobu
     Redis を使ったセッションストア
-    
+
 ===============================
 """
+
 
 class RedisSessionStore(_SessionStore):
     """session store using redis."""

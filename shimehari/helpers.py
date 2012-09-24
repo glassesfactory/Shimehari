@@ -42,6 +42,7 @@ from werkzeug.exceptions import NotFound
 from shimehari.shared import currentApp, request, _appContextStack, _requestContextStack
 from shimehari.core.helpers import importFromString
 
+
 def _assertHaveJson():
     if not jsonAvailable:
         raise RuntimeError(u'json ないじゃん')
@@ -54,10 +55,10 @@ try:
 except ImportError:
     redisAvailable = False
 
+
 def _assertHaveRedis():
     if not redisAvailable:
         raise RuntimeError('no redis module found')
-
 
 
 _osAltSep = list(sep for sep in [os.path.sep, os.path.altsep] if sep not in (None, '/'))
@@ -65,6 +66,7 @@ _osAltSep = list(sep for sep in [os.path.sep, os.path.altsep] if sep not in (Non
 _missing = object()
 
 _toJsonFilter = json.dumps
+
 
 def getHandlerAction(resource, action):
     u"""与えられたコントローラーとアクション名からマッチするハンドラを返します。
@@ -81,30 +83,29 @@ def getHandlerAction(resource, action):
 
 def getHostName(url):
     u"""URL からホスト名を取得します。
-    
+
     :param url: ホスト名を抜き出したい URL
-        
+
     """
     return urlparse.urlparse(url).netloc
 
 
-
-
 import sgmllib
+
+
 class Stripper(sgmllib.SGMLParser):
     u"""与えられたストリングから HTML タグを除去するクラス。"""
     def __init__(self):
         sgmllib.SGMLParser.___init__(self)
 
-    def strip(self,htmlTag):
+    def strip(self, htmlTag):
         self.theString = ""
         self.feed(htmlTag)
         self.close()
         return self.theString
 
-    def handleData(self,data):
+    def handleData(self, data):
         self.theString += data
-
 
 
 def urlFor(endpoint, **values):
@@ -118,7 +119,7 @@ def urlFor(endpoint, **values):
         urlAdapter = reqctx.urlAdapter
         # if urlAdapter is None:
             # raise RuntimeError('ooooo')
-        if endpoint[:1]==('.'):
+        if endpoint[:1] == ('.'):
             endpoint = endpoint[1:]
         external = values.pop('_external', False)
     else:
@@ -126,7 +127,7 @@ def urlFor(endpoint, **values):
         if urlAdapter is None:
             raise RuntimeError('url adapter not found')
         external = values.pop('_external', True)
-    
+
     anchor = values.pop('_anchor', None)
     method = values.pop('_method', None)
     appctx.app.injectURLDefaults(endpoint, values)
@@ -144,7 +145,6 @@ def urlFor(endpoint, **values):
     if anchor is not None:
         rv += '#' + url_quote(anchor)
     return rv
-
 
 
 def findPackage(importName):
@@ -181,7 +181,6 @@ def findPackage(importName):
     return None, pkgPath
 
 
-
 u"""-----------------------------
     ::pkg:: Shimehari.helpers
     getModulesFromPyFile
@@ -196,18 +195,19 @@ u"""-----------------------------
     [return]
     :modules
         インポートされたモジュール
-        
+
 ----------------------------------"""
 import glob
+
+
 def getModulesFromPyFile(targetPath, rootPath):
     files = glob.glob(targetPath + '/*.py')
     modules = []
     for fn in files:
         if not '__init__' in fn:
-            fn = fn.replace(rootPath, '')[1:].replace('.py','').replace('/', '.')
+            fn = fn.replace(rootPath, '')[1:].replace('.py', '').replace('/', '.')
             modules.append(fn)
     return modules
-
 
 
 u"""-----------------------------
@@ -222,8 +222,10 @@ u"""-----------------------------
 
     [return]
         :string ルートパス
-        
+
 ----------------------------------"""
+
+
 def getRootPath(importName):
     loader = pkgutil.get_loader(importName)
     if loader is None or importName == '__main__':
@@ -237,7 +239,6 @@ def getRootPath(importName):
     return os.path.dirname(os.path.abspath(filePath))
 
 
-
 u"""-----------------------------
     ::pkg:: Shimehari.helpers
     getEnviron
@@ -247,13 +248,14 @@ u"""-----------------------------
     [return]
     :url
         ホスト名を抜き出したい URL
-        
+
 ----------------------------------"""
+
+
 def getEnviron():
     if 'SHIMEHARI_WORK_ENV' in os.environ:
         return os.environ['SHIMEHARI_WORK_ENV']
     return 'development'
-
 
 
 def sendFromDirectory(directory, filename, **options):
@@ -261,9 +263,8 @@ def sendFromDirectory(directory, filename, **options):
     if not os.path.isfile(filename):
         print filename
         raise NotFound()
-    options.setdefault('conditional',True)
+    options.setdefault('conditional', True)
     return sendFile(filename, **options)
-
 
 
 def safeJoin(directory, filename):
@@ -276,16 +277,14 @@ def safeJoin(directory, filename):
     return os.path.join(directory, filename)
 
 
-
-
 def sendFile(filenameOrFp, mimetype=None, asAttachment=False,
              attachmentFilename=None, addEtags=True,
              cacheTimeout=None, conditional=False):
     u"""静的ファイルをレスポンスとして返します。
-    
+
     :param filenameOrFp:    送りたいファイル名
     :param mimetype:        mimetype
-    
+
     """
     mtime = None
     if isinstance(filenameOrFp, basestring):
@@ -301,10 +300,10 @@ def sendFile(filenameOrFp, mimetype=None, asAttachment=False,
             warn(DeprecationWarning('THAAAAAAAA'), stacklevel=2)
         if addEtags:
             warn(DeprecationWarning('AAAAAAA?'), stacklevel=2)
-        
+
     if filename is not None:
         if not os.path.isabs(filename):
-            filname = os.path.join(currentApp.rootPath, filename)
+            os.path.join(currentApp.rootPath, filename)
     if mimetype is None and (filename or attachmentFilename):
         mimetype = mimetypes.guess_type(filename or attachmentFilename)[0]
     if mimetype is None:
@@ -316,7 +315,7 @@ def sendFile(filenameOrFp, mimetype=None, asAttachment=False,
             if filename is None:
                 raise TypeError('file name is invalid')
             attachmentFilename = os.path.basename(filename)
-        headers.add('Content-Disposition','attachment',filename=attachmentFilename)
+        headers.add('Content-Disposition', 'attachment', filename=attachmentFilename)
 
     if currentApp.useXSendFile and filename:
         if file is not None:
@@ -344,9 +343,9 @@ def sendFile(filenameOrFp, mimetype=None, asAttachment=False,
         rv.expires = int(time() + cacheTimeout)
 
     if addEtags and filename is not None:
-        rv.set_etag('Shimehari-%s-%s-%s' % 
-            (os.path.getmtime(filename), 
-            os.path.getsize(filename), 
+        rv.set_etag('Shimehari-%s-%s-%s' %
+            (os.path.getmtime(filename),
+            os.path.getsize(filename),
             adler32(
                 filename.encode('utf8') if isinstance(filename, unicode) else filename
             ) & 0xffffffff
@@ -373,9 +372,8 @@ def jsonify(*args, **kwargs):
         content = str(callback) + '(' + jsonStr + ')'
         return currentApp.responseClass(content, mimetype='application/javascript')
     """
-    return currentApp.responseClass(json.dumps(dict(*args,**kwargs), \
+    return currentApp.responseClass(json.dumps(dict(*args, **kwargs), \
         indent=None if request.is_xhr else 2), mimetype='application/json')
-
 
 
 def fillSpace(text, length):
@@ -386,7 +384,6 @@ def fillSpace(text, length):
     return text
 
 
-from threading import RLock
 class lockedCachedProperty(object):
     def __init__(self, func, name=None, doc=None):
         self.__name__ = name or func.__name__
@@ -404,7 +401,6 @@ class lockedCachedProperty(object):
                 value = self.func(obj)
                 obj.__dict__[self.__name__] = value
             return value
-
 
 
 def getTemplater(app, templaterName, *args, **options):
@@ -425,21 +421,22 @@ u"""--------------------------------------
     ~~~~~~~~~~~~~~~~~~~~~~~~
     Shimehari のベーシッククラス
 --------------------------------------"""
+
+
 class _Kouzi(object):
-    def __init__( self, importName, appFolder='app', 
+    def __init__(self, importName, appFolder='app',
                   controllerFolder='controllers', viewFolder=None):
         self.importName = importName
         self.currentEnv = getEnviron()
-        
+
         self.rootPath = getRootPath(self.importName)
-        
 
         from shimehari.configuration import ConfigManager
         config = ConfigManager.getConfig(self.currentEnv)
 
-        if config and self.rootPath == os.getcwd() +'/' + config['APP_DIRECTORY']:
+        if config and self.rootPath == os.getcwd() + '/' + config['APP_DIRECTORY']:
             self.rootPath = os.getcwd()
-        
+
         self.appFolder = config['APP_DIRECTORY'] if config and config['APP_DIRECTORY'] else appFolder
         self.controllerFolder = config['CONTROLLER_DIRECTORY'] if config and \
                                 config['CONTROLLER_DIRECTORY'] else controllerFolder
@@ -451,6 +448,7 @@ class _Kouzi(object):
     def _getStaticFolder(self):
         if self._staticFolder is not None:
             return os.path.join(self.rootPath, self.appFolder, self._staticFolder)
+
     def _setStaticFolder(self, value):
         self._staticFolder = value
     staticFolder = property(_getStaticFolder, _setStaticFolder)
@@ -461,17 +459,15 @@ class _Kouzi(object):
             if self.staticFolder is None:
                 return None
             return '/' + os.path.basename(self.staticFolder)
+
     def _setStaticURL(self, value):
         self._staticURL = value
     staticURL = property(_getStaticURL, _setStaticURL)
     del _getStaticURL, _setStaticURL
 
-
-
     @property
     def hasStaticFolder(self):
         return self.staticFolder is not None
-
 
     u"""-----------------------------
         ::pkg:: Shimehari.helpers._Kouzi
@@ -484,15 +480,13 @@ class _Kouzi(object):
 
         [return]
         :response レスポンス
-        
+
     ----------------------------------"""
     def sendStaticFile(self, filename):
         if not self.hasStaticFolder:
             raise RuntimeError('static file folder has none.')
         cacheTimeout = self.getSendFileMaxAge(filename)
         return sendFromDirectory(self.staticFolder, filename, cacheTimeout=cacheTimeout)
-
-
 
     u"""-----------------------------
         ::pkg:: Shimehari.helpers._Kouzi
@@ -505,14 +499,12 @@ class _Kouzi(object):
 
         [return]
         :response レスポンス
-        
+
     ----------------------------------"""
     def getSendFileMaxAge(self, filename):
         return currentApp.config['SEND_FILE_MAX_AGE_DEFAULT']
 
-
     def openFile(self, filename, mode='rb'):
         if mode not in ('r', 'rb'):
             raise ValueError('can not read file')
-        return open(os.path.join(self.rootPath,filename), mode)
-
+        return open(os.path.join(self.rootPath, filename), mode)

@@ -17,19 +17,20 @@ from shimehari.core.helpers import importFromString
 
 _commands = None
 
+
 u"""
 コマンドラインから色々実行するべさ
 """
+
+
 def executeFromCommandLine(argv=None):
     executer = CommandLineExecuter(argv)
     executer.execute()
 
 
-
-def loadCommandModule(cmdName ,name):
+def loadCommandModule(cmdName, name):
     module = importFromString('%s.manage.commands.%s' % (cmdName, name))
     return module.Command()
-
 
 
 def getCommands():
@@ -43,7 +44,7 @@ def getCommands():
 
 
 def findCommand(manageDir):
-    cmdDir = os.path.join(manageDir,'commands')
+    cmdDir = os.path.join(manageDir, 'commands')
     try:
         return [f[:-3] for f in os.listdir(cmdDir) if not f.startswith('_') and f.endswith('.py')]
     except OSError:
@@ -84,6 +85,3 @@ class CommandLineExecuter(object):
             self.fetchCommand('help').runFromArgv(self.argv)
         else:
             self.fetchCommand(subcommand).runFromArgv(self.argv)
-        
-
-
