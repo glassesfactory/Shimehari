@@ -16,8 +16,8 @@ class Command(AbstractCommand):
     summary = 'Check Your Shimehari Application Configration'
     usage = "Usage: %prog [OPTIONS]"
     option_list = AbstractCommand.option_list + (
-            make_option('--env', '-e', action='store', type='string', dest='environ', help='get config environ'),
-        )
+        make_option('--env', '-e', action='store', type='string', dest='environ', help='get config environ'),
+    )
 
     def handle(self, *args, **options):
         try:

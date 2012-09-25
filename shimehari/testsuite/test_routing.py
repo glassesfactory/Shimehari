@@ -99,9 +99,9 @@ class testRESTfulRouter(ShimehariTestCase):
         self.assertNotEqual(RESTfulRouter([RESTfulRule('test', index, show)]), Exception)
 
         self.assertNotEqual(RESTfulRouter([
-                Resource(IndexController),
-                RESTfulRule('test', index, show)
-            ]), Exception)
+            Resource(IndexController),
+            RESTfulRule('test', index, show)
+        ]), Exception)
 
         self.assertRaises(TypeError, RESTfulRouter, [1, 2, 3])
 

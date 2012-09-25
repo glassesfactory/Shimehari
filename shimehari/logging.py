@@ -18,7 +18,7 @@ import os
 import sys
 
 from logging import getLogger, StreamHandler, Formatter, getLoggerClass, DEBUG
-from shimehari.configuration import ConfigManager,Config
+from shimehari.configuration import ConfigManager, Config
 from shimehari.helpers import getEnviron
 
 

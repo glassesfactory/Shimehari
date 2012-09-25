@@ -9,7 +9,8 @@ u"""
 ===============================
 """
 
-import os, sys
+import os
+import sys
 from optparse import OptionParser
 
 from .AbstractCommand import AbstractCommand, CreatableCommand
@@ -67,7 +68,6 @@ class CommandLineExecuter(object):
         else:
             cls = loadCommandModule(cmdName, subcommand)
         return cls
-
 
     def execute(self):
         parser = OptionParser()

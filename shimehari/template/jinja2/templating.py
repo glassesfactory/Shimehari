@@ -66,9 +66,9 @@ class Jinja2Templater(AbstractTemplater):
         rv = Environment(self.app, **options)
         #いるかなー
         rv.globals.update(
-                url_for=urlFor,
-                csrfToken=generateCSRFToken
-            )
+            url_for=urlFor,
+            csrfToken=generateCSRFToken
+        )
         rv.filters['tojson'] = _toJsonFilter
         return rv
 

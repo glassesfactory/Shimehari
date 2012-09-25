@@ -30,7 +30,7 @@ class ShimehariAppTestCase(ShimehariTestCase):
         app.router = shimehari.Router([Rule('/hell', endpoint='returnHello', methods=['POST'])])
         app.controllers['returnHello'] = returnHello
         c = app.testClient()
-        rv = c.get('/hell', content_type='text/planetext')
+        c.get('/hell', content_type='text/planetext')
         self.assert_(app.gotFirstRequest)
 
     #u---mu
@@ -105,9 +105,9 @@ class ShimehariAppTestCase(ShimehariTestCase):
         app.controllers['returnHello'] = returnHello
         c = app.testClient()
         self.assertEqual(app.testCnt, 0)
-        rv = c.get('/hell', content_type='text/planetext')
+        c.get('/hell', content_type='text/planetext')
         self.assertEqual(app.testCnt, 1)
-        rv = c.get('/hell', content_type='text/planetext')
+        c.get('/hell', content_type='text/planetext')
         self.assertEqual(app.testCnt, 1)
 
     def testPreprocessRequest(self):
@@ -128,11 +128,10 @@ class ShimehariAppTestCase(ShimehariTestCase):
         app.controllers['returnHello'] = returnHello
         c = app.testClient()
         self.assertEqual(app.testCnt, 0)
-        rv = c.get('/hell', content_type='text/planetext')
+        c.get('/hell', content_type='text/planetext')
         self.assertEqual(app.testCnt, 1)
-        rv = c.get('/hell', content_type='text/planetext')
+        c.get('/hell', content_type='text/planetext')
         self.assertEqual(app.testCnt, 2)
-
 
     def testProcessResponse(self):
         ConfigManager.removeConfig('development')
@@ -140,7 +139,7 @@ class ShimehariAppTestCase(ShimehariTestCase):
         app = shimehari.Shimehari(__name__)
 
         app.testCnt = 0
-        
+
         @app.afterRequest
         def doRequest(res):
             app.testCnt = app.testCnt + 1
@@ -149,12 +148,12 @@ class ShimehariAppTestCase(ShimehariTestCase):
         def returnHello(*args, **kwargs):
             return 'Hello'
         app.router = shimehari.Router([Rule('/hell', endpoint='returnHello', methods=['POST'])])
-        app.controllers['returnHello']= returnHello
+        app.controllers['returnHello'] = returnHello
         c = app.testClient()
         self.assertEqual(app.testCnt, 0)
-        rv = c.get('/hell', content_type='text/planetext')
+        c.get('/hell', content_type='text/planetext')
         self.assertEqual(app.testCnt, 1)
-        rv = c.get('/hell', content_type='text/planetext')
+        c.get('/hell', content_type='text/planetext')
         self.assertEqual(app.testCnt, 2)
 
 
