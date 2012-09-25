@@ -1,9 +1,9 @@
 Shimehari
 =======
 
-Python Middle Framework for web.
+Shimehari is Python Middle Framework for web.
 
-forked from Flask:: http://flask.pocoo.org
+inspired from Flask:: http://flask.pocoo.org
 
 ![travis-ci](https://secure.travis-ci.org/glassesfactory/Shimehari.png)
 
@@ -14,7 +14,7 @@ Shimehari (しめはり)は Python 製 Web フレームワークです。
 
 フルスタックだとゴリゴリすぎるけどマイクロフレームワークだと  
 ちょっと規模が大きいかな…
-という時に活躍したいミドルフレームワークを自称しています。
+という時に活躍したいモデレートフレームワークを自称しています。
 
 wiki はこれから整備していきます...
 
