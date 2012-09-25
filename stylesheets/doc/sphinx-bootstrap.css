@@ -230,3 +230,8 @@ em.property{
     background-color : #2b0f01;
     color : #f5f4df;
 }
+
+.navbar .nav > li > a{
+    color : #cf3616;
+}
+
