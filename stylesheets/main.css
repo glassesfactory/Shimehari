@@ -34,6 +34,7 @@ body > .container > header {
 	width : auto;
 	padding-left : 120px;
 }
+
 #main #navi li {
 	float : left;
 }
@@ -48,6 +49,22 @@ body > .container > header {
 	font-size: 1.6em;
 	text-align: center;
 	margin: 30px 0;
+}
+
+#latest{
+	text-align: center;
+	font-size : 80px;
+	font-weight: bold;
+	margin-bottom : 40px;
+} 
+
+#latest span{
+	display: inline-block;
+}
+
+#latest a{
+	padding-top :20px;
+	line-height: 90px;
 }
 
 section {
