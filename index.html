@@ -7,6 +7,7 @@
     <meta name="description" content="Shimehari : python middle framework for web." />
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/main.css">
 
     <title>Shimehari</title>
   </head>
@@ -14,16 +15,66 @@
   <body>
     <div class="container">
       <header>
-        <img src="images/logo.png" alt="Shimehari" width="800" height="350">
+        <h1>
+          <img src="images/logo.png" alt="Shimehari" width="800" height="350">
+        </h1>
       </header>
       <div id="main">
-        <div>
+        <div id="navi">
           <nav>
-            <li><a href="/">おーばーびゅー</a></li>
+            <li><a href="/"><img src="images/nav_overview.png" width="370" height="90" alt="overview" /></a></li>
+            <li><img src="images/nav_space.png" width="100" height="90"/></li>
+            <li><a href="/doc"><img src="images/nav_docs.png" width="190" height="90" alt="docs" /></a></li>
           </nav>
         </div>
+        <div id="read" class="row">
+          Shimehari is Python Middle Framework for web.
+        </div>
+        <section class="row">
+          <header>
+            <h2>Shimehari is Yopparai.</h2>
+          </header>
+          <div>
+            <pre>$ cd your_proj_directory
+$ shimehari create your_app_name
+$ shimehari drink
+$ * Shimehari GKGK!
+$ * Running on http://127.0.0.1:5959/</pre>
+          </div>
+        </section>
+        <section class="row">
+          <header>
+            <h2>酔っててもインストールできるますよ</h2>
+          </header>
+          <div>
+            <pre>$ pip install Shimehari</pre>
+          </div>
+        </section>
+        <section class="row" id="interest">
+          <header>
+            <h2>気になったら</h2>
+          </header>
+          <div>
+            <ul>
+              <li>
+                 <img src="images/star.png" width="200" height="45"><iframe class="github-btn"
+                src="http://ghbtns.com/github-btn.html?user=glassesfactory&repo=shimehari&type=watch&count=true&size=large"
+                allowtransparency="true" frameborder="0" scrolling="0"
+                width="140px" height="35px"></iframe>
+              </li>
+              <li>
+                  <img src="images/fork.png" width="200" height="45">
+                  <iframe class="github-btn"
+                src="http://ghbtns.com/github-btn.html?user=glassesfactory&repo=shimehari&type=fork&count=true&size=large"
+                allowtransparency="true" frameborder="0" scrolling="0"
+                width="190px" height="35px"></iframe>
+              </li>
+            </ul>
+          </div>
+        </section>
       </div>
       <footer>
+        <img src="images/copy.png" width="325" height="45">
       </footer>
     </div>
   </body>
