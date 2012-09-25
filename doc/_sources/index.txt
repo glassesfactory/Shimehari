@@ -1,0 +1,42 @@
+.. Shimehari documentation master file, created by
+   sphinx-quickstart on Tue Sep 18 22:11:11 2012.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+Welcome to Shimehari
+========================
+
+Welcome to Shimehari's documentation!
+
+Shimehari(しめはり) は Python 製 Web フレームワークです。
+
+フルスタックだと扱いがヘヴィだけどマイクロフレームワークでは
+ちょっとものたりないかな… という時に活躍したいと考えている
+自称ミドルフレームワークです。
+
+まずは :ref:`installation` と :ref:`quickstart` を読んでみてください。
+
+
+
+User's Guide
+--------------
+
+Shimehari の使い方について解説していきます。
+
+.. toctree::
+   :maxdepth: 3
+
+   about
+   installation
+   quickstart
+  
+API
+------
+
+各モジュールの API リファレンスです。
+書くモジュールごとの詳細な情報が知りたい場合はこれらを参照してください。
+
+.. toctree::
+	:maxdepth: 2
+
+	api

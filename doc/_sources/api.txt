@@ -1,0 +1,53 @@
+.. _api:
+
+API
+======
+
+.. module:: shimehari
+
+Application Object
+----------------------
+
+.. autoclass:: Shimehari
+	:members:
+	:inherited-members:
+
+.. module:: shimehari.routing
+
+Routing
+----------
+
+.. autoclass:: AbstractRouter
+	:members:
+
+.. autoclass:: RESTfulRouter
+	:members:
+
+.. autoclass:: Resource
+	:members:
+
+
+
+JSON
+---------
+
+
+.. module:: shimehari.cache
+
+
+Cache
+----------
+
+.. autoclass:: Cache
+	:members:
+
+.. module:: shimehari.configuration
+
+Configuration
+----------------
+
+.. autoclass:: ConfigManager
+	:members:
+
+.. autoclass:: Config
+	:members:

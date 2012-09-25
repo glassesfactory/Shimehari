@@ -1,0 +1,79 @@
+.. _quickstart:
+
+Quickstart
+==================
+
+ここでは Shimehari の簡単な使い方について解説します。
+
+====================
+How to use
+====================
+
+アプリケーションを作成したいディレクトリで以下のコマンドを実行するだけで
+最初の画面が表示されます。
+
+::
+
+	$ cd your_proj_directory
+	$ shimehari create your_app_name
+	$ shimehari drink
+	$ * Shimehari GKGK!
+	$ * Running on http://127.0.0.1:5959/
+
+
+It works! and Let's drink!
+
+================================
+RESTful Routing  & Controller
+================================
+
+Shimehari は RESTful なルーティングを推奨しています。
+  
+Routing
+-----------
+Router に対し、Resource としてコントローラークラスを追加するだけで自動的に RESTful なアクションがルーティングされます。
+
+.. code-block:: python
+
+	appRoutes = Router([
+		Resource(IndexController, root=True),
+		Resource(FooController),
+		Resource(BarController)
+	    ])
+
+
+現在のルーティング状況は以下のコマンドを叩くことで確認することが出来ます。
+
+::
+
+	$ shimehari routes
+	$ Your Shimehari App Current Routing.
+
+	Methods       |URL                          |Action
+	----------------------------------------------------------------------
+	GET            /                             [action => index, controller => IndexController]
+	POST,GET       /<int:id>                     [action => show, controller => IndexController]
+
+  
+Controller
+----------------
+
+shimehari.controllers.ApplicationController を継承することで  
+Resource() を使ってルーティングを拾い上げることが出来ます。
+コントローラーで実装されていない RESTful アクションは自動的にルーティングの対象外となります。
+  
+.. code-block:: python
+
+	from shimehari import renderTemplate
+	from shimehari.controllers import ApplicationController
+	class ExampleController(ApplicationController):
+		def index(self, *args, **kwargs):
+			return renderTemplate('index.html')
+
+
+ApplicationController を自前で継承後、必要なアクションを定義するだけでなく、  
+以下のコマンドを叩くことで一通りアクションが定義済みのコントローラーを生成することが出来ます。
+
+::
+
+	$ shimehari generate controller Example
