@@ -8,7 +8,7 @@ from werkzeug.utils import redirect
 from .app import Shimehari
 from .controllers import ApplicationController
 from .helpers import jsonAvailable, json, urlFor, jsonify, sendFile
-from .routing import Router, Resource, RESTfulRule, Root
+from .routing import Router, Resource, RESTfulRule, Root, Group
 from .shared import request, session, shared, _requestContextStack, _appContextStack, currentApp
 from .template import renderTemplate, renderTempalteString
 from .wrappers import Request, Response
