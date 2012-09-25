@@ -29,6 +29,11 @@ body > .container > header {
 	background-position: bottom;
 	padding-bottom : 50px;
 }
+
+#main #navi nav{
+	width : auto;
+	padding-left : 120px;
+}
 #main #navi li {
 	float : left;
 }
