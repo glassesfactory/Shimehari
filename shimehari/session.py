@@ -68,11 +68,16 @@ u"""
 
 
 class SecureCookieSession(SecureCookie, SessionMixin):
-    u"""Secure Cookie つかった session"""
+    u"""SecureCookie を使ったセッションクラス
+
+        :param initial:     セッションデータ
+        :param sid:         セッションID
+        :param new:         新規セッション
+        """
     def __init__(self,  initial=None, sid=None, new=False):
         def on_update(self):
             self.modified = True
-        # SecureCookie.__init__(self, initial, on_update)
+        SecureCookie.__init__(self, initial, on_update)
         self.sid = sid
         self.new = new
         self.modified = False
@@ -123,24 +128,18 @@ class _SessionStore(SessionStoreBase):
         return self.nullSessionClass()
 
 
-u"""
-===============================
-    ::pkg:: Shimehari.sessions
-    MemcachedSessionStore
-    ~~~~~~~~~~~~~~~~~~~~~
-
-    セッションの保存先として Memcache を
-    使用します。
-
-===============================
-"""
-
 
 from pickle import HIGHEST_PROTOCOL
 
 
 class MemcachedSessionStore(_SessionStore):
-    """session store using memcache"""
+    u"""セッションの保存先に Memcache を使ったセッションストア
+
+    :param servers:         Memcache サーバー
+    :param keyPrefix:       セッション格納時、キーに付ける接頭詞
+    :param defaultTimeout:  セッションの保存期間
+    :param session_class:   セッションクラス
+    """
     def __init__(self, servers=None, keyPrefix=None, defaultTimeout=300, session_class=None):
         _SessionStore.__init__(self, session_class=session_class)
 
@@ -168,9 +167,8 @@ class MemcachedSessionStore(_SessionStore):
             return self.new()
 
         key = self._getMemcacheKey(sid)
-        data = self._memcacheClient.get(key)
+        packed = self._memcacheClient.get(key)
         try:
-            # FIXME: Undefined name "packed"
             data = msg.loads(packed)
         except TypeError:
             data = {}
@@ -186,20 +184,10 @@ class MemcachedSessionStore(_SessionStore):
         return key
 
 
-u"""
-===============================
-    ::pkg:: Shimehari.sessions
-    SecureCookieSessionStore
-    ~~~~~~~~~~~~~~~~~~~~~~~~
 
-    SecureCookieSession を利用したセッションストア
-
-===============================
-"""
 from shimehari.shared import request
-
-
 class SecureCookieSessionStore(_SessionStore):
+    u"""SecureCookieSession を利用したセッションストア"""
     def __init__(self, key='session', expire=0):
         _SessionStore.__init__(self, session_class=SecureCookieSession)
         self.key = key
@@ -227,21 +215,16 @@ class SecureCookieSessionStore(_SessionStore):
             return self.session_class.load_cookie(request, self.key, secret_key=self.key)
 
 
-u"""
-===============================
-    ::pkg:: Shimehari.session
-    RedisSessionStore
-    ~~~~~~~~~~~~~~~~~
 
-    Author: @soundkitchen Izukawa Takanobu
-    Redis を使ったセッションストア
-
-===============================
-"""
 
 
 class RedisSessionStore(_SessionStore):
-    """session store using redis."""
+    u"""Redis を使ったセッションストア
+
+    Author: @soundkitchen Izukawa Takanobu
+
+    :param 
+    """
     def __init__(self, host='localhost', port=6379, db=0, expire=0, session_class=None):
         from redis import Redis
         super(RedisSessionStore, self).__init__(session_class=session_class)
@@ -269,16 +252,16 @@ class RedisSessionStore(_SessionStore):
         return self.session_class(data, sid, False)
 
 
-"""デフォルトのセッションストアを決定します。"""
+u"""デフォルトのセッションストアを決定します。"""
 try:
     from werkzeug.contrib.sessions import FileSystemSessionStore
     _currentStore = FileSystemSessionStore()
 except (Exception, RuntimeError), e:
     try:
-        """GAE 対策"""
+        u"""GAE 対策"""
         _currentStore = MemcachedSessionStore()
     except (Exception, RuntimeError), e:
-        """それでもダメだったら最後の手段"""
+        u"""それでもダメだったら最後の手段"""
         _currentStore = SecureCookieSessionStore()
 finally:
     SessionStore = _currentStore.__class__

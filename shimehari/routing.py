@@ -314,8 +314,7 @@ class Resource(Map):
 
     def _addRuleFromRules(self, rules):
         for rule in rules:
-            # FIXME: undefined name "RuleBase"
-            if not isinstance(rule, RuleBase):
+            if not isinstance(rule, Rule):
                 raise TypeError('Rule type is invalid')
             self._rules.append(rule)
 

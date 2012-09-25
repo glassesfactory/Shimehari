@@ -47,6 +47,5 @@ class TestConfigManager(ShimehariTestCase):
 
 def suite():
     suite = unittest.TestSuite()
-    # FIXME: Undefined name "ConfigManagerTestCase"
-    suite.addTest(unittest.makeSuite(ConfigManagerTestCase))
+    suite.addTest(unittest.makeSuite(TestConfigManager))
     return suite

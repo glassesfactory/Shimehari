@@ -55,8 +55,8 @@ class JSONTestCase(ShimehariTestCase):
     def jsonBodyEncoding(self):
         ConfigManager.addConfig(testConfig)
         app = shimehari.Shimehari(__name__)
-        # FIXME: Undefined name "testJSONBadRequests"
-        app.testing = testJSONBadRequests
+        
+        app.testing = True
 
         def returnJSON(*args, **kwargs):
             return shimehari.request.json

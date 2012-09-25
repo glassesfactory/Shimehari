@@ -202,9 +202,8 @@ class SimpleCacheStore(BaseCacheStore):
         #キャッシュの数が増えた時消す
         if len(self._cache) > self._threshold:
             now = time()
-            for ind, (expires, _) in enumerate(self._cache.items()):
+            for ind, (key,(expires, _)) in enumerate(self._cache.items()):
                 if expires <= now or ind % 3 == 0:
-                    # FIXME: Undefined name "key"
                     self._cache.pop(key, None)
 
     u"""-----------------------------
