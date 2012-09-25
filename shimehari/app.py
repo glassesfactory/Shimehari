@@ -222,8 +222,10 @@ class Shimehari(_Kouzi):
 
     def saveSession(self, session, response):
         u"""セッションを保存します。
+
         :param session:     保存したいセッション
         :param response:    レスポンス
+        
         """
         if session.should_save:
             self.sessionStore.save(session, response)
