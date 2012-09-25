@@ -24,7 +24,7 @@ setup(
     license='BSD',
     author=AUTHOR,
     author_email='megane@glasses-factory.net',
-    description='middle framework based on Flask, Werkzeug, Jinja2 ',
+    description='moderate framework for Python. based on Werkzeug, Jinja2 ',
     packages=['shimehari', 'shimehari.core', 'shimehari.template', 'shimehari.core.conf', 'shimehari.core.conf.app_template',
                 'shimehari.core.conf.app_template.controllers', 'shimehari.core.conf.app_template.models',
                 'shimehari.template.jinja2',
