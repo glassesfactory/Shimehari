@@ -138,6 +138,7 @@ tr > td:nth-child(2) {
 
 .quick-links strong {
     font-weight: normal;
+    color : #ab7b4a;
 }
 
 .quick-links .github-btn, .quick-links .tweet-btn, .quick-links .follow-btn, .plusone-container {
