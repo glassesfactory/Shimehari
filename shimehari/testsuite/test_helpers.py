@@ -55,7 +55,7 @@ class JSONTestCase(ShimehariTestCase):
     def jsonBodyEncoding(self):
         ConfigManager.addConfig(testConfig)
         app = shimehari.Shimehari(__name__)
-        
+
         app.testing = True
 
         def returnJSON(*args, **kwargs):
@@ -289,7 +289,7 @@ class LoggingTestCase(ShimehariTestCase):
         app.router = shimehari.Router([
             Rule('/', endpoint='index', methods=['GET']),
             Rule('/exc', endpoint='exc', methods=['GET']),
-            ])
+        ])
         app.controllers['index'] = index
         app.controllers['exc'] = exc
         with app.testClient() as c:

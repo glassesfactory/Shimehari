@@ -8,7 +8,8 @@ u"""
     ルーティング周り
 ===============================
 """
-import re, sys
+import re
+import sys
 from werkzeug.routing import Map, Rule, RuleTemplate
 
 from shimehari.controllers import AbstractController

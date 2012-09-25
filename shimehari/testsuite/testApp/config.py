@@ -6,7 +6,7 @@ u"""
     [[Shimehari Config]]
     config
     ~~~~~~
-    
+
 ===============================
 """
 
@@ -15,45 +15,45 @@ from shimehari.configuration import Config, ConfigManager
 
 ConfigManager.addConfigs([
     Config('development', {
-        'DEBUG':False,
+        'DEBUG': False,
 
-        'TEST':False,
+        'TEST': False,
 
-        'APP_ROOT':None,
+        'APP_ROOT': None,
 
         #アプリのディレクトリ名
-        'APP_DIRECTORY':'testApp',
+        'APP_DIRECTORY': 'testApp',
 
-        'MAIN_SCRIPT':'main',
+        'MAIN_SCRIPT': 'main',
 
         #アプリケーションinstanceの名前
-        'APP_INSTANCE_NAME':'app',
+        'APP_INSTANCE_NAME': 'app',
 
-        'CONTROLLER_DIRECTORY':'controllers',
+        'CONTROLLER_DIRECTORY': 'controllers',
 
-        'VIEW_DIRECTORY':'views',
+        'VIEW_DIRECTORY': 'views',
 
         #for daiginjou
-        'MODEL_DIRECTORY':'models',
+        'MODEL_DIRECTORY': 'models',
 
-        'PREFERRED_URL_SCHEME':'http',
+        'PREFERRED_URL_SCHEME': 'http',
 
-        'AUTO_SETUP':True,
+        'AUTO_SETUP': True,
 
-        'TEMPLATE_ENGINE':'jinja2',
+        'TEMPLATE_ENGINE': 'jinja2',
 
-        'USE_X_SENDFILE':False,
+        'USE_X_SENDFILE': False,
 
-        'SECRET_KEY':'_secret_shimehari',
+        'SECRET_KEY': '_secret_shimehari',
 
-        'SERVER_NAME':None,
+        'SERVER_NAME': None,
 
-        'TRAP_HTTP_EXCEPTIONS':False,
+        'TRAP_HTTP_EXCEPTIONS': False,
 
-        'TRAP_BAD_REQUEST_ERRORS':False,
+        'TRAP_BAD_REQUEST_ERRORS': False,
 
-        'PRESERVE_CONTEXT_ON_EXCEPTION':None,
+        'PRESERVE_CONTEXT_ON_EXCEPTION': None,
 
-        'PERMANENT_SESSION_LIFETIME':timedelta(days=31)
+        'PERMANENT_SESSION_LIFETIME': timedelta(days=31)
     })
 ])

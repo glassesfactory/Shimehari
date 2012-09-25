@@ -6,11 +6,11 @@ from shimehari.controllers import ApplicationController
 
 import logging
 
-class ChildController(ApplicationController):
-	def index(self, *args, **kwargs):
-		huge = 'huaaaa'
-		return renderTemplate('index.html',huga=huge)
-		# return 'Shimehari GKGKGKGKGKGK!'
 
-	def show(self, *args, **kwargs):
-		return 'response show'
+class ChildController(ApplicationController):
+    def index(self, *args, **kwargs):
+        huge = 'huaaaa'
+        return renderTemplate('index.html', huga=huge)
+
+    def show(self, *args, **kwargs):
+        return 'response show'

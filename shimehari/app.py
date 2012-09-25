@@ -21,7 +21,7 @@ from werkzeug.datastructures import ImmutableDict
 from werkzeug.routing import RequestRedirect, Rule
 
 from .helpers import _Kouzi, findPackage, getHandlerAction, getModulesFromPyFile, getEnviron, \
-                     lockedCachedProperty, getTemplater
+                    lockedCachedProperty, getTemplater
 from .contexts import RequestContext, AppContext
 from .routing import Router
 from core.config import RESTFUL_ACTIONS
@@ -225,7 +225,7 @@ class Shimehari(_Kouzi):
 
         :param session:     保存したいセッション
         :param response:    レスポンス
-        
+
         """
         if session.should_save:
             self.sessionStore.save(session, response)

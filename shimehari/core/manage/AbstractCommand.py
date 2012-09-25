@@ -30,8 +30,8 @@ class AbstractCommand(object):
     summary = 'Shimehari is a framework for Python'
     hidden = False
     option_list = (
-            make_option('--traceback', action='store_true', help='Print traceback on exception'),
-        )
+        make_option('--traceback', action='store_true', help='Print traceback on exception'),
+    )
 
     def __init__(self):
         self.parser = OptionParser(
@@ -39,7 +39,7 @@ class AbstractCommand(object):
             prog='shimehari %s' % self.name,
             version=self.getVersion(),
             option_list=self.option_list)
-        if not self.name == None:
+        if not self.name is None:
             command_dict[self.name] = self
 
     def getVersion(self):

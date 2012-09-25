@@ -50,9 +50,9 @@ class Request(RequestBase):
         # FIXME: Undefined name "_requestContextStack"
         context = _requestContextStack
 
-        if context is not None and context.app.debug and \
-            self.mimetype != 'multipart/form-data' and not self.files:
-                attachEnctypeErrorMultidict(self)
+        if context is not None and context.app.debug \
+           and self.mimetype != 'multipart/form-data' and not self.files:
+            attachEnctypeErrorMultidict(self)
 
 
 class Response(ResponseBase):
