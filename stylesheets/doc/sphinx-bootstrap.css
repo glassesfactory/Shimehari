@@ -87,7 +87,9 @@ h6:hover > a.headerlink,
 dt:hover > a.headerlink {
     visibility: visible;
 }
-
+a{
+    color : #cf3616;
+}
 a.headerlink {
     color: #aeaeae;
     text-decoration: none;
@@ -226,4 +228,5 @@ em.property{
 
 .footer{
     background-color : #2b0f01;
+    color : #f5f4df;
 }
