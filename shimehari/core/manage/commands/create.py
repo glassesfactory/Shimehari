@@ -24,9 +24,9 @@ from shimehari.core.manage import CreatableCommand
 from shimehari.core.helpers import importFromString
 from shimehari.core.exceptions import CommandError
 
-debugFormat = "('-' * 80 + '\\n' + '%(levelname)s in %(module)s [%(pathname)s:%(lineno)d]:\\n' + '%(message)s\\n' + '-' * 80)"
+debugFormat = ('-' * 80 + '\\n' + '%(levelname)s in %(module)s [%(pathname)s:%(lineno)d]:\\n' + '%(message)s\\n' + '-' * 80)
 
-outputFormat = "('%(asctime)s %(levelname)s in %(module)s [%(pathname)s:%(lineno)d]:\\n' + '%(message)s\\n' + '-' * 80)"
+outputFormat = ('%(asctime)s %(levelname)s in %(module)s [%(pathname)s:%(lineno)d]:\\n' + '%(message)s\\n' + '-' * 80)
 
 
 u"""

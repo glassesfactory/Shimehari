@@ -24,17 +24,18 @@ class CommandError(Exception):
     pass
 
 
-class DrinkError(Exception):
+class DrinkError(ShimehariException):
     def __init__(self, description, host=None, port=None):
-        self.description = description
+        super(ShimehariException).__init__(description)
+        # self.description = description
         self.host = host
         self.port = port
 
     def __str__(self):
-        return repr(self)
-
-    def __repr__(self):
         return 'Shimehari Drink Command is Error: %s\n host=%s\n port=%d' % (self.description, self.host, self.port)
+
+    # def __repr__(self):
+        # return 'Shimehari Drink Command is Error: %s\n host=%s\n port=%d' % (self.description, self.host, self.port)
 
 
 from werkzeug.exceptions import HTTPException, BadRequest
