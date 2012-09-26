@@ -5,6 +5,8 @@ python:
 install: 
   - pip install -r requirements.txt --use-mirrors
   - pip install pep8 --use-mirrors
-script:
-  - nosetests
+before_script:
   - "pep8 --ignore E126,E127,E128,E501 ."
+script:
+  - python setup.py test
+  - nosetests
