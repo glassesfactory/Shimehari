@@ -3,6 +3,8 @@ Shimehari
 
 Shimehari is moderate framework for Python.
 
+http://shimehari.hageee.net
+
 inspired from Flask:: http://flask.pocoo.org
 
 ![travis-ci](https://secure.travis-ci.org/glassesfactory/Shimehari.png)
@@ -107,4 +109,4 @@ $ shimehari generate controller Example
     
 and more...
 ---
-より詳しい使い方や、その他の API については [wiki](https://github.com/glassesfactory/Shimehari/wiki) を参照してください。s
+より詳しい使い方や、その他の API については [Shimehari 公式サイト](http://shimehari.hageee.net) を参照してください。
