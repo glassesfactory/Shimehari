@@ -74,7 +74,7 @@ class Command(AbstractCommand):
             if command.hidden:
                 continue
             sys.stdout.write('  %-*s  %s\n' % (indent, command.name, command.summary))
-        sys.stdout.write('\nFurther information:\n  https://github.com/glassesfactory/Shimehari\n')
+        sys.stdout.write('\nFurther information:\n  http://shimehari.hageee.net\n')
         return 0
 
 Command()
