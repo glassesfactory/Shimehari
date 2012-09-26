@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- cofing: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 
 from werkzeug.exceptions import abort
