@@ -1,7 +1,7 @@
 Shimehari
 =======
 
-Shimehari is Python Middle Framework for web.
+Shimehari is moderate framework for Python.
 
 inspired from Flask:: http://flask.pocoo.org
 
