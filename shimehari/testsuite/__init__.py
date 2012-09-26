@@ -20,8 +20,8 @@ import shimehari
 
 
 def addToPath(path):
-    if not os.path.isdir(path):
-        raise RuntimeError('存在しないパスです')
+    if not os.path.exists(path):
+        raise RuntimeError(u'存在しないパスです。')
 
     def _samefile(x, y):
         try:
@@ -154,7 +154,7 @@ class BetterLoader(unittest.TestLoader):
 
 
 def setupPath():
-    addToPath(os.path.abspath(os.path.join(os.path.dirname(__file__), 'testApps')))
+    addToPath(os.path.abspath(os.path.join(os.path.dirname(__file__), 'testApp')))
 
 
 def suite():
