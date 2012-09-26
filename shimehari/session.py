@@ -70,11 +70,11 @@ u"""
 class SecureCookieSession(SecureCookie, SessionMixin):
     u"""SecureCookie を使ったセッションクラス
 
-        :param initial:     セッションデータ
-        :param sid:         セッションID
-        :param new:         新規セッション
-        """
-    def __init__(self,  initial=None, sid=None, new=False):
+    :param initial:     セッションデータ
+    :param sid:         セッションID
+    :param new:         新規セッション
+    """
+    def __init__(self, initial=None, sid=None, new=False):
         def on_update(self):
             self.modified = True
         SecureCookie.__init__(self, initial, on_update)
@@ -126,7 +126,6 @@ class _SessionStore(SessionStoreBase):
 
     def makeNullSession(self):
         return self.nullSessionClass()
-
 
 
 from pickle import HIGHEST_PROTOCOL
@@ -184,8 +183,9 @@ class MemcachedSessionStore(_SessionStore):
         return key
 
 
-
 from shimehari.shared import request
+
+
 class SecureCookieSessionStore(_SessionStore):
     u"""SecureCookieSession を利用したセッションストア"""
     def __init__(self, key='session', expire=0):
@@ -215,15 +215,12 @@ class SecureCookieSessionStore(_SessionStore):
             return self.session_class.load_cookie(request, self.key, secret_key=self.key)
 
 
-
-
-
 class RedisSessionStore(_SessionStore):
     u"""Redis を使ったセッションストア
 
     Author: @soundkitchen Izukawa Takanobu
 
-    :param 
+    :param
     """
     def __init__(self, host='localhost', port=6379, db=0, expire=0, session_class=None):
         from redis import Redis

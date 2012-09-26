@@ -9,7 +9,8 @@ u"""
 ===============================
 """
 
-import os, sys
+import os
+import sys
 import unittest
 import warnings
 from StringIO import StringIO
@@ -46,10 +47,10 @@ def findAllTests(suite):
             suites.extend(s)
         except TypeError:
             yield s, '%s.%s.%s' % (
-                    s.__class__.__module__,
-                    s.__class__.__name__,
-                    s._testMethodName
-                )
+                s.__class__.__module__,
+                s.__class__.__name__,
+                s._testMethodName
+            )
 
 
 @contextmanager

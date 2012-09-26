@@ -45,9 +45,9 @@ class Command(CreatableCommand):
     summary = 'Create Shimehari Application'
     usage = "Usage: %prog APPLICATION_NAME [OPTIONS]"
     option_list = CreatableCommand.option_list + (
-            make_option('--path', '-p', action='store', type='string', dest='path', help='target create path'),
-            make_option('--template', '-t', action='store', type='string', dest='template', help='using project tempalte')
-        )
+        make_option('--path', '-p', action='store', type='string', dest='path', help='target create path'),
+        make_option('--template', '-t', action='store', type='string', dest='template', help='using project tempalte')
+    )
 
     def __init__(self):
         super(Command, self).__init__()

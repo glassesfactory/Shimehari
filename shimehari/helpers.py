@@ -349,7 +349,8 @@ def sendFile(filenameOrFp, mimetype=None, asAttachment=False,
             adler32(
                 filename.encode('utf8') if isinstance(filename, unicode) else filename
             ) & 0xffffffff
-        ))
+            )
+        )
 
     if conditional:
         rv = rv.make_conditional(request)
@@ -372,8 +373,8 @@ def jsonify(*args, **kwargs):
         content = str(callback) + '(' + jsonStr + ')'
         return currentApp.responseClass(content, mimetype='application/javascript')
     """
-    return currentApp.responseClass(json.dumps(dict(*args, **kwargs), \
-        indent=None if request.is_xhr else 2), mimetype='application/json')
+    resp = json.dumps(dict(*args, **kwargs), indent=None if request.is_xhr else 2)
+    return currentApp.responseClass(resp, mimetype='application/json')
 
 
 def fillSpace(text, length):

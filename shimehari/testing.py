@@ -54,8 +54,7 @@ class ShimehariClient(Client):
             self.cookie_jar.extract_wsgi(c.request.environ, headers)
 
     def open(self, *args, **kwargs):
-        kwargs.setdefault('environ_overrides', {}) \
-            ['shimehari._preserve_context'] = self.preserveContext
+        kwargs.setdefault('environ_overrides', {})['shimehari._preserve_context'] = self.preserveContext
 
         asTuple = kwargs.pop('asTuple', False)
         buffered = kwargs.pop('buffered', False)

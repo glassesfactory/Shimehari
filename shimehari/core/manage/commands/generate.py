@@ -44,8 +44,8 @@ class Command(CreatableCommand):
     usage = "Usage: %prog MODULE_NAME [OPTIONS]"
 
     option_list = CreatableCommand.option_list + (
-            make_option('--path', '-p', action='store', type='string', dest='path', help='generating target path'),
-        )
+        make_option('--path', '-p', action='store', type='string', dest='path', help='generating target path'),
+    )
 
     def __init__(self):
         super(Command, self).__init__()
