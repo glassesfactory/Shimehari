@@ -1,0 +1,5 @@
+*.pyc
+.DS_Store
+shimehari
+Shimehari.egg-info
+dist
