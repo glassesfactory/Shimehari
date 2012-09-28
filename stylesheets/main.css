@@ -121,3 +121,9 @@ body > .container > footer{
 	margin-left : 7px;
 }
 
+#buildStatus{
+	position : absolute;
+	top : 10px;
+	left : 10px;
+}
+

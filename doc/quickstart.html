@@ -4,7 +4,7 @@
     <meta http-equiv="Content-Type"
           content="text/html; charset=utf-8"/>
     
-        <title>Quickstart &mdash; Shimehari 0.1.5 documentation</title>
+        <title>Quickstart &mdash; Shimehari 0.1.7 documentation</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href='http://fonts.googleapis.com/css?family=Crete+Round' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="/stylesheets/doc/sphinx-bootstrap.css" type="text/css"/>
@@ -16,7 +16,7 @@
         <script type="text/javascript">
             var DOCUMENTATION_OPTIONS = {
                 URL_ROOT:'',
-                VERSION:'0.1.5',
+                VERSION:'0.1.7',
                 COLLAPSE_INDEX:false,
                 FILE_SUFFIX:'.html',
                 HAS_SOURCE:  true
@@ -27,7 +27,7 @@
         <script type="text/javascript" src="/javascripts/doc/bootstrap-dropdown.js"></script>
             <link rel="author" title="About these documents"
                   href="about.html"/>
-        <link rel="top" title="Shimehari 0.1.5 documentation" href="index.html"/>
+        <link rel="top" title="Shimehari 0.1.7 documentation" href="index.html"/>
             <link rel="next" title="API" href="api.html"/>
             <link rel="prev" title="Installation" href="installation.html"/> 
     <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
@@ -122,7 +122,7 @@
                     
   <div class="section" id="quickstart">
 <span id="id1"></span><h1>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline">¶</a></h1>
-<p>ここでは Shimehari の簡単な使い方について解説します。</p>
+<p>ここでは Shimehari の使い方について簡単に解説します。</p>
 <div class="section" id="how-to-use">
 <h2>How to use<a class="headerlink" href="#how-to-use" title="Permalink to this headline">¶</a></h2>
 <p>アプリケーションを作成したいディレクトリで以下のコマンドを実行するだけで
@@ -134,6 +134,14 @@ $ * Shimehari GKGK!
 $ * Running on http://127.0.0.1:5959/</pre>
 </div>
 <p>It works! and Let&#8217;s drink!</p>
+</div>
+<div class="section" id="debug-mode">
+<h2>Debug Mode<a class="headerlink" href="#debug-mode" title="Permalink to this headline">¶</a></h2>
+<p>Shimehari を debug 状態で起動するのはとても簡単です。</p>
+<div class="highlight-python"><pre>$ shimehari drink -d</pre>
+</div>
+<p>たったこれだけで Shimehari は debug 状態で起動。</p>
+<p>アプリケーションに何かエラーがあったときは Werkzeug のデバッガーがブラウザ上に表示されます。</p>
 </div>
 <div class="section" id="restful-routing-controller">
 <h2>RESTful Routing  &amp; Controller<a class="headerlink" href="#restful-routing-controller" title="Permalink to this headline">¶</a></h2>
@@ -157,22 +165,105 @@ Methods       |URL                          |Action
 GET            /                             [action =&gt; index, controller =&gt; IndexController]
 POST,GET       /&lt;int:id&gt;                     [action =&gt; show, controller =&gt; IndexController]</pre>
 </div>
+<p>rails のように Resource をネストすることで
+自動的に URL も1階層深く設定されます。</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">appRoutes</span> <span class="o">=</span> <span class="n">Router</span><span class="p">([</span>
+        <span class="n">Resource</span><span class="p">(</span><span class="n">IndexController</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+        <span class="n">Resource</span><span class="p">(</span><span class="n">FooController</span><span class="p">,[</span>
+                <span class="n">Resource</span><span class="p">(</span><span class="n">BarController</span><span class="p">)</span>
+                <span class="p">])</span>
+    <span class="p">])</span>
+</pre></div>
+</div>
+<div class="highlight-python"><pre>$ shimehari routes
+$ Your Shimehari App Current Routing.
+
+Methods       |URL                          |Action
+----------------------------------------------------------------------
+GET            /                             [action =&gt; index, controller =&gt; IndexController]
+POST,GET       /&lt;int:id&gt;                     [action =&gt; show, controller =&gt; IndexController]
+GET            /foo                          [action =&gt; index, controller =&gt; FooController]
+GET            /foo/bar                      [action =&gt; index, controller =&gt; BarController]</pre>
+</div>
 </div>
 <div class="section" id="controller">
 <h3>Controller<a class="headerlink" href="#controller" title="Permalink to this headline">¶</a></h3>
 <p>shimehari.controllers.ApplicationController を継承することで
 Resource() を使ってルーティングを拾い上げることが出来ます。
 コントローラーで実装されていない RESTful アクションは自動的にルーティングの対象外となります。</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">shimehari</span> <span class="kn">import</span> <span class="n">renderTemplate</span>
-<span class="kn">from</span> <span class="nn">shimehari.controllers</span> <span class="kn">import</span> <span class="n">ApplicationController</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">shimehari</span> <span class="kn">import</span> <span class="n">ApplicationController</span>
 <span class="k">class</span> <span class="nc">ExampleController</span><span class="p">(</span><span class="n">ApplicationController</span><span class="p">):</span>
         <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-                <span class="k">return</span> <span class="n">renderTemplate</span><span class="p">(</span><span class="s">&#39;index.html&#39;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">renderTemplate</span><span class="p">(</span><span class="s">&#39;index.html&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>ApplicationController を自前で継承後、必要なアクションを定義するだけでなく、
 以下のコマンドを叩くことで一通りアクションが定義済みのコントローラーを生成することが出来ます。</p>
 <div class="highlight-python"><pre>$ shimehari generate controller Example</pre>
+</div>
+</div>
+</div>
+<div class="section" id="command">
+<h2>Command<a class="headerlink" href="#command" title="Permalink to this headline">¶</a></h2>
+<p>Shimehari ではアプリケーションの開発をサポートするため
+様々なコマンドラインツールを用意しています。</p>
+<div class="section" id="create-application">
+<h3>Create Application<a class="headerlink" href="#create-application" title="Permalink to this headline">¶</a></h3>
+<p>Shimehari アプリケーションを作成するために自分自身でファイルを幾つも作成する必要はありません。
+create コマンドを実行するだけで Shimehari アプリケーションを動かすために必要なファイルが自動的に生成されます。</p>
+<div class="highlight-python"><pre>$ shimehari create app_name</pre>
+</div>
+<p>create コマンドの実行結果として、以下のファイルが生成されます。</p>
+<div class="highlight-python"><pre>/your_proj_dir
+  ├ config.py
+  └/app_name
+    ├ __init__.py
+    ├ main.py
+    ├ router.py
+    ├/log
+    ├/assets
+    ├/models
+    │ └ __init__.py
+    ├/views
+    └/controllers
+      ├ __init__.py
+      └ index.py</pre>
+</div>
+</div>
+<div class="section" id="development-server">
+<h3>Development Server<a class="headerlink" href="#development-server" title="Permalink to this headline">¶</a></h3>
+<p>開発中は drink コマンドを実行することで開発用サーバーを立ち上げることができます。</p>
+<div class="highlight-python"><pre>$ shimehari drink
+$ * Shimehari GKGK!
+$ * Running on http://127.0.0.1:5959/</pre>
+</div>
+<p>drink コマンドには幾つかのオプションが存在します。
+例えば、アプリケーションをデバッグモードで実行したい場合は以下のオプションを付けます。</p>
+<div class="highlight-python"><pre>$ shimehari drink --debug</pre>
+</div>
+</div>
+<div class="section" id="generate-module">
+<h3>Generate Module<a class="headerlink" href="#generate-module" title="Permalink to this headline">¶</a></h3>
+<p>アプリケーションを作る上で必要となる様々なモジュールをコマンドラインから生成することができます。
+現状 generate コマンドで生成できるのはコントローラーだけですが、将来的には様々なものが生成できるようになる予定です。</p>
+<p>コントローラーの生成は以下のように generate コマンドを実行します。</p>
+<div class="highlight-python"><pre>$ shimehari generate controller controller_name</pre>
+</div>
+</div>
+<div class="section" id="routing-map">
+<h3>Routing Map<a class="headerlink" href="#routing-map" title="Permalink to this headline">¶</a></h3>
+<p>アプリケーションのルーティングがどうなっているのか
+コマンドラインから確認することができます。</p>
+<p>現状のルーティングを確認するには routes コマンドを実行します。</p>
+<div class="highlight-python"><pre>$ shimehari routes
+$ Your Shimehari App Current Routing.
+
+Methods       |URL                          |Action
+----------------------------------------------------------------------
+GET            /                             [action =&gt; index, controller =&gt; IndexController]
+POST,GET       /&lt;int:id&gt;                     [action =&gt; show, controller =&gt; IndexController]
+GET            /foo                          [action =&gt; index, controller =&gt; FooController]
+GET            /foo/bar                      [action =&gt; index, controller =&gt; BarController]</pre>
 </div>
 </div>
 </div>
@@ -192,9 +283,17 @@ Resource() を使ってルーティングを拾い上げることが出来ます
   <ul>
 <li><a class="reference internal" href="#">Quickstart</a><ul>
 <li><a class="reference internal" href="#how-to-use">How to use</a></li>
+<li><a class="reference internal" href="#debug-mode">Debug Mode</a></li>
 <li><a class="reference internal" href="#restful-routing-controller">RESTful Routing  &amp; Controller</a><ul>
 <li><a class="reference internal" href="#routing">Routing</a></li>
 <li><a class="reference internal" href="#controller">Controller</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#command">Command</a><ul>
+<li><a class="reference internal" href="#create-application">Create Application</a></li>
+<li><a class="reference internal" href="#development-server">Development Server</a></li>
+<li><a class="reference internal" href="#generate-module">Generate Module</a></li>
+<li><a class="reference internal" href="#routing-map">Routing Map</a></li>
 </ul>
 </li>
 </ul>
@@ -237,7 +336,7 @@ Resource() を使ってルーティングを拾い上げることが出来ます
 
     <!-- disqus -->
     <script type="text/javascript">
-        var disqus_title = 'Quickstart &mdash; Shimehari 0.1.5 documentation';
+        var disqus_title = 'Quickstart &mdash; Shimehari 0.1.7 documentation';
         var disqus_identifier ='code' + '.' + "glassesfactory.disqus.com" + window.location.pathname.replace('/', '.');
     </script>
 
