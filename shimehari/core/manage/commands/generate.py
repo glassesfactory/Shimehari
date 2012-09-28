@@ -129,12 +129,11 @@ class Command(CreatableCommand):
 
         with open(old, 'r') as template:
             content = template.read()
-            
+
             if '%s' in content:
                 content = content % name
                 content = content[3:]
-                content = content[:len(content) - 4]
-                
+                content = content[:len(content) - 4]                
         with open(new, 'w') as newFile:
             newFile.write(content)
         sys.stdout.write("Genarating New Controller: %s\n" % new)
