@@ -18,7 +18,7 @@ from optparse import OptionParser, make_option
 import traceback
 import shimehari
 
-from shimehari.core.exceptions import CommandError
+from shimehari.core.exceptions import CommandError, DrinkError
 
 command_dict = {}
 
@@ -60,7 +60,7 @@ class AbstractCommand(object):
             output = self.handle(*args, **options)
             if output:
                 self.stdout.write(output)
-        except (TypeError, CommandError), e:
+        except (TypeError, CommandError, DrinkError), e:
             if showTraceback:
                 traceback.print_exc()
             else:

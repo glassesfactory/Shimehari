@@ -13,6 +13,8 @@ u"""
 """
 
 import os
+import sys
+import traceback
 from optparse import make_option
 
 from shimehari.core.manage import AbstractCommand
@@ -50,8 +52,9 @@ class BaseDrinkCommand(AbstractCommand):
             sys.path.append(os.getcwd())
             try:
                 import config
-            except:
-                pass
+            except ImportError, e:
+                t = sys.exc_info()[2]
+                raise DrinkError(u'ちょっと頑張ったけどやっぱりコンフィグが見当たりません。\n%s' % e), None, traceback.print_exc(t)
 
         try:
             currentEnv = options.get('SHIMEHARI_ENV')
@@ -79,7 +82,8 @@ class BaseDrinkCommand(AbstractCommand):
             app.drink(host=self.host, port=int(self.port), debug=self.debug)
 
         except Exception, e:
-            raise CommandError(e)
+            t = sys.exc_info()[2]
+            raise DrinkError(u'飲めるかと思ったのですが嘔吐しました。\n%s' % e), None, traceback.print_exc(t)
 
     def handle(self, *args, **options):
         port = options.get('port')

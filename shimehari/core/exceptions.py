@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import sys
+import traceback
 
 class ShimehariException(Exception):
     def __init__(self, description):
@@ -21,21 +23,21 @@ class ShimehariSetupError(ShimehariException):
 
 
 class CommandError(Exception):
-    pass
+    def __init__(self, description):
+        self.description = description
+
+    def __str__(self):
+        return 'CommandError: %s' % self.description
 
 
-class DrinkError(ShimehariException):
-    def __init__(self, description, host=None, port=None):
-        super(ShimehariException).__init__(description)
-        # self.description = description
+class DrinkError(Exception):
+    def __init__(self, description, host='127.0.0.1', port=5959):
+        self.description = description
         self.host = host
         self.port = port
 
     def __str__(self):
-        return 'Shimehari Drink Command is Error: %s\n host=%s\n port=%d' % (self.description, self.host, self.port)
-
-    # def __repr__(self):
-        # return 'Shimehari Drink Command is Error: %s\n host=%s\n port=%d' % (self.description, self.host, self.port)
+        return 'Shimehari Drink Command is Error: %s\nhost=%s\nport=%d' % (self.description, self.host, self.port)
 
 
 from werkzeug.exceptions import HTTPException, BadRequest

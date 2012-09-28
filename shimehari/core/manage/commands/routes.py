@@ -12,6 +12,7 @@ u"""
 
 import os
 import sys
+import traceback
 
 from shimehari.core.exceptions import CommandError
 from shimehari.core.manage import AbstractCommand
@@ -35,18 +36,21 @@ class Command(AbstractCommand):
             sys.path.append(os.getcwd())
             try:
                 importFromString('config')
-            except ImportError:
-                raise CommandError(u'コンフィグファイルが見当たりません')
+            except ImportError, e:
+                t = sys.exc_info()[2]
+                raise CommandError(u'コンフィグファイルが見当たりません:: %s' % e), None, traceback.print_tb(t)
 
         config = ConfigManager.getConfig(getEnviron())
         appPath = os.path.join(os.getcwd(), config['APP_DIRECTORY'])
         if not os.path.isdir(appPath):
-            raise CommandError(u'アプリケーションが見当たりません')
+            t = sys.exc_info()[2]
+            raise CommandError(u'アプリケーションが見当たりません::'), None, traceback.print_tb(t)
 
         try:
             router = importFromString(config['APP_DIRECTORY'] + '.' + 'router')
         except Exception, e:
-            raise CommandError(u'ルーターがみつかりません。\n %s' % e)
+            t = sys.exc_info()[2]
+            raise CommandError(u'ルーターがみつかりません。\n %s' % e), None, traceback.print_tb(t)
 
         sys.stdout.write('\nYour Shimehari App Current Routing.\n\n')
         sys.stdout.write('Methods       |URL                          |Action\n')
