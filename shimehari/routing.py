@@ -238,8 +238,6 @@ class Resource(Map):
 
         self.namespace = namespace
 
-
-
         if self.namespace:
             if self.namespace.startswith('/'):
                 self.namespace = self.namespace[1:]
@@ -263,7 +261,6 @@ class Resource(Map):
                 if self.namespace is not '':
                     self._inSubDir = True
 
-
         if controller:
             controller = self._checkControllerType(controller)
             if not name:
@@ -280,7 +277,6 @@ class Resource(Map):
         if self.parent:
             self.baseName = self.parent.baseName + '/' + self.baseName
 
-
         if isinstance(self.children, list) and len(self.children) > 0:
             for child in self.children:
                 if not isinstance(child, (Resource, RESTfulRule, Rule)):
@@ -293,8 +289,8 @@ class Resource(Map):
                 if isinstance(child, Resource):
                     self._rules = self._rules + child._rules
 
-
     from shimehari.controllers import AbstractController
+
     def _checkControllerType(self, controller):
         if isinstance(controller, str):
             controller = importFromString(controller)
