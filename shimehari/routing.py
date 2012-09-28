@@ -59,7 +59,8 @@ class AbstractRouter(Map):
             _map += fillSpace(unicode(rule).encode('utf-8') + '  ', 50)
             _map += '[action => '
             _map += rule.endpoint.__name__
-            clsName = rule.endpoint.im_class.__name__
+            clsName = rule.endpoint.im_class.__name__ if hasattr(rule.endpoint, 'im_class') \
+                else rule.endpoint.__name__
             _map += ', controller => ' + clsName + ']\n'
         return _map
 
@@ -117,6 +118,10 @@ class RESTfulRule(object):
     parent = None
 
     baseName = None
+
+    depth = 0
+
+    _inSubDir = False
 
     def __init__(self, name, index=None, show=None, edit=None, new=None, create=None, update=None, destroy=None, methods=[]):
         self.baseName = name
@@ -183,9 +188,13 @@ class Resource(Map):
 
     parent = None
 
+    _inSubDir = False
+
     baseName = None
 
     orgName = None
+
+    depth = 0
 
     def __init__(self, controller=None, children=[], name=None, only=[], excepts=[], root=False,
                 subdomain=None, buildOnly=False, strict_slashes=None, redirectTo=None,
@@ -228,6 +237,7 @@ class Resource(Map):
         self.getName = self.getNameFromRESTAction
 
         self.namespace = namespace
+
         if self.namespace:
             if self.namespace.startswith('/'):
                 self.namespace = self.namespace[1:]
@@ -248,11 +258,16 @@ class Resource(Map):
                 self.orgName = pkgs[len(pkgs) - 1]
                 pkgs = pkgs[:len(pkgs) - 1]
                 self.namespace = "/".join(pkgs)
+                if self.namespace is not '':
+                    self._inSubDir = True
 
         if controller:
             controller = self._checkControllerType(controller)
             if not name:
-                self.baseName = self.orgName = controller.baseName
+                if hasattr(controller, 'baseName'):
+                    self.baseName = self.orgName = controller.baseName
+                elif isinstance(controller, Rule):
+                    self.baseName = self.orgName = str(controller.endpoint)
             self.add(controller)
 
         #uuuumu
@@ -262,9 +277,9 @@ class Resource(Map):
         if self.parent:
             self.baseName = self.parent.baseName + '/' + self.baseName
 
-        if isinstance(self.children, dict) and len(self.children) > 0:
+        if isinstance(self.children, list) and len(self.children) > 0:
             for child in self.children:
-                if not isinstance(child, Resource) and not isinstance(child, RESTfulRule) and not isinstance(child, Rule):
+                if not isinstance(child, (Resource, RESTfulRule, Rule)):
                     raise TypeError('children is invalid')
                 if isinstance(child, Rule):
                     child.rule = self.baseName + '/' + child.rule
@@ -274,8 +289,9 @@ class Resource(Map):
                 if isinstance(child, Resource):
                     self._rules = self._rules + child._rules
 
+    from shimehari.controllers import AbstractController
+
     def _checkControllerType(self, controller):
-        from shimehari.controllers import AbstractController
         if isinstance(controller, str):
             controller = importFromString(controller)
 
@@ -283,7 +299,7 @@ class Resource(Map):
         if inspect.isclass(controller):
             controller = controller(controller.__name__)
         if not isinstance(controller, AbstractController) and \
-           not isinstance(controller, RESTfulRule):
+           not isinstance(controller, (RESTfulRule, Rule)):
             if isinstance(controller, dict):
                 for rule in dict:
                     if not isinstance(rule, Rule):
@@ -337,13 +353,25 @@ class Resource(Map):
             self._rules = controller._rules
         elif isinstance(controller, dict):
             self._addRuleFromRules(controller)
+        elif isinstance(controller, Rule):
+            self._rules.append(controller)
         else:
             raise ValueError('out!')
 
     def refresh(self):
         for rule in self._rules:
             if self.parent:
-                rule.rule = '/' + self.parent.baseName + rule.rule
+                if self._inSubDir:
+                    urls = rule.rule.split('/')
+                    if self.namespace in urls:
+                        action = urls.pop()
+                        if action == self.orgName:
+                            action = ''
+                        rule.rule = '/' + self.parent.baseName + '/' + self.baseName + '/' + action
+                    else:
+                        rule.rule = '/' + self.parent.baseName + rule.rule
+                else:
+                    rule.rule = '/' + self.parent.baseName + rule.rule
 
     def addRule(self, name, handler, methods=[], *args, **kwargs):
         u"""リソースに対してルールを追加します。

@@ -5,7 +5,10 @@ import unittest
 import shimehari
 from shimehari.routing import *
 from shimehari.testsuite import ShimehariTestCase
+from shimehari.configuration import ConfigManager, Config
 from shimehari.testsuite.testApp.controllers import IndexController, ChildController
+
+testConfig = Config('development', {'AUTO_SETUP': False, 'SERVER_NAME': 'localhost', 'PREFERRED_URL_SCHEME': 'https', 'CONTROLLER_AUTO_NAMESPACE': False})
 
 
 class testResource(ShimehariTestCase):
@@ -98,12 +101,36 @@ class testRESTfulRouter(ShimehariTestCase):
             return 'show'
         self.assertNotEqual(RESTfulRouter([RESTfulRule('test', index, show)]), Exception)
 
-        self.assertNotEqual(RESTfulRouter([
+        router = RESTfulRouter([
             Resource(IndexController),
-            RESTfulRule('test', index, show)
-        ]), Exception)
+            RESTfulRule('test', index, show),
+        ])
+
+        self.assertNotEqual(router, Exception)
 
         self.assertRaises(TypeError, RESTfulRouter, [1, 2, 3])
+
+    def testHasChild(self):
+        ConfigManager.removeConfig('development')
+        ConfigManager.addConfig(testConfig)
+
+        def index(*args, **kwargs):
+            return 'index'
+
+        def show(*args, **kwargs):
+            return 'show'
+        router = RESTfulRouter([
+            Resource(IndexController, [Resource(ChildController)]),
+            RESTfulRule('test', index, show),
+        ])
+
+        app = shimehari.Shimehari(__name__)
+        app.setupTemplater()
+        app.router = router
+        app.setControllerFromRouter(router)
+        c = app.testClient()
+        rv = c.get('/index/1', content_type='text/planetext')
+        self.assertEqual(rv.data, "response show")
 
     def testDump(self):
         router = RESTfulRouter([Resource(IndexController)])
