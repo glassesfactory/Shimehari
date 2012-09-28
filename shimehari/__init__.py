@@ -14,7 +14,7 @@ from .template import renderTemplate, renderTempalteString
 from .wrappers import Request, Response
 from .cache import Cache
 
-VERSION = '0.1.7'
+VERSION = '0.1.7b'
 AUTHOR = 'Yamaguchi Eikichi, Keiichiro Matsumoto'
 
 
