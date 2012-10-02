@@ -98,8 +98,8 @@ class ApplicationController(TemplateRenderableMixIn, AbstractController):
     def __init__(self, name):
         AbstractController.__init__(self, name)
 
-    def renderTemplate(self, templateName):
-        return renderTemplate(templateName)
+    def renderTemplate(self, templateName, **context):
+        return renderTemplate(templateName, **context)
 
     def httpMethodNotAllowed(self, templateName='405.html'):
         pass

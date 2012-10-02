@@ -20,7 +20,7 @@ from optparse import make_option
 from shimehari.core.manage import AbstractCommand
 from shimehari.core.helpers import importFromString
 from shimehari.configuration import ConfigManager
-from shimehari.core.exceptions import DrinkError, CommandError
+from shimehari.core.exceptions import DrinkError
 
 DEFAULT_PORT = 5959
 DEFAULT_HOST = '127.0.0.1'
@@ -48,7 +48,6 @@ class BaseDrinkCommand(AbstractCommand):
             #humu-
             import config
         except ImportError, e:
-            import sys
             sys.path.append(os.getcwd())
             try:
                 import config

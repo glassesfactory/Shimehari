@@ -74,10 +74,10 @@ class SecureCookieSession(SecureCookie, SessionMixin):
     :param sid:         セッションID
     :param new:         新規セッション
     """
-    def __init__(self, initial=None, sid=None, new=False):
+    def __init__(self, initial=None, sid=None, new=False, secret_key=None):
         def on_update(self):
             self.modified = True
-        SecureCookie.__init__(self, initial, on_update)
+        SecureCookie.__init__(self, initial, secret_key, on_update )
         self.sid = sid
         self.new = new
         self.modified = False
@@ -208,7 +208,7 @@ class SecureCookieSessionStore(_SessionStore):
 
     #hum...
     def get(self, sid):
-        if not self.is_vaild_key(sid):
+        if not self.is_valid_key(sid):
             return self.new()
 
         if self.key is not None:
