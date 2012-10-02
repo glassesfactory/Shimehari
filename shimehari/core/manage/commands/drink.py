@@ -22,9 +22,6 @@ from shimehari.core.helpers import importFromString
 from shimehari.configuration import ConfigManager
 from shimehari.core.exceptions import DrinkError
 
-DEFAULT_PORT = 5959
-DEFAULT_HOST = '127.0.0.1'
-
 
 class BaseDrinkCommand(AbstractCommand):
     name = 'drink'
@@ -32,15 +29,14 @@ class BaseDrinkCommand(AbstractCommand):
     usage = "Usage: %prog COMMAND [OPTIONS]"
 
     option_list = AbstractCommand.option_list + (
-        make_option('--port', '-p', action='store', type='int', dest='port', help='port number.'),
-        make_option('--host', action='store', type='string', dest='host', help='host name.'),
+        make_option('--port', '-p', action='store', type='int', dest='port', default=5959, help='port number. default %default'),
+        make_option('--host', action='store', type='string', dest='host', default='127.0.0.1', help='host name. default %default'),
         make_option('--debug', '-d', action='store_true', default=False, help='running debug mode.'),
+        make_option('--browser', '-b', action='store_true', dest='browser', default=False, help='open browser.')
     )
 
     def __init__(self):
         super(BaseDrinkCommand, self).__init__()
-        self.port = DEFAULT_PORT
-        self.host = DEFAULT_HOST
         self.debug = False
 
     def run(self, *args, **options):
@@ -62,22 +58,14 @@ class BaseDrinkCommand(AbstractCommand):
             if not self.debug and currentConfig['DEBUG']:
                 self.debug = True
 
-            def openBrowser(host, port):
-                url = 'http://'
-                if not host:
-                    url += '127.0.0.1'
-                else:
-                    url += host
-
-                if not port:
-                    url += ':5959/'
-                else:
-                    url += ':' + str(port)
-                import webbrowser
-                webbrowser.open(url)
-            import threading
-            timer = threading.Timer(0.5, openBrowser, args=[self.host, self.port])
-            timer.start()
+            if options.get('browser'):
+                def openBrowser(host, port):
+                    url = 'http://' + host + ':' + str(port)
+                    import webbrowser
+                    webbrowser.open(url)
+                import threading
+                timer = threading.Timer(0.5, openBrowser, args=[self.host, self.port])
+                timer.start()
             app.drink(host=self.host, port=int(self.port), debug=self.debug)
 
         except Exception, e:
@@ -85,13 +73,8 @@ class BaseDrinkCommand(AbstractCommand):
             raise DrinkError(u'飲めるかと思ったのですが嘔吐しました。\n%s' % e), None, traceback.print_exc(t)
 
     def handle(self, *args, **options):
-        port = options.get('port')
-        if port:
-            self.port = port
-
-        host = options.get('host')
-        if not host:
-            self.host = host
+        self.port = options.get('port')
+        self.host = options.get('host')
         self.debug = options.get('debug')
         self.run(*args, **options)
 
