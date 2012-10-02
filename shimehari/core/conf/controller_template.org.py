@@ -3,9 +3,10 @@
 
 from shimehari import Request, Response, ApplicationController
 
+
 class %sController(ApplicationController):
     def __init__(self, name):
-        ApplicationController.__init__(self,name)
+        ApplicationController.__init__(self, name)
 
     #Create your controller here.
 

@@ -368,6 +368,8 @@ class Resource(Map):
                         if action == self.orgName:
                             action = ''
                         rule.rule = '/' + self.parent.baseName + '/' + self.baseName + '/' + action
+                        if rule.rule.endswith('/'):
+                            rule.rule = rule.rule[:len(rule.rule) - 1]
                     else:
                         rule.rule = '/' + self.parent.baseName + rule.rule
                 else:
