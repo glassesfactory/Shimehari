@@ -48,13 +48,12 @@ class BaseDrinkCommand(AbstractCommand):
             #humu-
             import config
         except ImportError, e:
-            import sys
             sys.path.append(os.getcwd())
             try:
                 import config
             except ImportError, e:
                 t = sys.exc_info()[2]
-                raise DrinkError(u'ちょっと頑張ったけどやっぱりコンフィグが見当たりません。\n%s' % e), None, traceback.print_exc(t)
+                raise DrinkError('ちょっと頑張ったけどやっぱりコンフィグが見当たりません。\n%s' % e), None, traceback.print_exc(t)
 
         try:
             currentEnv = options.get('SHIMEHARI_ENV')
@@ -83,7 +82,7 @@ class BaseDrinkCommand(AbstractCommand):
 
         except Exception, e:
             t = sys.exc_info()[2]
-            raise DrinkError(u'飲めるかと思ったのですが嘔吐しました。\n%s' % e), None, traceback.print_exc(t)
+            raise DrinkError('飲めるかと思ったのですが嘔吐しました。\n%s' % e), None, traceback.print_exc(t)
 
     def handle(self, *args, **options):
         port = options.get('port')
