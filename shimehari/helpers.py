@@ -39,7 +39,7 @@ from werkzeug.wsgi import wrap_file
 from werkzeug.urls import url_quote
 from werkzeug.routing import BuildError
 from werkzeug.exceptions import NotFound
-from shimehari.shared import currentApp, request, _appContextStack, _requestContextStack
+from shimehari.shared import session, currentApp, request, _appContextStack, _requestContextStack
 from shimehari.core.helpers import importFromString
 
 
@@ -415,6 +415,30 @@ def getTemplater(app, templaterName, *args, **options):
     except Exception, e:
         raise Exception(e)
     return templater(app, *args, **options)
+
+
+def flash(message, category='message'):
+    u"""次のリクエストが発生するまで存在する揮発性のあるメッセージ。
+
+    :param message: メッセージ。次のリクエストがあった際には消滅します。
+    :param category: カテゴリー
+
+    """
+    flashes = session.get('_flashes', [])
+    flashes.append((category, message))
+    session['_flashes'] = flashes
+
+
+def getFlashedMessage(withCategory=None, categoryFilter=[]):
+    u"""flash に突っ込まれたメッセージを取得します。"""
+    flashes = _requestContextStack.top.flash
+    if flashes is None:
+        _requestContextStack.top.flash = flashes = session.pop('_flashes') if '_flashes' in session else []
+    if categoryFilter:
+        flashes = filter(lambda f: f[0] in categoryFilter, flashes)
+    if not withCategory:
+        return [x[1] for x in flashes]
+    return flashes
 
 
 u"""--------------------------------------
