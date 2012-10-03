@@ -183,8 +183,9 @@ class MemcachedSessionStore(_SessionStore):
             key = key.encode('utf-8')
         return key
 
-
 from shimehari.shared import request
+
+
 class SecureCookieSessionStore(_SessionStore):
     u"""SecureCookieSession を利用したセッションストア"""
     def __init__(self, key='session', expire=0):
