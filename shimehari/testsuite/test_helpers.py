@@ -6,9 +6,9 @@ import os
 import shimehari
 from logging import StreamHandler
 from StringIO import StringIO
+from shimehari.helpers import flash, getFlashedMessage
 from shimehari.testsuite import ShimehariTestCase, catchWarnings, catchStdErr
 from shimehari.configuration import ConfigManager, Config
-from shimehari.routing import Resource
 from werkzeug.routing import Rule
 from werkzeug.http import parse_cache_control_header, parse_options_header
 
@@ -22,6 +22,67 @@ def hasEncoding(name):
         return True
     except LookupError:
         return False
+
+
+class FlashTestCase(ShimehariTestCase):
+    def testFlash(self):
+        app = shimehari.Shimehari(__name__)
+
+        def index(*args, **kwargs):
+            flash('ninja')
+            return 'hooo'
+
+        def getFlash(*args, **kwargs):
+            msg = getFlashedMessage()
+            if len(msg) > 0:
+                msg = msg[0]
+            else:
+                msg = None
+            return msg
+
+        app.router = shimehari.Router([
+            Rule('/', endpoint='index', methods=['GET']),
+            Rule('/getflash', endpoint='getFlash', methods=['GET'])
+        ])
+
+        app.controllers['index'] = index
+        app.controllers['getFlash'] = getFlash
+
+        c = app.testClient()
+        c.get('/')
+        rv = c.get('/getflash')
+        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(rv.data, 'ninja')
+
+        rv = c.get('/getflash')
+        # self.assert_(rv is None)
+
+    def testFlashCategory(self):
+        app = shimehari.Shimehari(__name__)
+
+        def index(*args, **kwargs):
+            flash('ninja', 'shinobi')
+            flash('kagetora', 'sake')
+            return 'flash'
+
+        def getFlash(*args, **kwargs):
+            msg = getFlashedMessage(False, ['sake'])[0]
+            return msg
+
+        app.router = shimehari.Router([
+            Rule('/', endpoint='index', methods=['GET']),
+            Rule('/getflash', endpoint='getFlash', methods=['GET'])
+        ])
+
+        app.controllers['index'] = index
+        app.controllers['getFlash'] = getFlash
+
+        c = app.testClient()
+        c.get('/')
+        rv = c.get('/getflash')
+        self.assertEqual(rv.status_code, 200)
+        self.assertNotEqual(rv.data, 'ninja')
+        self.assertEqual(rv.data, 'kagetora')
 
 
 class JSONTestCase(ShimehariTestCase):
@@ -88,7 +149,6 @@ class JSONTestCase(ShimehariTestCase):
         c = app.testClient()
         for url in '/kw', '/dict':
             rv = c.get(url)
-            print rv.mimetype
             self.assertEqual(rv.mimetype, 'application/json')
             self.assertEqual(shimehari.json.loads(rv.data), d)
 

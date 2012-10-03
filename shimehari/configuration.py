@@ -106,29 +106,32 @@ class Config(dict):
 
                     $ shimehari drink -d
 
-    :param TEST:                        アプリケーションをテストモードとして起動するかどうか。
-    :param APP_ROOT:                    アプリケーションのルートディレクトリを指定します。
-    :param APP_DIRECTORY:               アプリケーションのファイルが置かれたディレクトリを指定します。
-    :param MAIN_SCRIPT:                 アプリケーションで一番最初に実行されるスクリプトを指定します。
-    :param APP_INSTANCE_NAME:           アプリケーションがインスタンス化される際の名前を指定します。
-    :param CONTROLLER_DIRECTORY:        コントローラーが格納されたディレクトリを指定します。
-    :param VIEW_DIRECTORY:              ビューファイルが格納されたディレクトリを指定します。
-    :param MODEL_DIRECTORY:             モデルファイルが格納されたディレクトリを指定します。
-    :param ASSETS_DIRECTORY:            アセットファイルが格納されたディレクトリを指定します。
-    :param PREFERRED_URL_SCHEME:        URL を発行する際のプロトコルを指定します。
-    :param AUTO_SETUP:                  自動的にセットアップを開始するかどうか指定します。
-                                        この項目についての詳細は app.setup を参照してください。
-    :param CONTROLLER_AUTO_NAMESPACE:   コントローラーディレクトリ内で、サブディレクトリが作成されていた場合、
-                                        自動的にサブディレクトリ名を URL に反映させるかどうかを決定します。
-    :param TEMPLATE_ENGINE:             デフォルトで使用するテンプレートエンジンを決定します。
-    :param USE_X_SENDFILE:              静的ファイルを X-Sendfile を使用して返すかどうか指定します。
-    :param SECRET_KEY:                  アプリケーション固有のシークレットキーです。アプリケーションごとに変更してください。
-    :param SERVER_NAME:                 ホスト名を指定します。
-    :param TRAP_HTTP_EXCEPTIONS:        hoge
-    :param TRAP_BAD_REQUEST_ERRORS:     huga
+    :param TEST:                            アプリケーションをテストモードとして起動するかどうか。
+    :param APP_ROOT:                        アプリケーションのルートディレクトリを指定します。
+    :param APP_DIRECTORY:                   アプリケーションのファイルが置かれたディレクトリを指定します。
+    :param MAIN_SCRIPT:                     アプリケーションで一番最初に実行されるスクリプトを指定します。
+    :param APP_INSTANCE_NAME:               アプリケーションがインスタンス化される際の名前を指定します。
+    :param CONTROLLER_DIRECTORY:            コントローラーが格納されたディレクトリを指定します。
+    :param VIEW_DIRECTORY:                  ビューファイルが格納されたディレクトリを指定します。
+    :param MODEL_DIRECTORY:                 モデルファイルが格納されたディレクトリを指定します。
+    :param ASSETS_DIRECTORY:                アセットファイルが格納されたディレクトリを指定します。
+    :param PREFERRED_URL_SCHEME:            URL を発行する際のプロトコルを指定します。
+    :param AUTO_SETUP:                      自動的にセットアップを開始するかどうか指定します。
+                                            この項目についての詳細は app.setup を参照してください。
+    :param CONTROLLER_AUTO_NAMESPACE:       コントローラーディレクトリ内で、サブディレクトリが作成されていた場合、
+                                            自動的にサブディレクトリ名を URL に反映させるかどうかを決定します。
+    :param TEMPLATE_ENGINE:                 デフォルトで使用するテンプレートエンジンを決定します。
+    :param USE_X_SENDFILE:                  静的ファイルを X-Sendfile を使用して返すかどうか指定します。
+    :param SECRET_KEY:                      アプリケーション固有のシークレットキーです。アプリケーションごとに変更してください。
+    :param SERVER_NAME:                     ホスト名を指定します。
+    :param TRAP_HTTP_EXCEPTIONS:            hoge
+    :param TRAP_BAD_REQUEST_ERRORS:         huga
     :param PRESERVE_CONTEXT_ON_EXCEPTION:   aaa
     :param SEND_FILE_MAX_AGE_DEFAULT:       静的ファイルのタイムアウトを指定します。
     :param PERMANENT_SESSION_LIFETIME:      セッションの有効期限を指定します。
+    :param SESSION_COOKIE_NAME:             aaa
+    :param SESSION_COOKIE_HTTPONLY:         iii
+    :param SESSION_COOKIE_SECURE:           uuu
     :param CACHE_STORE:                     標準で使用するキャッシュストアを指定します。
     :param CACHE_DEFAULT_TIMEOUT:           キャッシュとして保持するデフォルトの時間を指定します。
     :param CACHE_THRESHOLD:                 キャッシュの保持数を指定します。
@@ -166,6 +169,9 @@ class Config(dict):
         'TRAP_BAD_REQUEST_ERRORS': False,
         'PRESERVE_CONTEXT_ON_EXCEPTION': None,
         'SEND_FILE_MAX_AGE_DEFAULT': 12 * 60 * 60,
+        'SESSION_COOKIE_NAME': 'session',
+        'SESSION_COOKIE_HTTPONLY': True,
+        'SESSION_COOKIE_SECURE': False,
         'PERMANENT_SESSION_LIFETIME': timedelta(days=31),
         #キャッシュ
         'CACHE_STORE': None,

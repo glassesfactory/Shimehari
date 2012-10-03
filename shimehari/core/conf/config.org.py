@@ -52,6 +52,12 @@ ConfigManager.addConfigs([
 
         'PERMANENT_SESSION_LIFETIME': timedelta(days=31),
 
+        'SESSION_COOKIE_NAME': 'session',
+
+        'SESSION_COOKIE_HTTPONLY': True,
+
+        'SESSION_COOKIE_SECURE': False,
+
         #キャッシュ
         'CACHE_STORE': None,
 

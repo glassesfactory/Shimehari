@@ -8,9 +8,10 @@ u"""
     セッション管理
 ===============================
 """
-
+from datetime import datetime
 from werkzeug.contrib.securecookie import SecureCookie
 from werkzeug.contrib.sessions import SessionStore as SessionStoreBase, Session
+from shimehari.configuration import ConfigManager
 from shimehari.helpers import jsonAvailable
 from shimehari.core.helpers import importPreferredMemcachedClient
 
@@ -184,8 +185,6 @@ class MemcachedSessionStore(_SessionStore):
 
 
 from shimehari.shared import request
-
-
 class SecureCookieSessionStore(_SessionStore):
     u"""SecureCookieSession を利用したセッションストア"""
     def __init__(self, key='session', expire=0):
@@ -196,11 +195,31 @@ class SecureCookieSessionStore(_SessionStore):
         #直せ
         self.domain = None
 
+    def getCookieHttpOnly(self):
+        return ConfigManager.getConfig()['SESSION_COOKIE_HTTPONLY']
+
+    def getCookieSecure(self):
+        return ConfigManager.getConfig()['SESSION_COOKIE_SECURE']
+
+    def getCookieExpire(self, session):
+        if session.permanent:
+            return datetime.utcnow() + ConfigManager.getConfig()['PERMANENT_SESSION_LIFETIME']
+
+    def new(self):
+        config = ConfigManager.getConfig()
+        key = config['SECRET_KEY']
+        sessionCookieName = config['SESSION_COOKIE_NAME']
+        if key is not None:
+            return self.session_class.load_cookie(request, sessionCookieName, secret_key=key)
+
     def save(self, session, response):
+        self.expire = self.getCookieExpire(session)
+        self.httponly = self.getCookieHttpOnly()
+        self.secure = self.getCookieSecure()
         if session.modified and not session:
             response.delete_cookie(self.key, path=self.path, domain=self.domain)
         else:
-            session.save_session(response, self.key, path=self.path, expire=self.expire, httponly=self.httponly,
+            session.save_cookie(response, self.key, path=self.path, expires=self.expire, httponly=self.httponly,
                 secure=self.secure, domain=self.domain)
 
     def delete(self, session):
@@ -250,6 +269,7 @@ class RedisSessionStore(_SessionStore):
 
 
 u"""デフォルトのセッションストアを決定します。"""
+_currentStore = None
 try:
     from werkzeug.contrib.sessions import FileSystemSessionStore
     _currentStore = FileSystemSessionStore()

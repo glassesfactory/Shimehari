@@ -429,7 +429,7 @@ def flash(message, category='message'):
     session['_flashes'] = flashes
 
 
-def getFlashedMessage(withCategory=None, categoryFilter=[]):
+def getFlashedMessage(withCategory=False, categoryFilter=[]):
     u"""flash に突っ込まれたメッセージを取得します。"""
     flashes = _requestContextStack.top.flash
     if flashes is None:
