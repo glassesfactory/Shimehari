@@ -59,7 +59,7 @@ class CSRF(object):
                         self.csrfHandler(*self.app.matchRequest())
                 else:
                     if not self.checkCSRFExpire(token):
-                        abort(400)
+                        abort(403)
 
 
 def generateCSRFToken():

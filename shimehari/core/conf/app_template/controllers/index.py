@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from shimehari import Request, Response, ApplicationController
+from shimehari import request, Response, ApplicationController
 
 
 class IndexController(ApplicationController):
