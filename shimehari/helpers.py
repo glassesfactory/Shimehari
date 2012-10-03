@@ -119,8 +119,6 @@ def urlFor(endpoint, **values):
         urlAdapter = reqctx.urlAdapter
         # if urlAdapter is None:
             # raise RuntimeError('ooooo')
-        if endpoint[:1] == ('.'):
-            endpoint = endpoint[1:]
         external = values.pop('_external', False)
     else:
         urlAdapter = appctx.adapter
