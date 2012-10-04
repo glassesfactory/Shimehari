@@ -59,18 +59,23 @@ class BaseDrinkCommand(AbstractCommand):
                 self.debug = True
 
             if options.get('browser'):
-                def openBrowser(host, port):
-                    url = 'http://' + host + ':' + str(port)
-                    import webbrowser
-                    webbrowser.open(url)
                 import threading
-                timer = threading.Timer(0.5, openBrowser, args=[self.host, self.port])
+                timer = threading.Timer(0.5, self.openBrowser, args=[self.host, self.port])
                 timer.start()
+
+            key = KeyboardThread(self)
+            key.start()
+
             app.drink(host=self.host, port=int(self.port), debug=self.debug)
 
         except Exception, e:
             t = sys.exc_info()[2]
             raise DrinkError(u'飲めるかと思ったのですが嘔吐しました。\n%s' % e), None, traceback.print_exc(t)
+
+    def openBrowser(self, host, port):
+        url = 'http://' + host + ':' + str(port)
+        import webbrowser
+        webbrowser.open(url)
 
     def handle(self, *args, **options):
         self.port = options.get('port')
@@ -84,3 +89,28 @@ BaseDrinkCommand()
 class Command(BaseDrinkCommand):
     def getHandler(self):
         pass
+
+
+import threading
+import time
+class KeyboardThread(threading.Thread):
+
+    def __init__(self, drinkCommand):
+        threading.Thread.__init__(self)
+        self.setDaemon(True)
+        self.drinkCommand = drinkCommand
+    
+    def commands(self, command):
+        if command == "":
+            return
+        if command in ['b', 'browser']:
+            self.drinkCommand.openBrowser(self.drinkCommand.host, self.drinkCommand.port)
+        if command in ['r', 'restart']:
+            # Todo: あとで実装する
+            pass
+    def run(self):
+        for line in iter(sys.stdin.readline, ""):
+            try:
+                self.commands(line.strip())
+            except (KeyboardInterrupt, SystemExit):
+                raise
