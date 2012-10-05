@@ -617,7 +617,7 @@ class Shimehari(_Kouzi):
                 response = self.makeResponse(self.handleException(e))
             return response(environ, startResponse)
 
-    def drink(self, host=None, port=None, debug=None, **options):
+    def drink(self, host, port, debug=None, **options):
         u"""アプリを実行します。
 
         :param host:    ホスト名
@@ -626,10 +626,6 @@ class Shimehari(_Kouzi):
         :param options: kwargs
         """
         from werkzeug.serving import run_simple
-        if host is None:
-            host = '127.0.0.1'
-        if port is None:
-            port = 5959
         if debug is not None:
             self.debug = bool(debug)
         options.setdefault('use_reloader', self.debug)
