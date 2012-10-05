@@ -93,13 +93,15 @@ class Command(BaseDrinkCommand):
 
 import threading
 import time
+
+
 class KeyboardThread(threading.Thread):
 
     def __init__(self, drinkCommand):
         threading.Thread.__init__(self)
         self.setDaemon(True)
         self.drinkCommand = drinkCommand
-    
+
     def commands(self, command):
         if command == "":
             return
@@ -108,6 +110,7 @@ class KeyboardThread(threading.Thread):
         if command in ['r', 'restart']:
             # Todo: あとで実装する
             pass
+
     def run(self):
         for line in iter(sys.stdin.readline, ""):
             try:
