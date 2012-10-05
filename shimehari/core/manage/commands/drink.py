@@ -14,6 +14,7 @@ u"""
 
 import os
 import sys
+import threading
 import traceback
 from optparse import make_option
 
@@ -59,7 +60,6 @@ class BaseDrinkCommand(AbstractCommand):
                 self.debug = True
 
             if options.get('browser'):
-                import threading
                 timer = threading.Timer(0.5, self.openBrowser, args=[self.host, self.port])
                 timer.start()
 
@@ -90,10 +90,6 @@ BaseDrinkCommand()
 class Command(BaseDrinkCommand):
     def getHandler(self):
         pass
-
-
-import threading
-import time
 
 
 class KeywordListenerThread(threading.Thread):
