@@ -63,7 +63,7 @@ class BaseDrinkCommand(AbstractCommand):
                 timer = threading.Timer(0.5, self.openBrowser, args=[self.host, self.port])
                 timer.start()
 
-            key = KeywordListenerThread(self)
+            key = KeywordListenerThread()
             key.register(KeywordCallback(self.openBrowser, [self.host, self.port]), 'b', 'browser')
             key.start()
 
@@ -94,10 +94,9 @@ class Command(BaseDrinkCommand):
 
 class KeywordListenerThread(threading.Thread):
 
-    def __init__(self, drinkCommand):
+    def __init__(self):
         threading.Thread.__init__(self)
         self.setDaemon(True)
-        self.drinkCommand = drinkCommand
         self.keyword_dict = {}
 
     def commands(self, keyword):
