@@ -292,10 +292,8 @@ class SendFileTestCase(ShimehariTestCase):
         ConfigManager.removeConfig('development')
         ConfigManager.addConfig(testConfig)
         app = shimehari.Shimehari(__name__)
-        app.staticFolder = 'static'
+        app.setStaticFolder('static')
         with app.testRequestContext():
-            print app.appFolder
-            print app.staticFolder
             rv = app.sendStaticFile('index.html')
             cc = parse_cache_control_header(rv.headers['Cache-Control'])
             self.assertEqual(cc.max_age, 12 * 60 * 60)
@@ -315,7 +313,7 @@ class SendFileTestCase(ShimehariTestCase):
             def getSendFileMaxAge(self, filename):
                 return 10
         app = StaticFileApp(__name__)
-        app.staticFolder = 'static'
+        app.setStaticFolder('static')
         with app.testRequestContext():
             rv = app.sendStaticFile('index.html')
             cc = parse_cache_control_header(rv.headers['Cache-Control'])

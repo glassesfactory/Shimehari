@@ -336,7 +336,8 @@ class Shimehari(_Kouzi):
             if hasattr(routerMod, 'appRoutes'):
                 self.router = routerMod.appRoutes
             if self.hasStaticFolder:
-                self.addRoute(self.staticURL + '/<path:filename>', self.sendStaticFile)
+                for url in self.getStaticURLs():
+                    self.addRoute(url + '/<path:filename>', self.sendStaticFile)
         except (ImportError, AttributeError), e:
             raise ShimehariSetupError('Failed to setup the router ...\n details::\n%s' % e)
 

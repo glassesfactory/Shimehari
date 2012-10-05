@@ -19,7 +19,6 @@ from time import time
 from zlib import adler32
 from threading import RLock
 
-
 u"""json が使用可能かどうか"""
 jsonAvailable = True
 json = None
@@ -259,7 +258,6 @@ def getEnviron():
 def sendFromDirectory(directory, filename, **options):
     filename = safeJoin(directory, filename)
     if not os.path.isfile(filename):
-        print filename
         raise NotFound()
     options.setdefault('conditional', True)
     return sendFile(filename, **options)
@@ -465,32 +463,47 @@ class _Kouzi(object):
                                 config['CONTROLLER_DIRECTORY'] else controllerFolder
         self.viewFolder = config['VIEW_DIRECTORY'] if config and config['VIEW_DIRECTORY'] else viewFolder
 
-        self._staticFolder = config['ASSETS_DIRECTORY'] if config and config['ASSETS_DIRECTORY'] else None
-        self._staticURL = None
+        if config and config['ASSETS_DIRECTORY']:
+            if type(config['ASSETS_DIRECTORY']) is list:
+                self._staticFolders = {}
+                [self._staticFolders.setdefault(x, x) for x in config['ASSETS_DIRECTORY']]
+            else:
+                self._staticFolders = {config['ASSETS_DIRECTORY']: config['ASSETS_DIRECTORY']}
+        self._staticURLDict = {}
 
-    def _getStaticFolder(self):
-        if self._staticFolder is not None:
-            return os.path.join(self.rootPath, self.appFolder, self._staticFolder)
+    def getStaticFolder(self, key):
+        if key in self._staticFolders:
+            return os.path.join(self.rootPath, self.appFolder, self._staticFolders[key])
 
-    def _setStaticFolder(self, value):
-        self._staticFolder = value
-    staticFolder = property(_getStaticFolder, _setStaticFolder)
-    del _getStaticFolder, _setStaticFolder
+    def setStaticFolder(self, value):
+        self._staticFolders.setdefault(value, value)
 
-    def _getStaticURL(self):
-        if self._staticURL is None:
-            if self.staticFolder is None:
+    def getStaticFolders(self):
+        return self._staticFolders.values()
+
+    def setStaticFolders(self, **folders):
+        self._staticFolders.update(folders)
+
+    def getStaticURL(self, key):
+        if key in self._staticURLDict:
+            return '/' + os.path.basename(self._staticFolders[key])
+
+    def setStaticURL(self, value):
+        self._staticURLDict.setdefault(value, value)
+
+    def getStaticURLs(self):
+        if len(self._staticURLDict) < 1:
+            if len(self._staticFolders) == 0:
                 return None
-            return '/' + os.path.basename(self.staticFolder)
+            return ['/' + os.path.basename(x) for x in self._staticFolders]
+        return self._staticURLDict.values()
 
-    def _setStaticURL(self, value):
-        self._staticURL = value
-    staticURL = property(_getStaticURL, _setStaticURL)
-    del _getStaticURL, _setStaticURL
+    def setStaticURLs(self, **urls):
+        self._staticURLDict.update(urls)
 
     @property
     def hasStaticFolder(self):
-        return self.staticFolder is not None
+        return len(self._staticFolders) > 0
 
     u"""-----------------------------
         ::pkg:: Shimehari.helpers._Kouzi
@@ -505,11 +518,21 @@ class _Kouzi(object):
         :response レスポンス
 
     ----------------------------------"""
+
+    from shimehari.shared import request
+
     def sendStaticFile(self, filename):
         if not self.hasStaticFolder:
             raise RuntimeError('static file folder has none.')
         cacheTimeout = self.getSendFileMaxAge(filename)
-        return sendFromDirectory(self.staticFolder, filename, cacheTimeout=cacheTimeout)
+        if request is not None and request.urlRule is not None:
+            key = request.urlRule.rule.split('/')[1]
+            dirname = self.getStaticFolder(key)
+        else:
+            dirname = filename.split('/')
+            if len(dirname) == 1:
+                dirname = self.getStaticFolder(self.getStaticFolders()[0])
+        return sendFromDirectory(dirname, filename, cacheTimeout=cacheTimeout)
 
     u"""-----------------------------
         ::pkg:: Shimehari.helpers._Kouzi
