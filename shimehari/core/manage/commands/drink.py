@@ -63,7 +63,8 @@ class BaseDrinkCommand(AbstractCommand):
                 timer = threading.Timer(0.5, self.openBrowser, args=[self.host, self.port])
                 timer.start()
 
-            key = KeyboardThread(self)
+            key = KeywordListenerThread(self)
+            key.register(KeywordCallback(self.openBrowser, [self.host, self.port]), 'b', 'browser')
             key.start()
 
             app.drink(host=self.host, port=int(self.port), debug=self.debug)
@@ -95,21 +96,23 @@ import threading
 import time
 
 
-class KeyboardThread(threading.Thread):
+class KeywordListenerThread(threading.Thread):
 
     def __init__(self, drinkCommand):
         threading.Thread.__init__(self)
         self.setDaemon(True)
         self.drinkCommand = drinkCommand
+        self.keyword_dict = {}
 
-    def commands(self, command):
-        if command == "":
+    def commands(self, keyword):
+        if keyword == "":
             return
-        if command in ['b', 'browser']:
-            self.drinkCommand.openBrowser(self.drinkCommand.host, self.drinkCommand.port)
-        if command in ['r', 'restart']:
-            # Todo: あとで実装する
-            pass
+        if keyword in self.keyword_dict:
+            self.keyword_dict[keyword].execute()
+
+    def register(self, keywordCallback, *arg_keywords):
+        for keyword in arg_keywords:
+            self.keyword_dict[keyword] = keywordCallback
 
     def run(self):
         for line in iter(sys.stdin.readline, ""):
@@ -117,3 +120,14 @@ class KeyboardThread(threading.Thread):
                 self.commands(line.strip())
             except (KeyboardInterrupt, SystemExit):
                 raise
+
+
+class KeywordCallback(object):
+
+    def __init__(self, function, function_args=[], function_kwargs={}):
+        self.function = function
+        self.function_args = function_args
+        self.function_kwargs = function_kwargs
+
+    def execute(self):
+        self.function(*self.function_args, **self.function_kwargs)
