@@ -469,6 +469,8 @@ class _Kouzi(object):
                 [self._staticFolders.setdefault(x, x) for x in config['ASSETS_DIRECTORY']]
             else:
                 self._staticFolders = {config['ASSETS_DIRECTORY']: config['ASSETS_DIRECTORY']}
+        else:
+            self._staticFolders = {}
         self._staticURLDict = {}
 
     def getStaticFolder(self, key):

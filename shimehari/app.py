@@ -39,7 +39,7 @@ _loggerLock = Lock()
 
 def setupMethod(f):
     def wrapperFunc(self, *args, **kwargs):
-        if self.debug or self._gotFirstRequest:
+        if self.debug and self._gotFirstRequest:
             raise AssertionError('Setup seems to have already completed ...')
         return f(self, *args, **kwargs)
     return update_wrapper(wrapperFunc, f)
