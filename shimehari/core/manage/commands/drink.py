@@ -63,9 +63,9 @@ class BaseDrinkCommand(AbstractCommand):
                 timer = threading.Timer(0.5, self.openBrowser, args=[self.host, self.port])
                 timer.start()
 
-            key = KeywordListenerThread()
-            key.register(KeywordCallback(self.openBrowser, [self.host, self.port]), 'b', 'browser')
-            key.start()
+            # key = KeywordListenerThread()
+            # key.register(KeywordCallback(self.openBrowser, [self.host, self.port]), 'b', 'browser')
+            # key.start()
 
             app.drink(host=self.host, port=int(self.port), debug=self.debug)
 
