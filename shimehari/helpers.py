@@ -95,7 +95,7 @@ import sgmllib
 class Stripper(sgmllib.SGMLParser):
     u"""与えられたストリングから HTML タグを除去するクラス。"""
     def __init__(self):
-        sgmllib.SGMLParser.___init__(self)
+        sgmllib.SGMLParser.__init__(self)
 
     def strip(self, htmlTag):
         self.theString = ""
@@ -103,7 +103,7 @@ class Stripper(sgmllib.SGMLParser):
         self.close()
         return self.theString
 
-    def handleData(self, data):
+    def handle_data(self, data):
         self.theString += data
 
 
