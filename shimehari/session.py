@@ -9,8 +9,12 @@ u"""
 ===============================
 """
 from datetime import datetime
-from werkzeug.contrib.securecookie import SecureCookie
-from werkzeug.contrib.sessions import SessionStore as SessionStoreBase, Session
+from hmac import new as hmac
+from time import time
+from werkzeug.urls import url_unquote_plus, url_unquote_plus
+from werkzeug.contrib.securecookie import SecureCookie, UnquoteError
+from werkzeug.contrib.sessions import SessionStore as SessionStoreBase, Session, generate_key
+from werkzeug.security import safe_str_cmp
 from shimehari.configuration import ConfigManager
 from shimehari.helpers import jsonAvailable
 from shimehari.core.helpers import importPreferredMemcachedClient
@@ -78,10 +82,64 @@ class SecureCookieSession(SecureCookie, SessionMixin):
     def __init__(self, initial=None, sid=None, new=False, secret_key=None):
         def on_update(self):
             self.modified = True
-        SecureCookie.__init__(self, initial, secret_key, on_update)
+        SecureCookie.__init__(self, initial, secret_key=secret_key, new=new)
         self.sid = sid
         self.new = new
         self.modified = False
+
+        if self.sid is None:
+            self.sid = generate_key()
+
+    @classmethod
+    def load_cookie(cls, request, key='session', secret_key=None):
+        data = request.cookies.get(key)
+        if not data:
+            return cls(secret_key=secret_key)
+        return cls.unserialize(data, secret_key)
+
+    @classmethod
+    def unserialize(cls, string, secret_key):
+        u"""werkzeug.contrib.securecookie.SecureCookie.unserialize"""
+
+        if isinstance(string, unicode):
+            string = string.encode('utf-8', 'replace')
+        try:
+            base64Hash, data = string.split('?', 1)
+        except (ValueError, IndexError):
+            items = ()
+        else:
+            items = {}
+            mac = hmac(secret_key, None, SecureCookie.hash_method)
+            for item in data.split('&'):
+                if not '=' in item:
+                    items = None
+                    break
+                k, v = item.split('=', 1)
+                k = url_unquote_plus(k)
+                try:
+                    k = str(k)
+                except UnicodeError:
+                    pass
+                items[k] = v
+            try:
+                clientHash = base64Hash.decode('base64')
+            except Exception:
+                items = clientHash = None
+            if items is not None and safe_str_cmp(clientHash, mac.digest()):
+                try:
+                    for k, v in items.iteritems():
+                        items[k] = SecureCookie.unquote(v)
+                except UnquoteError:
+                    items = ()
+                else:
+                    if '_expires' in items:
+                        if time() > items['_expires']:
+                            items = ()
+                        else:
+                            del items['_expires']
+            else:
+                items = ()
+        return cls(items, secret_key=secret_key, new=False)
 
 
 u"""
@@ -96,7 +154,7 @@ u"""
 """
 
 
-class NullSession(Session):
+class NullSession(SecureCookieSession):
     def _fail(self, *args, **kwargs):
         raise RuntimeError('Null Session!!!')
 
@@ -211,7 +269,7 @@ class SecureCookieSessionStore(_SessionStore):
         key = config['SECRET_KEY']
         sessionCookieName = config['SESSION_COOKIE_NAME']
         if key is not None:
-            return self.session_class.load_cookie(request, sessionCookieName, secret_key=key)
+            return self.session_class.load_cookie(request, key=sessionCookieName, secret_key=key)
 
     def save(self, session, response):
         self.expire = self.getCookieExpire(session)

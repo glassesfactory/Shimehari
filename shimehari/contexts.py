@@ -176,7 +176,7 @@ class RequestContext(object):
 
         self.session = self.app.openSession(self.request)
         if self.session is None:
-            self.session = self.app.makeNullSession()
+            self.session = self.app.sessionStore.makeNullSession()
 
     u"""-----------------------------
         ::pkg:: Shimehari.contexts.RequestContext
