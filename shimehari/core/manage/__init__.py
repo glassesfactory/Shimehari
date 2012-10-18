@@ -30,22 +30,21 @@ def executeFromCommandLine(argv=None):
 
 
 def loadCommandModule(cmdName, name):
-    module = importFromString('%s.manage.commands.%s' % (cmdName, name))
+    module = importFromString('.'.join([cmdName, name]))
     return module.Command()
 
 
 def getCommands():
     global _commands
     if _commands is None:
-        _commands = dict([(name, 'shimehari.core') for name in findCommand(__path__[0])])
-
+        _commands = dict([(name, 'shimehari.core.manage.commands') for name in findCommand(__path__[0], 'commands')])
         #ユーザーコマンドー…
-
+        _commands.update(dict([(name, 'command') for name in findCommand(os.getcwd(), 'command')]))
     return _commands
 
 
-def findCommand(manageDir):
-    cmdDir = os.path.join(manageDir, 'commands')
+def findCommand(manageDir, commandDir):
+    cmdDir = os.path.join(manageDir, commandDir)
     try:
         return [f[:-3] for f in os.listdir(cmdDir) if not f.startswith('_') and f.endswith('.py')]
     except OSError:
