@@ -158,7 +158,7 @@ class Config(dict):
         'VIEW_DIRECTORY': 'views',
         'MODEL_DIRECTORY': 'models',
         'ASSETS_DIRECTORY': 'assets',
-        'STATIC_DIRECTORIES':[],
+        'STATIC_DIRECTORIES': [],
         'PREFERRED_URL_SCHEME': 'http',
         'AUTO_SETUP': True,
         'CONTROLLER_AUTO_NAMESPACE': True,
