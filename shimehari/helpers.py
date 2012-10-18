@@ -430,6 +430,7 @@ def getFlashedMessage(withCategory=False, categoryFilter=[]):
     flashes = _requestContextStack.top.flash
     if flashes is None:
         _requestContextStack.top.flash = flashes = session.pop('_flashes') if '_flashes' in session else []
+
     if categoryFilter:
         flashes = filter(lambda f: f[0] in categoryFilter, flashes)
     if not withCategory:
@@ -472,6 +473,10 @@ class _Kouzi(object):
         else:
             self._staticFolders = {}
         self._staticURLDict = {}
+
+        #####
+        if config and config['STATIC_DIRECTORIES']:
+            pass
 
     def getStaticFolder(self, key):
         if key in self._staticFolders:

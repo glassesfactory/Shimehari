@@ -11,10 +11,10 @@ u"""
 from datetime import datetime
 from hmac import new as hmac
 from time import time
-from werkzeug.urls import url_unquote_plus, url_unquote_plus
+from werkzeug.urls import url_quote_plus, url_unquote_plus
 from werkzeug.contrib.securecookie import SecureCookie, UnquoteError
-from werkzeug.contrib.sessions import SessionStore as SessionStoreBase, Session, generate_key
-from werkzeug.security import safe_str_cmp
+from werkzeug.contrib.sessions import SessionStore as SessionStoreBase, generate_key, ModificationTrackingDict
+# from werkzeug.security import safe_str_cmp
 from shimehari.configuration import ConfigManager
 from shimehari.helpers import jsonAvailable
 from shimehari.core.helpers import importPreferredMemcachedClient
@@ -91,55 +91,17 @@ class SecureCookieSession(SecureCookie, SessionMixin):
             self.sid = generate_key()
 
     @classmethod
-    def load_cookie(cls, request, key='session', secret_key=None):
+    def load_cookie(cls, request, sid=None, key='session', secret_key=None):
         data = request.cookies.get(key)
         if not data:
-            return cls(secret_key=secret_key)
-        return cls.unserialize(data, secret_key)
+            return cls(sid=sid, secret_key=secret_key)
+        return cls.unserialize(data, secret_key=secret_key, sid=sid)
 
     @classmethod
-    def unserialize(cls, string, secret_key):
+    def unserialize(cls, string, secret_key, sid=None):
         u"""werkzeug.contrib.securecookie.SecureCookie.unserialize"""
-
-        if isinstance(string, unicode):
-            string = string.encode('utf-8', 'replace')
-        try:
-            base64Hash, data = string.split('?', 1)
-        except (ValueError, IndexError):
-            items = ()
-        else:
-            items = {}
-            mac = hmac(secret_key, None, SecureCookie.hash_method)
-            for item in data.split('&'):
-                if not '=' in item:
-                    items = None
-                    break
-                k, v = item.split('=', 1)
-                k = url_unquote_plus(k)
-                try:
-                    k = str(k)
-                except UnicodeError:
-                    pass
-                items[k] = v
-            try:
-                clientHash = base64Hash.decode('base64')
-            except Exception:
-                items = clientHash = None
-            if items is not None and safe_str_cmp(clientHash, mac.digest()):
-                try:
-                    for k, v in items.iteritems():
-                        items[k] = SecureCookie.unquote(v)
-                except UnquoteError:
-                    items = ()
-                else:
-                    if '_expires' in items:
-                        if time() > items['_expires']:
-                            items = ()
-                        else:
-                            del items['_expires']
-            else:
-                items = ()
-        return cls(items, secret_key=secret_key, new=False)
+        items = SecureCookie.unserialize(string, secret_key).items()
+        return cls(items, sid=sid, secret_key=secret_key, new=False)
 
 
 u"""
@@ -185,9 +147,6 @@ class _SessionStore(SessionStoreBase):
 
     def makeNullSession(self):
         return self.nullSessionClass()
-
-
-from pickle import HIGHEST_PROTOCOL
 
 
 class MemcachedSessionStore(_SessionStore):
@@ -288,9 +247,11 @@ class SecureCookieSessionStore(_SessionStore):
     def get(self, sid):
         if not self.is_valid_key(sid):
             return self.new()
-
-        if self.key is not None:
-            return self.session_class.load_cookie(request, self.key, secret_key=self.key)
+        config = ConfigManager.getConfig()
+        key = config['SECRET_KEY']
+        sessionCookieName = config['SESSION_COOKIE_NAME']
+        if key is not None:
+            return self.session_class.load_cookie(request, key=sessionCookieName, secret_key=key, sid=sid)
 
 
 class RedisSessionStore(_SessionStore):
