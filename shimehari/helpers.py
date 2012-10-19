@@ -479,7 +479,7 @@ class _Kouzi(object):
             elif isinstance(staticDir, dict):
                 self._staticFolders.update(staticDir)
             else:
-                self._staticFolders.setdefault(staticDir,staticDir)
+                self._staticFolders.setdefault(staticDir, staticDir)
         self._staticURLDict = {}
 
         def _assetsURL(self):
