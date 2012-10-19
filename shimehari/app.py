@@ -12,12 +12,11 @@ u"""
 
 import os
 import sys
-from  threading import Lock, RLock
+from threading import Lock
 from functools import update_wrapper
 from datetime import timedelta
 
-from werkzeug.exceptions import NotFound, HTTPException, InternalServerError, MethodNotAllowed, BadRequest
-from werkzeug.datastructures import ImmutableDict
+from werkzeug.exceptions import HTTPException, InternalServerError, BadRequest
 from werkzeug.routing import RequestRedirect, Rule
 
 from .helpers import _Kouzi, findPackage, getHandlerAction, getModulesFromPyFile, getEnviron, \
@@ -28,9 +27,9 @@ from core.config import RESTFUL_ACTIONS
 from .wrappers import Request, Response
 from shimehari.configuration import Config, ConfigManager
 from shimehari.session import SessionStore
-from shimehari.shared import _requestContextStack, _appContextStack, _SharedRequestClass, request
+from shimehari.shared import _requestContextStack, _SharedRequestClass, request
 from shimehari.template import _defaultTemplateCtxProcessor
-from shimehari.core.exceptions import ShimehariException, ShimehariSetupError
+from shimehari.core.exceptions import ShimehariSetupError
 from shimehari.core.signals import appContextTearingDown, requestContextTearingDown
 
 
@@ -156,6 +155,15 @@ class Shimehari(_Kouzi):
 
         if self.config['AUTO_SETUP']:
             self.setup()
+
+    @lockedCachedProperty
+    def name(self):
+        if self.importName == '__main__':
+            fn = getattr(sys.modules['__main__'], '__file__', None)
+            if fn is None:
+                return '__main__'
+            return os.path.splittext(os.path.basename(fn))[0]
+        return self.importName
 
     @property
     def gotFirstRequest(self):

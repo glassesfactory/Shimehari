@@ -10,7 +10,7 @@ u"""
 """
 from datetime import datetime
 from werkzeug.contrib.securecookie import SecureCookie
-from werkzeug.contrib.sessions import SessionStore as SessionStoreBase, Session
+from werkzeug.contrib.sessions import SessionStore as SessionStoreBase, generate_key
 from shimehari.configuration import ConfigManager
 from shimehari.helpers import jsonAvailable
 from shimehari.core.helpers import importPreferredMemcachedClient
@@ -78,10 +78,26 @@ class SecureCookieSession(SecureCookie, SessionMixin):
     def __init__(self, initial=None, sid=None, new=False, secret_key=None):
         def on_update(self):
             self.modified = True
-        SecureCookie.__init__(self, initial, secret_key, on_update)
+        SecureCookie.__init__(self, initial, secret_key=secret_key, new=new)
         self.sid = sid
         self.new = new
         self.modified = False
+
+        if self.sid is None:
+            self.sid = generate_key()
+
+    @classmethod
+    def load_cookie(cls, request, sid=None, key='session', secret_key=None):
+        data = request.cookies.get(key)
+        if not data:
+            return cls(sid=sid, secret_key=secret_key)
+        return cls.unserialize(data, secret_key=secret_key, sid=sid)
+
+    @classmethod
+    def unserialize(cls, string, secret_key, sid=None):
+        u"""werkzeug.contrib.securecookie.SecureCookie.unserialize"""
+        items = SecureCookie.unserialize(string, secret_key).items()
+        return cls(items, sid=sid, secret_key=secret_key, new=False)
 
 
 u"""
@@ -96,7 +112,7 @@ u"""
 """
 
 
-class NullSession(Session):
+class NullSession(SecureCookieSession):
     def _fail(self, *args, **kwargs):
         raise RuntimeError('Null Session!!!')
 
@@ -127,9 +143,6 @@ class _SessionStore(SessionStoreBase):
 
     def makeNullSession(self):
         return self.nullSessionClass()
-
-
-from pickle import HIGHEST_PROTOCOL
 
 
 class MemcachedSessionStore(_SessionStore):
@@ -211,7 +224,7 @@ class SecureCookieSessionStore(_SessionStore):
         key = config['SECRET_KEY']
         sessionCookieName = config['SESSION_COOKIE_NAME']
         if key is not None:
-            return self.session_class.load_cookie(request, sessionCookieName, secret_key=key)
+            return self.session_class.load_cookie(request, key=sessionCookieName, secret_key=key)
 
     def save(self, session, response):
         self.expire = self.getCookieExpire(session)
@@ -230,9 +243,11 @@ class SecureCookieSessionStore(_SessionStore):
     def get(self, sid):
         if not self.is_valid_key(sid):
             return self.new()
-
-        if self.key is not None:
-            return self.session_class.load_cookie(request, self.key, secret_key=self.key)
+        config = ConfigManager.getConfig()
+        key = config['SECRET_KEY']
+        sessionCookieName = config['SESSION_COOKIE_NAME']
+        if key is not None:
+            return self.session_class.load_cookie(request, key=sessionCookieName, secret_key=key, sid=sid)
 
 
 class RedisSessionStore(_SessionStore):

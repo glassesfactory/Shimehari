@@ -15,6 +15,7 @@ from werkzeug.wrappers import Request as RequestBase, Response as ResponseBase
 from shimehari.core.helpers import attachEnctypeErrorMultidict
 from shimehari.core.exceptions import JSONBadRequest
 from shimehari.helpers import _assertHaveJson, json
+from shimehari.shared import _requestContextStack
 
 
 class Request(RequestBase):
@@ -47,8 +48,7 @@ class Request(RequestBase):
     def _load_from_data(self):
         RequestBase._load_from_data(self)
 
-        # FIXME: Undefined name "_requestContextStack"
-        context = _requestContextStack
+        context = _requestContextStack.top
 
         if context is not None and context.app.debug \
            and self.mimetype != 'multipart/form-data' and not self.files:

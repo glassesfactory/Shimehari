@@ -430,6 +430,7 @@ def getFlashedMessage(withCategory=False, categoryFilter=[]):
     flashes = _requestContextStack.top.flash
     if flashes is None:
         _requestContextStack.top.flash = flashes = session.pop('_flashes') if '_flashes' in session else []
+
     if categoryFilter:
         flashes = filter(lambda f: f[0] in categoryFilter, flashes)
     if not withCategory:
@@ -463,15 +464,31 @@ class _Kouzi(object):
                                 config['CONTROLLER_DIRECTORY'] else controllerFolder
         self.viewFolder = config['VIEW_DIRECTORY'] if config and config['VIEW_DIRECTORY'] else viewFolder
 
+        self._staticFolders = {}
         if config and config['ASSETS_DIRECTORY']:
-            if type(config['ASSETS_DIRECTORY']) is list:
-                self._staticFolders = {}
-                [self._staticFolders.setdefault(x, x) for x in config['ASSETS_DIRECTORY']]
+            assetsDir = config['ASSETS_DIRECTORY']
+            if type(assetsDir) is list:
+                [self._staticFolders.setdefault(x, x) for x in assetsDir]
             else:
-                self._staticFolders = {config['ASSETS_DIRECTORY']: config['ASSETS_DIRECTORY']}
-        else:
-            self._staticFolders = {}
+                self._staticFolders = {assetsDir: assetsDir}
+
+        if config and config['STATIC_DIRECTORY']:
+            staticDir = config['STATIC_DIRECTORY']
+            if isinstance(staticDir, (list, tuple)):
+                [self._staticFolders.setdefault(x, x) for x in staticDir]
+            elif isinstance(staticDir, dict):
+                self._staticFolders.update(staticDir)
+            else:
+                self._staticFolders.setdefault(staticDir, staticDir)
         self._staticURLDict = {}
+
+        def _assetsURL(self):
+            if config['ASSETS_DIRECTORY'] in self._staticFolders:
+                return self.getStaticURL(config['ASSETS_DIRECTORY'])
+            else:
+                return None
+        self.assetsURL = property(_assetsURL)
+        del _assetsURL
 
     def getStaticFolder(self, key):
         if key in self._staticFolders:

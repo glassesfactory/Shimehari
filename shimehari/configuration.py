@@ -115,6 +115,7 @@ class Config(dict):
     :param VIEW_DIRECTORY:                  ビューファイルが格納されたディレクトリを指定します。
     :param MODEL_DIRECTORY:                 モデルファイルが格納されたディレクトリを指定します。
     :param ASSETS_DIRECTORY:                アセットファイルが格納されたディレクトリを指定します。
+    :param STATIC_DIRECTORY:                静的ファイルが格納されたディレクトリを指定します。
     :param PREFERRED_URL_SCHEME:            URL を発行する際のプロトコルを指定します。
     :param AUTO_SETUP:                      自動的にセットアップを開始するかどうか指定します。
                                             この項目についての詳細は app.setup を参照してください。
@@ -158,6 +159,7 @@ class Config(dict):
         'VIEW_DIRECTORY': 'views',
         'MODEL_DIRECTORY': 'models',
         'ASSETS_DIRECTORY': 'assets',
+        'STATIC_DIRECTORY': [],
         'PREFERRED_URL_SCHEME': 'http',
         'AUTO_SETUP': True,
         'CONTROLLER_AUTO_NAMESPACE': True,

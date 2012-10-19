@@ -31,7 +31,9 @@ ConfigManager.addConfigs([
 
         'VIEW_DIRECTORY': 'views',
 
-        'ASSESTS_DIRECTORY':'assets',
+        'ASSETS_DIRECTORY':'assets',
+
+        'STATIC_DIRECTORY':[],
 
         #for daiginjou
         'MODEL_DIRECTORY': 'models',
