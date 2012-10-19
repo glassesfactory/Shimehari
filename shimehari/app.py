@@ -157,6 +157,15 @@ class Shimehari(_Kouzi):
         if self.config['AUTO_SETUP']:
             self.setup()
 
+    @lockedCachedProperty
+    def name(self):
+        if self.importName == '__main__':
+            fn = getattr(sys.modules['__main__'], '__file__', None)
+            if fn is None:
+                return '__main__'
+            return os.path.splittext(os.path.basename(fn))[0]
+        return self.importName
+
     @property
     def gotFirstRequest(self):
         return self._gotFirstRequest
