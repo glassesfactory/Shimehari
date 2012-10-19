@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from setuptools import Command, setup
-from shimehari import VERSION, AUTHOR
+# from shimehari import VERSION, AUTHOR
 
 
 class runAudit(Command):
@@ -17,10 +17,10 @@ class runAudit(Command):
 
 setup(
     name='Shimehari',
-    version=VERSION,
+    version='0.1.9'
     url='http://shimehari.hageee.net',
     license='BSD',
-    author=AUTHOR,
+    author='Yamaguchi Eikichi, Keiichiro Matsumoto',
     author_email='megane@glasses-factory.net',
     description='moderate framework for Python. based on Werkzeug, Jinja2',
     packages=['shimehari', 'shimehari.core', 'shimehari.template', 'shimehari.core.conf', 'shimehari.core.conf.app_template',

@@ -17,7 +17,6 @@ from .wrappers import Request, Response
 from .cache import Cache
 
 VERSION = '0.1.9'
-AUTHOR = 'Yamaguchi Eikichi, Keiichiro Matsumoto'
 
 
 def getVersion():
