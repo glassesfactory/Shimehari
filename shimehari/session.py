@@ -9,12 +9,8 @@ u"""
 ===============================
 """
 from datetime import datetime
-from hmac import new as hmac
-from time import time
-from werkzeug.urls import url_quote_plus, url_unquote_plus
-from werkzeug.contrib.securecookie import SecureCookie, UnquoteError
-from werkzeug.contrib.sessions import SessionStore as SessionStoreBase, generate_key, ModificationTrackingDict
-# from werkzeug.security import safe_str_cmp
+from werkzeug.contrib.securecookie import SecureCookie
+from werkzeug.contrib.sessions import SessionStore as SessionStoreBase, generate_key
 from shimehari.configuration import ConfigManager
 from shimehari.helpers import jsonAvailable
 from shimehari.core.helpers import importPreferredMemcachedClient
