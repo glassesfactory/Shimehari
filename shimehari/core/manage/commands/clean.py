@@ -17,6 +17,7 @@ import os
 import re
 import sys
 from shimehari.core.manage import AbstractCommand
+from shimehari.configuration import ConfigManager
 
 u"""
 ===============================
@@ -31,17 +32,45 @@ u"""
 
 class Command(AbstractCommand):
     name = 'clean'
-    summary = "Clean up *.py[cod]"
-    usage = "Usage: %prog COMMAND [OPTIONS]"
+    summary = "Clean up files"
+    usage = "Usage: %prog TARGET"
+
+    targets = ('pyc', 'log')
 
     def __init__(self):
         super(Command, self).__init__()
 
-    def handle(self, *args, **options):
-        for root, dirs, files in os.walk(os.getcwd()):
+    def handle(self, target=None, *args, **options):
+        isUnknownTarget = False
+
+        if not target is None and not target in self.targets:
+            isUnknownTarget = True
+            sys.stdout.write('Unknown target. ')
+
+        if target is None or isUnknownTarget:
+            sys.stdout.write('Please imput target.\n')
+            for theTarget in self.targets:
+                sys.stdout.write('    %s\n' % theTarget)
+            return 0
+
+        exec_method = getattr(self, '_exec_%s' % target)
+        return exec_method()
+
+    def _exec_pyc(self):
+        self._removeFiles(os.getcwd(), r'\.py[cod]$')
+
+    def _exec_log(self):
+        __import__('config')
+        config = ConfigManager.getConfig()
+        logDir = os.path.join(os.getcwd(), config['LOG_FILE_DIRECTORY'])
+
+        self._removeFiles(logDir, r'\.log$')
+
+    def _removeFiles(self, path, fileReg):
+        for root, dirs, files in os.walk(path):
             for f in files:
                 f = unicode(f, 'cp932')
-                if not re.search(r'\.py[cod]$', f):
+                if not re.search(fileReg, f):
                     continue
                 fullpath = os.path.join(root, f)
                 path = root.replace(os.getcwd() + '/', '')
