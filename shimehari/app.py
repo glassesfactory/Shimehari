@@ -433,7 +433,7 @@ class Shimehari(_Kouzi):
             if request.environ['REQUEST_METHOD'] == 'POST':
                 if '_method' in request.form:
                     method = request.form['_method'].upper()
-                    if method in allowedMethods:
+                    if method in self.allowedMethods:
                         request.environ['REQUEST_METHOD'] = method
 
             return self.router.bind_to_environ(request.environ)
