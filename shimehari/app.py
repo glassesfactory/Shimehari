@@ -104,6 +104,8 @@ class Shimehari(_Kouzi):
 
     sharedRequestClass = _SharedRequestClass
 
+    allowedMethods = set(['HEAD', 'GET', 'OPTIONS', 'POST', 'PUT', 'TRACE', 'DELETE', 'PATCH'])
+
     def __init__(self, importName,
                  staticURL=None, staticFolder='static',
                  appFolder='app', controllerFolder='controllers',
@@ -427,6 +429,13 @@ class Shimehari(_Kouzi):
 
         """
         if request is not None:
+
+            if request.environ['REQUEST_METHOD'] == 'POST':
+                if '_method' in request.form:
+                    method = request.form['_method'].upper()
+                    if method in self.allowedMethods:
+                        request.environ['REQUEST_METHOD'] = method
+
             return self.router.bind_to_environ(request.environ)
         #なんのこっちゃ
         if self.config['SERVER_NAME'] is not None:
