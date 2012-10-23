@@ -37,6 +37,7 @@ _loggerLock = Lock()
 defaultHost = '127.0.0.1'
 defaultPort = 5959
 
+
 def setupMethod(f):
     def wrapperFunc(self, *args, **kwargs):
         if self.debug and self._gotFirstRequest:
