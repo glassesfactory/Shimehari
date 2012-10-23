@@ -104,7 +104,8 @@ class Shimehari(_Kouzi):
 
     sharedRequestClass = _SharedRequestClass
 
-    allowedMethods = set(['HEAD', 'GET', 'OPTIONS', 'POST', 'PUT', 'TRACE', 'DELETE', 'PATCH'])
+    allowedMethods = set(['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'])
+    bodylessMethods = frozenset(['GET', 'HEAD', 'OPTIONS', 'DELETE'])
 
     def __init__(self, importName,
                  staticURL=None, staticFolder='static',
@@ -431,10 +432,12 @@ class Shimehari(_Kouzi):
         if request is not None:
 
             if request.environ['REQUEST_METHOD'] == 'POST':
-                if '_method' in request.form:
-                    method = request.form['_method'].upper()
-                    if method in self.allowedMethods:
-                        request.environ['REQUEST_METHOD'] = method
+                method = request.form.get('_method', '').upper() or request.environ.get('HTTP_X_HTTP_METHOD_OVERRIDE', '').upper()
+                if method in self.allowedMethods:
+                    method = method.encode('ascii', 'replace')
+                    request.environ['REQUEST_METHOD'] = method
+                if method in self.bodylessMethods:
+                    request.environ['CONTENT_LENGTH'] = 0
 
             return self.router.bind_to_environ(request.environ)
         #なんのこっちゃ
