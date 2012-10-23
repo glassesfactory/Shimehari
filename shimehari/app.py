@@ -649,7 +649,7 @@ class Shimehari(_Kouzi):
         """
 
         host = host or defaultHost
-        host = host or defaultPort
+        port = port or defaultPort
 
         from werkzeug.serving import run_simple
         if debug is not None:
