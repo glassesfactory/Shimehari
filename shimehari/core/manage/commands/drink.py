@@ -18,6 +18,7 @@ import threading
 import traceback
 from optparse import make_option
 
+from shimehari.app import defaultHost, defaultPort
 from shimehari.core.manage import AbstractCommand
 from shimehari.core.helpers import importFromString
 from shimehari.configuration import ConfigManager
@@ -26,12 +27,12 @@ from shimehari.core.exceptions import DrinkError
 
 class BaseDrinkCommand(AbstractCommand):
     name = 'drink'
-    summary = 'Present a web page at http://127.0.0.1:5959/'
+    summary = 'Present a web page at http://%s:%d/' % (defaultHost, defaultPort)
     usage = "Usage: %prog COMMAND [OPTIONS]"
 
     option_list = AbstractCommand.option_list + (
-        make_option('--port', '-p', action='store', type='int', dest='port', default=5959, help='port number. default %default'),
-        make_option('--host', action='store', type='string', dest='host', default='127.0.0.1', help='host name. default %default'),
+        make_option('--port', '-p', action='store', type='int', dest='port', default=defaultPort, help='port number. default %default'),
+        make_option('--host', action='store', type='string', dest='host', default=defaultHost, help='host name. default %default'),
         make_option('--debug', '-d', action='store_true', default=False, help='running debug mode.'),
         make_option('--browser', '-b', action='store_true', dest='browser', default=False, help='open browser.')
     )

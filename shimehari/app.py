@@ -34,7 +34,8 @@ from shimehari.core.signals import appContextTearingDown, requestContextTearingD
 
 
 _loggerLock = Lock()
-
+defaultHost = '127.0.0.1'
+defaultPort = 5959
 
 def setupMethod(f):
     def wrapperFunc(self, *args, **kwargs):
@@ -638,7 +639,7 @@ class Shimehari(_Kouzi):
                 response = self.makeResponse(self.handleException(e))
             return response(environ, startResponse)
 
-    def drink(self, host, port, debug=None, **options):
+    def drink(self, host=None, port=None, debug=None, **options):
         u"""アプリを実行します。
 
         :param host:    ホスト名
@@ -646,6 +647,10 @@ class Shimehari(_Kouzi):
         :param debug:   デバッグモードとして起動するかどうか
         :param options: kwargs
         """
+
+        host = host or defaultHost
+        host = host or defaultPort
+
         from werkzeug.serving import run_simple
         if debug is not None:
             self.debug = bool(debug)
