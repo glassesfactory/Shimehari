@@ -7,7 +7,8 @@ http://shimehari.hageee.net
 
 inspired from Flask:: http://flask.pocoo.org
 
-![travis-ci](https://secure.travis-ci.org/glassesfactory/Shimehari.png)
+master: [![Master Build Status](https://secure.travis-ci.org/glassesfactory/Shimehari.png?branch=master)](http://travis-ci.org/glassesfactory/Shimehari)
+namashibori: [![Namashibori Build Status](https://secure.travis-ci.org/glassesfactory/Shimehari.png?branch=namashibori)](http://travis-ci.org/glassesfactory/Shimehari)
 
 What is Shimehari
 ---
