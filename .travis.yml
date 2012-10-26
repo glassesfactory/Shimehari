@@ -10,3 +10,7 @@ before_script:
 script:
   - python setup.py test
   - nosetests
+branches:
+  only:
+    - master
+    - namashibori
