@@ -39,6 +39,7 @@ def getCommands():
     if _commands is None:
         _commands = dict([(name, 'shimehari.core.manage.commands') for name in findCommand(__path__[0], 'commands')])
         #ユーザーコマンドー…
+        sys.path.append(os.getcwd())
         _commands.update(dict([(name, 'command') for name in findCommand(os.getcwd(), 'command')]))
     return _commands
 
