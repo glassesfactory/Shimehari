@@ -52,11 +52,13 @@ class CSRF(object):
 
     def csrfProtect(self):
         if not shared._csrfExempt:
-            if request.method == 'POST':
+            if request.method in ['POST', 'PUT', 'PATCH', 'DELETE']:
                 token = session.pop('_csrfToken', None)
                 if not token or token != request.form.get('_csrfToken'):
                     if self.csrfHandler:
                         self.csrfHandler(*self.app.matchRequest())
+                    else:
+                        abort(403)
                 else:
                     if not self.checkCSRFExpire(token):
                         abort(403)
