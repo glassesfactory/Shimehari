@@ -42,7 +42,9 @@ class CSRF(object):
     #token の有効期限チェック
     def checkCSRFExpire(self, token):
         csrfCreateAt = session.pop('_csrfTokenAdded', None)
-        expire = self.app.config['CSRF_EXPIRE']
+        expire = self.app.config.get('CSRF_EXPIRE', None)
+        if expire is None:
+            return True
         now = datetime.datetime.now()
         currentTime = time.mktime(now.timetuple())
         term = currentTime - csrfCreateAt
@@ -52,18 +54,20 @@ class CSRF(object):
 
     def csrfProtect(self):
         if not shared._csrfExempt:
-            if request.method == 'POST':
+            if request.method in ['POST', 'PUT', 'PATCH', 'DELETE']:
                 token = session.pop('_csrfToken', None)
                 if not token or token != request.form.get('_csrfToken'):
                     if self.csrfHandler:
                         self.csrfHandler(*self.app.matchRequest())
+                    else:
+                        abort(403)
                 else:
                     if not self.checkCSRFExpire(token):
                         abort(403)
 
 
 def generateCSRFToken():
-    if '_csrfToken' not in session:
+    if not '_csrfToken' in session:
         session['_csrfToken'] = genereateToken()
         now = datetime.datetime.now() + datetime.timedelta()
         session['_csrfTokenAdded'] = time.mktime(now.timetuple())

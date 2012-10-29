@@ -37,6 +37,7 @@ _loggerLock = Lock()
 defaultHost = '127.0.0.1'
 defaultPort = 5959
 
+
 def setupMethod(f):
     def wrapperFunc(self, *args, **kwargs):
         if self.debug and self._gotFirstRequest:
@@ -649,7 +650,7 @@ class Shimehari(_Kouzi):
         """
 
         host = host or defaultHost
-        host = host or defaultPort
+        port = port or defaultPort
 
         from werkzeug.serving import run_simple
         if debug is not None:
