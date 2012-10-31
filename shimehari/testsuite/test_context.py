@@ -71,7 +71,7 @@ class TestAppContext(ShimehariTestCase):
         app.setupTemplater()
         app.sharedRequestClass = CustomRequestGlobals
         with app.testRequestContext():
-            self.assertEqual(shimehari.renderTempalteString('{{ shared.spam }}'), 'sakerin')
+            self.assertEqual(shimehari.renderTemplateString('{{ shared.spam }}'), 'sakerin')
 
 
 def suite():

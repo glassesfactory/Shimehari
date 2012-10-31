@@ -169,7 +169,7 @@ class JSONTestCase(ShimehariTestCase):
         ConfigManager.addConfig(testConfig)
         app = shimehari.Shimehari(__name__)
         app.setupTemplater()
-        render = shimehari.renderTempalteString
+        render = shimehari.renderTemplateString
         with app.testRequestContext():
             rv = render('{{"</script>"|tojson|safe }}')
             self.assertEqual(rv, '"</script>"')

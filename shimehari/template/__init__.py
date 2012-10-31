@@ -28,7 +28,7 @@ def renderTemplate(templateNameOrList, **context):
         context)
 
 
-def renderTempalteString(source, **context):
+def renderTemplateString(source, **context):
     ctx = _requestContextStack.top
     ctx.app.updateTemplateContext(context)
     return _render(ctx.app.templateEnv.from_string(source), context)
