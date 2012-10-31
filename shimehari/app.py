@@ -669,7 +669,7 @@ class Shimehari(_Kouzi):
             単純に drink メソッドをラップしているだけです。
             WSGI 周りのライブラリや既存のコードで run を自動的に呼ぶ物がおおいので念のため。
         """
-        self.drink(host, port, debug, options)
+        self.drink(host, port, debug, **options)
 
     def testClient(self, useCookies=True):
         cls = self.testClientCls
