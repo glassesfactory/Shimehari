@@ -30,7 +30,7 @@ from shimehari.session import SessionStore
 from shimehari.shared import _requestContextStack, _SharedRequestClass, request
 from shimehari.template import _defaultTemplateCtxProcessor
 from shimehari.core.exceptions import ShimehariSetupError
-from shimehari.core.signals import appContextTearingDown, requestContextTearingDown
+from shimehari.core.signals import appContextTearingDown, requestContextTearingDown, requestStarted, requestFinished, gotRequestException
 
 
 _loggerLock = Lock()
@@ -513,6 +513,7 @@ class Shimehari(_Kouzi):
         """
         self.tryTriggerBeforeFirstRequest()
         try:
+            requestStarted.send(self)
             rv = self.preprocessRequest()
             if rv is None:
                 req = _requestContextStack.top.request
@@ -525,6 +526,7 @@ class Shimehari(_Kouzi):
 
         response = self.makeResponse(rv)
         response = self.processResponse(response)
+        requestFinished.send(self, response=response)
 
         return response
 
@@ -565,6 +567,8 @@ class Shimehari(_Kouzi):
         """
 
         excType, excValue, excTb = sys.exc_info()
+
+        gotRequestException.send(self, exception=e)
         handler = self.errorHandlerSpec[None].get(500)
 
         if self.propagateExceptions:
