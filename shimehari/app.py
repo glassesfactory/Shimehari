@@ -153,7 +153,7 @@ class Shimehari(_Kouzi):
 
         self.debug = self.config['DEBUG']
         self.test = self.config['TEST']
-        self.sessionKey = self.config['SECRET_KEY']
+        self.sessionKey = self.config['SESSION_COOKIE_NAME']
         self.useXSendFile = self.config['USE_X_SENDFILE']
 
         self.templateOptions = templateOptions
@@ -246,7 +246,7 @@ class Shimehari(_Kouzi):
         return response
 
     def openSession(self, request):
-        sid = request.cookies.get(self.sessionKey, None)
+        sid = request.cookies.get(self.sessionKey, None) or request.values.get(self.sessionKey, None)
         if sid is None:
             return self.sessionStore.new()
         else:

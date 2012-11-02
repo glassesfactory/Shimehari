@@ -87,7 +87,7 @@ class SecureCookieSession(SecureCookie, SessionMixin):
             self.sid = generate_key()
 
     @classmethod
-    def load_cookie(cls, request, sid=None, key='session', secret_key=None):
+    def load_cookie(cls, request, sid=None, key=None, secret_key=None):
         data = request.cookies.get(key)
         if not data:
             return cls(sid=sid, secret_key=secret_key)
@@ -201,13 +201,11 @@ from shimehari.shared import request
 
 class SecureCookieSessionStore(_SessionStore):
     u"""SecureCookieSession を利用したセッションストア"""
-    def __init__(self, key='session', expire=0):
+    def __init__(self, key='session', path='/', domain=None, expire=0):
         _SessionStore.__init__(self, session_class=SecureCookieSession)
         self.key = key
-        #直せ
-        self.path = '/'
-        #直せ
-        self.domain = None
+        self.path = path
+        self.domain = domain
 
     def getCookieHttpOnly(self):
         return ConfigManager.getConfig()['SESSION_COOKIE_HTTPONLY']
@@ -221,10 +219,9 @@ class SecureCookieSessionStore(_SessionStore):
 
     def new(self):
         config = ConfigManager.getConfig()
-        key = config['SECRET_KEY']
-        sessionCookieName = config['SESSION_COOKIE_NAME']
-        if key is not None:
-            return self.session_class.load_cookie(request, key=sessionCookieName, secret_key=key)
+        secretKey = config['SECRET_KEY']
+        if secretKey is not None:
+            return self.session_class.load_cookie(request, key=self.key, secret_key=secretKey)
 
     def save(self, session, response):
         self.expire = self.getCookieExpire(session)
@@ -233,7 +230,7 @@ class SecureCookieSessionStore(_SessionStore):
         if session.modified and not session:
             response.delete_cookie(self.key, path=self.path, domain=self.domain)
         else:
-            session.save_cookie(response, self.key, path=self.path, expires=self.expire, httponly=self.httponly,
+            return session.save_cookie(response, self.key, path=self.path, expires=self.expire, httponly=self.httponly,
                 secure=self.secure, domain=self.domain)
 
     def delete(self, session):
@@ -244,10 +241,9 @@ class SecureCookieSessionStore(_SessionStore):
         if not self.is_valid_key(sid):
             return self.new()
         config = ConfigManager.getConfig()
-        key = config['SECRET_KEY']
-        sessionCookieName = config['SESSION_COOKIE_NAME']
-        if key is not None:
-            return self.session_class.load_cookie(request, key=sessionCookieName, secret_key=key, sid=sid)
+        secretKey = config['SECRET_KEY']
+        if secretKey is not None:
+            return self.session_class.load_cookie(request, key=self.key, secret_key=secretKey, sid=sid)
 
 
 class RedisSessionStore(_SessionStore):
