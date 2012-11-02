@@ -53,23 +53,27 @@ class CSRF(object):
         return True
 
     def csrfProtect(self):
-        if not shared._csrfExempt:
-            if request.method in ['POST', 'PUT', 'PATCH', 'DELETE']:
-                token = session.get('_csrfToken', None)
-                if not token:
-                    # csrf token missiong
-                    abort(403)
+        if shared._csrfExempt:
+            return
 
-                if str(token) != request.form.get('_csrfToken'):
-                    # invalid csrf token
-                    if self.csrfHandler:
-                        self.csrfHandler(*self.app.matchRequest())
-                    else:
-                        abort(403)
+        if not request.method in ['POST', 'PUT', 'PATCH', 'DELETE']:
+            return
 
-                if not self.checkCSRFExpire(token):
-                    # csrf token expired
-                    abort(403)
+        token = session.get('_csrfToken', None)
+        if not token:
+            # csrf token missiong
+            abort(403)
+
+        if str(token) != request.form.get('_csrfToken'):
+            # invalid csrf token
+            if self.csrfHandler:
+                self.csrfHandler(*self.app.matchRequest())
+            else:
+                abort(403)
+
+        if not self.checkCSRFExpire(token):
+            # csrf token expired
+            abort(403)
 
 
 def generateCSRFToken():
