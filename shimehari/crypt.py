@@ -22,11 +22,17 @@ from shimehari import session, shared, request
 from shimehari.configuration import ConfigManager
 
 
-_exemptions = []
-
 """
 https://github.com/sjl/flask-csrf
 """
+
+
+_exemptions = []
+
+
+def csrfExempt(action):
+    _exemptions.append(action)
+    return action
 
 
 class CSRF(object):
@@ -64,7 +70,7 @@ class CSRF(object):
 
         token = session.get('_csrfToken', None)
         if not token:
-            # csrf token missiong
+            # CSRF token missing
             abort(403)
 
         config = ConfigManager.getConfig()
@@ -73,14 +79,14 @@ class CSRF(object):
         hmacCompare = hmac.new(secretKey, str(token).encode('utf-8'), digestmod=sha1)
 
         if hmacCompare.hexdigest() != request.form.get('_csrfToken'):
-            # invalid csrf token
+            # invalid CSRF token
             if self.csrfHandler:
                 self.csrfHandler(*self.app.matchRequest())
             else:
                 abort(403)
 
         if not self.checkCSRFExpire(token):
-            # csrf token expired
+            # CSRF token expired
             abort(403)
 
 

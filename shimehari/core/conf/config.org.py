@@ -54,7 +54,7 @@ ConfigManager.addConfigs([
 
         'PERMANENT_SESSION_LIFETIME': timedelta(days=31),
 
-        'SESSION_COOKIE_NAME': 'session',
+        'SESSION_COOKIE_NAME': '_%s_session',
 
         'SESSION_COOKIE_HTTPONLY': True,
 
@@ -83,7 +83,7 @@ ConfigManager.addConfigs([
 
         'LOG_ROTATE_COUNT': 5,
 
-        'LOG_FILE_DIRECTORY': '%s/log',
+        'LOG_FILE_DIRECTORY': 'log',
 
         'LOG_DEBUG_FORMAT': '%s',
 

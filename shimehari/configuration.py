@@ -130,7 +130,7 @@ class Config(dict):
     :param PRESERVE_CONTEXT_ON_EXCEPTION:   aaa
     :param SEND_FILE_MAX_AGE_DEFAULT:       静的ファイルのタイムアウトを指定します。
     :param PERMANENT_SESSION_LIFETIME:      セッションの有効期限を指定します。
-    :param SESSION_COOKIE_NAME:             aaa
+    :param SESSION_COOKIE_NAME:             セッションIDを保持するクッキー名です。
     :param SESSION_COOKIE_HTTPONLY:         iii
     :param SESSION_COOKIE_SECURE:           uuu
     :param CACHE_STORE:                     標準で使用するキャッシュストアを指定します。
@@ -171,7 +171,7 @@ class Config(dict):
         'TRAP_BAD_REQUEST_ERRORS': False,
         'PRESERVE_CONTEXT_ON_EXCEPTION': None,
         'SEND_FILE_MAX_AGE_DEFAULT': 12 * 60 * 60,
-        'SESSION_COOKIE_NAME': 'session',
+        'SESSION_COOKIE_NAME': '_app_session',
         'SESSION_COOKIE_HTTPONLY': True,
         'SESSION_COOKIE_SECURE': False,
         'PERMANENT_SESSION_LIFETIME': timedelta(days=31),
