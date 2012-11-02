@@ -13,11 +13,14 @@ import uuid
 from hashlib import sha1
 import datetime
 import time
+import hmac
 
 from werkzeug.exceptions import abort
 from werkzeug.routing import NotFound
 
 from shimehari import session, shared, request
+from shimehari.configuration import ConfigManager
+
 
 _exemptions = []
 
@@ -64,7 +67,12 @@ class CSRF(object):
             # csrf token missiong
             abort(403)
 
-        if str(token) != request.form.get('_csrfToken'):
+        config = ConfigManager.getConfig()
+        secretKey = config['SECRET_KEY']
+
+        hmacCompare = hmac.new(secretKey, str(token).encode('utf-8'), digestmod=sha1)
+
+        if hmacCompare.hexdigest() != request.form.get('_csrfToken'):
             # invalid csrf token
             if self.csrfHandler:
                 self.csrfHandler(*self.app.matchRequest())
@@ -79,9 +87,15 @@ class CSRF(object):
 def generateCSRFToken():
     if not '_csrfToken' in session:
         session['_csrfToken'] = genereateToken()
-        now = datetime.datetime.now() + datetime.timedelta()
-        session['_csrfTokenAdded'] = time.mktime(now.timetuple())
-    return session['_csrfToken']
+
+    now = datetime.datetime.now() + datetime.timedelta()
+    session['_csrfTokenAdded'] = time.mktime(now.timetuple())
+
+    config = ConfigManager.getConfig()
+    secretKey = config['SECRET_KEY']
+
+    hmacCsrf = hmac.new(secretKey, str(session['_csrfToken']).encode('utf-8'), digestmod=sha1)
+    return hmacCsrf.hexdigest()
 
 
 import string
