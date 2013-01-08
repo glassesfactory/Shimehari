@@ -3,6 +3,7 @@
 
 from shimehari.shared import _requestContextStack
 from shimehari.helpers import lockedCachedProperty
+from shimehari.core.signals import templateRendered
 from werkzeug.datastructures import ImmutableDict
 
 
@@ -16,8 +17,9 @@ def _defaultTemplateCtxProcessor():
     )
 
 
-def _render(template, context):
+def _render(template, context, app):
     rv = template.render(context)
+    templateRendered.send(app, template=template, context=context)
     return rv
 
 
@@ -25,13 +27,13 @@ def renderTemplate(templateNameOrList, **context):
     ctx = _requestContextStack.top
     ctx.app.updateTemplateContext(context)
     return _render(ctx.app.templateEnv.get_or_select_template(templateNameOrList),
-        context)
+        context, ctx.app)
 
 
-def renderTempalteString(source, **context):
+def renderTemplateString(source, **context):
     ctx = _requestContextStack.top
     ctx.app.updateTemplateContext(context)
-    return _render(ctx.app.templateEnv.from_string(source), context)
+    return _render(ctx.app.templateEnv.from_string(source), context, ctx.app)
 
 
 u"""

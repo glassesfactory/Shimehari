@@ -9,6 +9,7 @@ from StringIO import StringIO
 from shimehari.helpers import flash, getFlashedMessage
 from shimehari.testsuite import ShimehariTestCase, catchWarnings, catchStdErr
 from shimehari.configuration import ConfigManager, Config
+from shimehari.crypt import csrfExempt
 from werkzeug.routing import Rule
 from werkzeug.http import parse_cache_control_header, parse_options_header
 
@@ -90,6 +91,7 @@ class JSONTestCase(ShimehariTestCase):
         ConfigManager.addConfig(testConfig)
         app = shimehari.Shimehari(__name__)
 
+        @csrfExempt
         def returnJSON(*args, **kwargs):
             return unicode(shimehari.request.json)
         app.router = shimehari.Router([Rule('/json', endpoint='returnJSON', methods=['POST'])])
@@ -102,6 +104,7 @@ class JSONTestCase(ShimehariTestCase):
         ConfigManager.addConfig(testConfig)
         app = shimehari.Shimehari(__name__)
 
+        @csrfExempt
         def returnJSON(*args, **kwargs):
             return unicode(shimehari.request.json)
         app.router = shimehari.Router([Rule('/json', endpoint='returnJSON', methods=['POST'])])
@@ -156,6 +159,7 @@ class JSONTestCase(ShimehariTestCase):
         ConfigManager.addConfig(testConfig)
         app = shimehari.Shimehari(__name__)
 
+        @csrfExempt
         def returnJSON(*args, **kwargs):
             return unicode(shimehari.request.json['a'] + shimehari.request.json['b'])
         app.router = shimehari.Router([Rule('/add', endpoint='returnJSON', methods=['POST'])])
@@ -169,7 +173,7 @@ class JSONTestCase(ShimehariTestCase):
         ConfigManager.addConfig(testConfig)
         app = shimehari.Shimehari(__name__)
         app.setupTemplater()
-        render = shimehari.renderTempalteString
+        render = shimehari.renderTemplateString
         with app.testRequestContext():
             rv = render('{{"</script>"|tojson|safe }}')
             self.assertEqual(rv, '"</script>"')

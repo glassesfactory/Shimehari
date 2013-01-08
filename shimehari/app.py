@@ -30,7 +30,7 @@ from shimehari.session import SessionStore
 from shimehari.shared import _requestContextStack, _SharedRequestClass, request
 from shimehari.template import _defaultTemplateCtxProcessor
 from shimehari.core.exceptions import ShimehariSetupError
-from shimehari.core.signals import appContextTearingDown, requestContextTearingDown
+from shimehari.core.signals import appContextTearingDown, requestContextTearingDown, requestStarted, requestFinished, gotRequestException
 
 
 _loggerLock = Lock()
@@ -153,7 +153,7 @@ class Shimehari(_Kouzi):
 
         self.debug = self.config['DEBUG']
         self.test = self.config['TEST']
-        self.sessionKey = self.config['SECRET_KEY']
+        self.sessionKey = self.config['SESSION_COOKIE_NAME']
         self.useXSendFile = self.config['USE_X_SENDFILE']
 
         self.templateOptions = templateOptions
@@ -246,7 +246,7 @@ class Shimehari(_Kouzi):
         return response
 
     def openSession(self, request):
-        sid = request.cookies.get(self.sessionKey, None)
+        sid = request.cookies.get(self.sessionKey, None) or request.values.get(self.sessionKey, None)
         if sid is None:
             return self.sessionStore.new()
         else:
@@ -513,6 +513,7 @@ class Shimehari(_Kouzi):
         """
         self.tryTriggerBeforeFirstRequest()
         try:
+            requestStarted.send(self)
             rv = self.preprocessRequest()
             if rv is None:
                 req = _requestContextStack.top.request
@@ -525,6 +526,7 @@ class Shimehari(_Kouzi):
 
         response = self.makeResponse(rv)
         response = self.processResponse(response)
+        requestFinished.send(self, response=response)
 
         return response
 
@@ -565,6 +567,8 @@ class Shimehari(_Kouzi):
         """
 
         excType, excValue, excTb = sys.exc_info()
+
+        gotRequestException.send(self, exception=e)
         handler = self.errorHandlerSpec[None].get(500)
 
         if self.propagateExceptions:
@@ -669,7 +673,7 @@ class Shimehari(_Kouzi):
             単純に drink メソッドをラップしているだけです。
             WSGI 周りのライブラリや既存のコードで run を自動的に呼ぶ物がおおいので念のため。
         """
-        self.drink(host, port, debug, options)
+        self.drink(host, port, debug, **options)
 
     def testClient(self, useCookies=True):
         cls = self.testClientCls

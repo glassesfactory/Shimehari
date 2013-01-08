@@ -13,17 +13,26 @@ import uuid
 from hashlib import sha1
 import datetime
 import time
+import hmac
 
 from werkzeug.exceptions import abort
 from werkzeug.routing import NotFound
 
 from shimehari import session, shared, request
+from shimehari.configuration import ConfigManager
 
-_exemptions = []
 
 """
 https://github.com/sjl/flask-csrf
 """
+
+
+_exemptions = []
+
+
+def csrfExempt(action):
+    _exemptions.append(action)
+    return action
 
 
 class CSRF(object):
@@ -41,7 +50,7 @@ class CSRF(object):
 
     #token の有効期限チェック
     def checkCSRFExpire(self, token):
-        csrfCreateAt = session.pop('_csrfTokenAdded', None)
+        csrfCreateAt = session.get('_csrfTokenAdded', None)
         expire = self.app.config.get('CSRF_EXPIRE', None)
         if expire is None:
             return True
@@ -53,25 +62,46 @@ class CSRF(object):
         return True
 
     def csrfProtect(self):
-        if not shared._csrfExempt:
-            if request.method in ['POST', 'PUT', 'PATCH', 'DELETE']:
-                token = session.pop('_csrfToken', None)
-                if not token or token != request.form.get('_csrfToken'):
-                    if self.csrfHandler:
-                        self.csrfHandler(*self.app.matchRequest())
-                    else:
-                        abort(403)
-                else:
-                    if not self.checkCSRFExpire(token):
-                        abort(403)
+        if shared._csrfExempt:
+            return
+
+        if not request.method in ['POST', 'PUT', 'PATCH', 'DELETE']:
+            return
+
+        token = session.get('_csrfToken', None)
+        if not token:
+            # CSRF token missing
+            abort(403)
+
+        config = ConfigManager.getConfig()
+        secretKey = config['SECRET_KEY']
+
+        hmacCompare = hmac.new(secretKey, str(token).encode('utf-8'), digestmod=sha1)
+
+        if hmacCompare.hexdigest() != request.form.get('_csrfToken'):
+            # invalid CSRF token
+            if self.csrfHandler:
+                self.csrfHandler(*self.app.matchRequest())
+            else:
+                abort(403)
+
+        if not self.checkCSRFExpire(token):
+            # CSRF token expired
+            abort(403)
 
 
 def generateCSRFToken():
     if not '_csrfToken' in session:
         session['_csrfToken'] = genereateToken()
-        now = datetime.datetime.now() + datetime.timedelta()
-        session['_csrfTokenAdded'] = time.mktime(now.timetuple())
-    return session['_csrfToken']
+
+    now = datetime.datetime.now() + datetime.timedelta()
+    session['_csrfTokenAdded'] = time.mktime(now.timetuple())
+
+    config = ConfigManager.getConfig()
+    secretKey = config['SECRET_KEY']
+
+    hmacCsrf = hmac.new(secretKey, str(session['_csrfToken']).encode('utf-8'), digestmod=sha1)
+    return hmacCsrf.hexdigest()
 
 
 import string
