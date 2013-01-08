@@ -106,8 +106,20 @@ ApplicationController を自前で継承後、必要なアクションを定義�
 ```
 $ shimehari generate controller Example
 ```
+
+
+貢献
+------------
+
+1. フォークします
+2. ブランチを作ります (`git checkout -b my_markup`)
+3. 変更を行います (`git commit -am "Added Snarkdown"`)
+4. ブランチにプッシュします (`git push origin my_markup`)
+5.  [Pull Request] [1] を開きます
+6. 〆張鶴楽しみ、待つ
+
   
-    
+
 and more...
 ---
 より詳しい使い方や、その他の API については [Shimehari 公式サイト](http://shimehari.hageee.net) を参照してください。
