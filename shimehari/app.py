@@ -167,7 +167,7 @@ class Shimehari(_Kouzi):
             fn = getattr(sys.modules['__main__'], '__file__', None)
             if fn is None:
                 return '__main__'
-            return os.path.splittext(os.path.basename(fn))[0]
+            return os.path.splitext(os.path.basename(fn))[0]
         return self.importName
 
     @property

@@ -28,7 +28,7 @@ from shimehari.core.exceptions import DrinkError
 class BaseDrinkCommand(AbstractCommand):
     name = 'drink'
     summary = 'Present a web page at http://%s:%d/' % (defaultHost, defaultPort)
-    usage = "Usage: %prog COMMAND [OPTIONS]"
+    usage = "Usage: %prog APP_MODULE [OPTIONS]"
 
     option_list = AbstractCommand.option_list + (
         make_option('--port', '-p', action='store', type='int', dest='port', default=defaultPort, help='port number. default %default'),
@@ -56,7 +56,12 @@ class BaseDrinkCommand(AbstractCommand):
         try:
             currentEnv = options.get('SHIMEHARI_ENV')
             currentConfig = ConfigManager.getConfig(currentEnv or 'development')
-            app = importFromString(currentConfig['APP_DIRECTORY'] + '.' + currentConfig['MAIN_SCRIPT'] + '.' + currentConfig['APP_INSTANCE_NAME'])
+
+            if len(args):
+                app = importFromString(args[0])
+            else:
+                app = importFromString(currentConfig['APP_DIRECTORY'] + '.' + currentConfig['MAIN_SCRIPT'] + '.' + currentConfig['APP_INSTANCE_NAME'])
+
             if not self.debug and currentConfig['DEBUG']:
                 self.debug = True
 

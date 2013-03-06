@@ -61,7 +61,7 @@ class CSRF(object):
             return False
         return True
 
-    def csrfProtect(self):
+    def csrfProtect(self, token=None):
         if shared._csrfExempt:
             return
 
@@ -77,8 +77,9 @@ class CSRF(object):
         secretKey = config['SECRET_KEY']
 
         hmacCompare = hmac.new(secretKey, str(token).encode('utf-8'), digestmod=sha1)
+        token = requestToken if requestToken is not None else request.form.get('_csrfToken')
 
-        if hmacCompare.hexdigest() != request.form.get('_csrfToken'):
+        if hmacCompare.hexdigest() != token:
             # invalid CSRF token
             if self.csrfHandler:
                 self.csrfHandler(*self.app.matchRequest())
