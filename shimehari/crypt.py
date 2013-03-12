@@ -49,7 +49,7 @@ class CSRF(object):
             shared._csrfExempt = False
 
     #token の有効期限チェック
-    def checkCSRFExpire(self, token):
+    def checkCSRFExpire(self, requestToken):
         csrfCreateAt = session.get('_csrfTokenAdded', None)
         expire = self.app.config.get('CSRF_EXPIRE', None)
         if expire is None:
@@ -61,22 +61,22 @@ class CSRF(object):
             return False
         return True
 
-    def csrfProtect(self, token=None):
+    def csrfProtect(self, requestToken=None):
         if shared._csrfExempt:
             return
 
         if not request.method in ['POST', 'PUT', 'PATCH', 'DELETE']:
             return
 
-        token = session.get('_csrfToken', None)
-        if not token:
+        sessionToken = session.get('_csrfToken', None)
+        if not sessionToken:
             # CSRF token missing
             abort(403)
 
         config = ConfigManager.getConfig()
         secretKey = config['SECRET_KEY']
 
-        hmacCompare = hmac.new(secretKey, str(token).encode('utf-8'), digestmod=sha1)
+        hmacCompare = hmac.new(secretKey, str(sessionToken).encode('utf-8'), digestmod=sha1)
         token = requestToken if requestToken is not None else request.form.get('_csrfToken')
 
         if hmacCompare.hexdigest() != token:
