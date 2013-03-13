@@ -17,7 +17,7 @@ class runAudit(Command):
 
 setup(
     name='Shimehari',
-    version='0.1.11b',
+    version='0.1.11c',
     url='http://shimehari.hageee.net',
     license='BSD',
     author='Yamaguchi Eikichi, Keiichiro Matsumoto',

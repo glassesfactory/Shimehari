@@ -16,7 +16,7 @@ from .template import renderTemplate, renderTemplateString
 from .wrappers import Request, Response
 from .cache import Cache
 
-VERSION = '0.1.9'
+VERSION = '0.1.11c'
 
 
 def getVersion():
